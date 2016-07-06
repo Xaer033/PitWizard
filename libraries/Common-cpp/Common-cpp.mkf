@@ -1,0 +1,73 @@
+files
+{
+	(inc)
+	ANSIString.h
+	Base.h
+	BaseCharString.h
+	BaseListener.h
+	Common.h
+	CustomType.h
+	CustomTypeBase.h
+	CustomTypeFactory.h
+	defines.h
+	DeSerializer.h
+	Dictionary.h
+	DictionaryBase.h
+	EGTime.h
+	Hashtable.h
+	JString.h
+	JVector.h
+	KeyObject.h
+	Logger.h
+	Object.h
+	platformLayer.h
+	porting.h
+	Serializer.h
+	ToString.h
+	UTF8String.h
+	ValueObject.h
+	(inc/Enums)
+	DebugLevel.h
+	TypeCode.h
+	(inc/Helpers)
+	ArrayLengthType.h
+	CompileTimeAssertTrue.h
+	ConfirmAllowed.h
+	ConfirmAllowedKey.h
+	CustomTypeCallbackWrapper.h
+	debug_assert.h
+	DeSerializerImplementation.h
+	EnableIf.h
+	EndianCorrectCast.h
+	EndianCorrectCastImplementation.h
+	IsDerivedFrom.h
+	IsPrimitiveType.h
+	KeyToObject.h
+	Lockguard.h
+	MathHelper.h
+	ObjectToStringConverter.h
+	PrimitiveToStringConverter.h
+	RemoveConst.h
+	RemovePointer.h
+	SerializerImplementation.h
+	Spinlock.h
+	Thread.h
+	ToStringImplementation.h
+	TypeName.h
+	ValueToObject.h
+	(inc/MemoryManagement)
+	Allocate.h
+	(inc/MemoryManagement/Internal)
+	Entry.h
+	Interface.h
+	MemoryPool.h
+	MemoryPoolManager.h
+	RawStorage.h
+}
+
+includepath ..
+
+subprojects
+{
+	iwutil
+}

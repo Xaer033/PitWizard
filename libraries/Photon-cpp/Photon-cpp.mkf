@@ -1,0 +1,29 @@
+files
+{
+	(inc)
+	EventData.h
+	LitePeer.h
+	OperationRequest.h
+	OperationResponse.h
+	PhotonListener.h
+	PhotonPeer.h
+	TrafficStats.h
+	TrafficStatsGameLevel.h
+	(inc/Enums)
+	ConnectionProtocol.h
+	ErrorCode.h
+	EventCache.h
+	EventCode.h
+	EventKey.h
+	NetworkPort.h
+	OperationCode.h
+	ParameterCode.h
+	PeerState.h
+	ReceiverGroup.h
+	StatusCode.h
+}
+
+subprojects
+{
+	../Common-cpp
+}

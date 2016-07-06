@@ -1,0 +1,49 @@
+#!/usr/bin/env mkb
+
+files
+{
+	(source)
+    PitWizard.cpp
+	
+	#[GG/Utility]
+}
+
+subprojects
+{
+    iwutil
+	iwgeom
+    iwgx
+    libraries/Photon-cpp/Photon-cpp
+	libraries/Common-cpp/Common-cpp
+}
+
+librarys
+{
+	"libraries/Common-cpp,Common-cpp"
+	"libraries/Photon-cpp,Photon-cpp"
+}
+
+includepaths
+{
+	"include"
+	"libraries/Common-cpp/inc"
+	"libraries/Photon-cpp/inc"
+}
+
+options
+{
+
+}
+
+
+assets
+{
+    (data)
+	textures
+	models
+}
+
+
+deployment
+{
+}
