@@ -3,9 +3,32 @@
 files
 {
 	(source)
+	[Source]
+	main.cpp
     PitWizard.cpp
+	PitWizard.h
 	
-	#[GG/Utility]
+	[Source/GG/GameLayer]
+	Application.cpp
+	GameStateManager.cpp
+	GameState.cpp
+	
+	
+	(include)
+	[Include]
+	
+	[Include/GG/GameLayer]
+	(include/GG)
+	
+	Application.h
+	GameStateManager.h
+	GameState.h
+	
+	
+	
+	(data)
+	[Assets]
+	
 }
 
 subprojects
@@ -13,6 +36,7 @@ subprojects
     iwutil
 	iwgeom
     iwgx
+	iwresmanager
     libraries/Photon-cpp/Photon-cpp
 	libraries/Common-cpp/Common-cpp
 }
@@ -32,7 +56,7 @@ includepaths
 
 options
 {
-
+	cxx11
 }
 
 
