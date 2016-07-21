@@ -1,0 +1,8 @@
+ResGroupResources:
+	CIwModelBuildInfo (0x66bbd6f5)
+		"creep_01" (0x13936254)
+		Size: 2076
+	ResList 'CIwModelBuildInfo' pos:18 size:2086
+
+ResGroupResources: Wrote 2090 bytes to CIwResGroup ""
+

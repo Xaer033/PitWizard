@@ -11,6 +11,5 @@ namespace GG
 		virtual void init();
 		virtual void doGameLoop() = 0;
 		virtual void shutdown();
-
 	};
 }

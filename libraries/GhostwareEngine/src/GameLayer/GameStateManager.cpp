@@ -1,11 +1,12 @@
-#include <GG/GameStateManager.h>
+
+#include "GameStateManager.h"
 
 #include <map>
 #include <string>
 #include <s3e.h>
 #include <IwUtil.h>
 
-#include <GG/GameState.h>
+#include "GameState.h"
 
 
 namespace GG

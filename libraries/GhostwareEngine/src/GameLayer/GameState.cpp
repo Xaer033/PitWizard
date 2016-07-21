@@ -1,4 +1,4 @@
-#include <GG/GameState.h>
+#include "GameState.h"
 
 namespace GG
 {

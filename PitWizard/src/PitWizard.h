@@ -1,7 +1,10 @@
 #pragma once
 
-#include <GG/Application.h>
-#include <GG/GameStateManager.h>
+#include "GG/GameLayer/Application.h"
+#include "GG/GameLayer/GameStateManager.h"
+
+
+class CIwModel;
 
 class PitWizard : public GG::Application
 {
@@ -12,4 +15,5 @@ public:
 
 private:
 	GG::GameStateManager		_gameStateManager;
+	CIwModel * _test;
 };

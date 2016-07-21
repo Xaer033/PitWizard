@@ -2,32 +2,18 @@
 
 files
 {
-	(source)
-	[Source]
+
+#Pit Wizard files
+	[PitWizard/src]
+	(PitWizard/src)
 	main.cpp
     PitWizard.cpp
 	PitWizard.h
 	
-	[Source/GG/GameLayer]
-	Application.cpp
-	GameStateManager.cpp
-	GameState.cpp
 	
-	
-	(include)
-	[Include]
-	
-	[Include/GG/GameLayer]
-	(include/GG)
-	
-	Application.h
-	GameStateManager.h
-	GameState.h
-	
-	
-	
+#Game Asset Files
 	(data)
-	[Assets]
+	[PitWizard/Assets]
 	
 }
 
@@ -35,10 +21,13 @@ subprojects
 {
     iwutil
 	iwgeom
+	iwgraphics
     iwgx
 	iwresmanager
+	iwanim
     libraries/Photon-cpp/Photon-cpp
 	libraries/Common-cpp/Common-cpp
+	libraries/GhostwareEngine/GhostwareEngine
 }
 
 librarys
@@ -49,9 +38,9 @@ librarys
 
 includepaths
 {
-	"include"
 	"libraries/Common-cpp/inc"
 	"libraries/Photon-cpp/inc"
+	"libraries/GhostwareEngine/GhostwareEngine/include"
 }
 
 options
@@ -59,13 +48,6 @@ options
 	cxx11
 }
 
-
-assets
-{
-    (data)
-	textures
-	models
-}
 
 
 deployment

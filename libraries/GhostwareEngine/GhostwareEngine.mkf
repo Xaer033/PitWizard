@@ -1,0 +1,55 @@
+files
+{
+
+# GameLayer ------------------
+	[GG/GameLayer]
+	(include/GG/GameLayer)
+		Application.h
+		GameState.h
+		GameStateManager.h
+		
+	(src/GameLayer)
+		Application.cpp
+		GameState.cpp
+		GameStateManager.cpp
+		
+		
+# Graphics -------------------
+	[GG/Graphics]
+	(include/GG/Graphics)
+		Transform.h
+		Camera.h
+		Material.h
+		RenderCommand3D.h
+		RenderFactory.h
+		
+	(src/Graphics)
+		Transform.cpp
+		Camera.cpp
+		RenderFactory.cpp
+		
+		
+		
+# Core -----------------------
+	[GG/Core]
+	(include/GG/Core)
+		Timer.h
+		Types.h
+		Vector.h
+		Matrix.h
+		Rect.h
+		
+	(src/Core)
+		Timer.cpp
+	
+}
+
+
+includepaths
+{
+	"include"
+	"include/GG"
+	"include/GG/GameLayer"
+	"include/GG/Graphics"
+	"include/GG/Core"
+}

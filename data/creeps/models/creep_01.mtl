@@ -1,0 +1,6 @@
+CIwMaterial
+{
+    name "creep_01/creep_01"
+    colDiffuse {0.200000,0.800000,0.800000,0.800000}
+    colEmissive {0.800000,0.800000,0.800000,0.000000}
+}
