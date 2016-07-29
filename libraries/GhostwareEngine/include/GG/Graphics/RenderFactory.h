@@ -18,7 +18,7 @@ namespace GG
 	class RenderFactory
 	{
 	public:
-		void		addCommand( Material * mat, CIwModel * geo, Matrix4 * worldMatrix );
+		void		addCommand( Material * mat, CIwModel * geo, const Matrix4 & worldMatrix );
 		void		clearAllCommands();
 		void		renderAll( Camera * camera );
 

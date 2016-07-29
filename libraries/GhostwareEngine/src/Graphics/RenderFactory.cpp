@@ -11,7 +11,7 @@
 namespace GG
 {
 
-	void RenderFactory::addCommand( Material * mat, CIwModel * geo, Matrix4 * worldMatrix )
+	void RenderFactory::addCommand( Material * mat, CIwModel * geo, const Matrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( RenderCommand3D { mat, geo, worldMatrix } );
 	}
@@ -44,8 +44,7 @@ namespace GG
 				if( command->material != nullptr )
 					IwGxSetMaterial( command->material );
 
-				if( command->modelMatrix !=  nullptr )
-					IwGxSetModelMatrix( command->modelMatrix );
+				IwGxSetModelMatrix( &command->modelMatrix );
 
 				if( command->geometry != nullptr )
 					command->geometry->Render( false );

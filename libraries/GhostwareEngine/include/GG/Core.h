@@ -6,3 +6,4 @@
 #include "Core/Timer.h"
 #include "Core/Types.h"
 #include "Core/Vector.h"
+#include "Core/Quaternion.h"

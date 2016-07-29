@@ -40,13 +40,13 @@ void PitWizard::shutdown()
 
 void PitWizard::doGameLoop()
 {
-	GG::Transform boxTransform;
+	GG::SceneNode boxTransform;
 
 	float aspect = ( float )IwGxGetScreenWidth() / ( float )IwGxGetScreenHeight();
 	
 	GG::Camera cam;
-	cam.transform.setPosition( GG::Vector3( 2, 5, 10 ) );
-	cam.transform.lookAt( boxTransform.getPosition(), -GG::Vector3::g_AxisY );
+	cam.sceneNode.setPosition( GG::Vector3( 2, 5, 10 ) );
+	cam.sceneNode.lookAt( boxTransform.getWorldPosition(), -GG::Vector3::g_AxisY );
 	cam.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam.setViewport( 0, 0, 1, 1 );
 	cam.setClearMode( GG::ClearMode::Depth | GG::ClearMode::Color );
@@ -54,8 +54,8 @@ void PitWizard::doGameLoop()
 
 
 	GG::Camera cam2;
-	cam2.transform.setPosition( GG::Vector3( 2, 5, 10 ) );
-	cam2.transform.lookAt( boxTransform.getPosition(), -GG::Vector3::g_AxisY );
+	cam2.sceneNode.setPosition( boxTransform.getWorldPosition() + boxTransform.left() * 4.0f );
+	cam2.sceneNode.lookAt( &boxTransform, -GG::Vector3::g_AxisY );
 	cam2.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam2.setViewport( 0, 0, 0.2f, 0.2f );
 	cam2.setClearMode( GG::ClearMode::Depth  );
@@ -63,8 +63,19 @@ void PitWizard::doGameLoop()
 
 
 	GG::RenderFactory renderFactory;
+	bool follow = false;
 
 	float _angle = 0;
+	GG::SceneNode parent;
+	parent.setPosition( GG::Vector3( -4.0f, 0, 0 ) );
+	boxTransform.setParent( &parent );
+	CIwGxSurface fbo;
+	fbo.CreateSurface( nullptr, IwGxGetScreenWidth(), IwGxGetScreenHeight(), CIwGxSurface::CREATE_8888_SURFACE_F );
+	
+	
+	GG::SceneNode cool;
+	cool.setPosition( GG::Vector3( 1.0f, 2.0f, -3.0f ) );
+	cool.setParent( &boxTransform );
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while( !s3eDeviceCheckQuitRequest() )
@@ -77,17 +88,64 @@ void PitWizard::doGameLoop()
 		{
 			boxTransform.rotate( 0.01f, GG::Vector3( 0, 1, 0 ));
 		}
+		else if( s3eKeyboardGetState( s3eKeyS ) & S3E_KEY_STATE_DOWN )
+		{
+			boxTransform.rotate( -0.01f, GG::Vector3( 0, 1, 0 ) );
+		}
+		
+		if( s3eKeyboardGetState( s3eKeyDown ) & S3E_KEY_STATE_DOWN )
+		{
+			boxTransform.translate( boxTransform.back() * 0.1f );
+		}
+		if( s3eKeyboardGetState( s3eKeyUp ) & S3E_KEY_STATE_DOWN )
+		{
+			boxTransform.translate( boxTransform.forward() * 0.1f );
+		}
 
-		renderFactory.addCommand( creepMat, _test, &boxTransform.getMatrix() );
+		if( s3eKeyboardGetState( s3eKeyLeft ) & S3E_KEY_STATE_DOWN )
+		{
+			parent.rotate( 0.01f, GG::Vector3( 0, 1, 0 ) );
+		}
+		else if( s3eKeyboardGetState( s3eKeyRight ) & S3E_KEY_STATE_DOWN )
+		{
+			parent.rotate( -0.01f, GG::Vector3( 0, 1, 0 ) );
+		}
 
+		if( s3eKeyboardGetState( s3eKeyF ) & S3E_KEY_STATE_PRESSED )
+		{ 
+			follow = !follow;
+		}
+
+		if( s3eKeyboardGetState( s3eKeyB ) & S3E_KEY_STATE_PRESSED )
+		{
+			boxTransform.setParent( nullptr );
+		}
+
+		if( s3eKeyboardGetState( s3eKeyP ) & S3E_KEY_STATE_PRESSED )
+		{
+			boxTransform.setParent( &parent );
+		}
+
+		if( follow )
+		{
+			cam.sceneNode.lookAt( &boxTransform );
+		}
+
+		cool.setPosition( GG::Vector3( 2, -1, 1 ) );
+
+		renderFactory.addCommand( creepMat, _test, cool.modelToWorldMatrix() );
+		renderFactory.addCommand( creepMat, _test, boxTransform.modelToWorldMatrix() );
+		renderFactory.addCommand( creepMat, _test, parent.modelToWorldMatrix() );
+
+		//fbo.MakeCurrent();
 		renderFactory.renderAll( &cam );
 		renderFactory.renderAll( &cam2 );
 
 		renderFactory.clearAllCommands();
-
-
+		
 		// Standard EGL-style flush of drawing to the surface
 		IwGxFlush();
+		//fbo.MakeDisplayCurrent();
 
 		// Standard EGL-style flipping of double-buffers
 		IwGxSwapBuffers();

@@ -1,6 +1,12 @@
 files
 {
-
+# Submodule Root ------------
+	[GG]
+	(include/GG)
+		Core.h
+		Graphics.h
+		GameLayer.h
+		
 # GameLayer ------------------
 	[GG/GameLayer]
 	(include/GG/GameLayer)
@@ -17,16 +23,16 @@ files
 # Graphics -------------------
 	[GG/Graphics]
 	(include/GG/Graphics)
-		Transform.h
 		Camera.h
 		Material.h
 		RenderCommand3D.h
 		RenderFactory.h
+		SceneNode.h
 		
 	(src/Graphics)
-		Transform.cpp
 		Camera.cpp
 		RenderFactory.cpp
+		SceneNode.cpp
 		
 		
 		
@@ -38,6 +44,7 @@ files
 		Vector.h
 		Matrix.h
 		Rect.h
+		Quaternion.h
 		
 	(src/Core)
 		Timer.cpp

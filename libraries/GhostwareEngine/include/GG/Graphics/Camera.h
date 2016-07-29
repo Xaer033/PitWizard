@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <GG/Graphics/Transform.h>
+#include <GG/Graphics/SceneNode.h>
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Vector.h>
 #include <GG/Core/Types.h>
@@ -34,17 +34,17 @@ namespace GG
 		Camera( const std::string & name = "Camera" );
 		~Camera();
 
-		inline void				setEnabled( bool enabled );
-		inline bool				isEnabled() const;
+		void				setEnabled( bool enabled );
+		bool				isEnabled() const;
 		
-		inline void				setName( const std::string & name );
-		inline std::string 		getName( ) const;
+		void				setName( const std::string & name );
+		std::string 		getName( ) const;
 		
-		inline void				setLayer( int16 layer );
-		inline int16			getLayer() const;
+		void				setLayer( int16 layer );
+		int16				getLayer() const;
 		
-		inline void				setDepth( int16 depth );
-		inline int16			getDepth( ) const;
+		void				setDepth( int16 depth );
+		int16				getDepth( ) const;
 		
 		void					setClearMode( uint clearMode);
 		uint					getClearMode( ) const;
@@ -64,7 +64,7 @@ namespace GG
 		float *					getProjectionMatrix();
 
 	public:
-		Transform				transform;
+		SceneNode				sceneNode;
 
 	private:
 

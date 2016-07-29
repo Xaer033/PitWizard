@@ -4,7 +4,7 @@
 #include <IwGx.h>
 
 #include <GG/Core/Matrix.h>
-#include <GG/Graphics/Transform.h>
+#include <GG/Graphics/SceneNode.h>
 
 
 
@@ -148,7 +148,7 @@ namespace GG
 
 	Matrix4 * Camera::getViewMatrix( ) 
 	{
-		_viewMat = transform.getMatrix();
+		_viewMat = sceneNode.modelToWorldMatrix();
 		return &_viewMat;
 	}
 

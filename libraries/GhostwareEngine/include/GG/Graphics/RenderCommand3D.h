@@ -13,6 +13,6 @@ namespace GG
 	{
 		Material *		material;
 		CIwModel *		geometry;
-		Matrix4	 *		modelMatrix;
+		Matrix4	 		modelMatrix;
 	};
 }
