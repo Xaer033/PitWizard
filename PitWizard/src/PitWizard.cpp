@@ -50,7 +50,7 @@ void PitWizard::doGameLoop()
 	cam.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam.setViewport( 0, 0, 1, 1 );
 	cam.setClearMode( GG::ClearMode::Depth | GG::ClearMode::Color );
-	cam.setClearColor( GG::Vector4( 0.1, 0.03, 0.14f, 1 ) );
+	cam.setClearColor( GG::Vector4( 0.1f, 0.03f, 0.14f, 1 ) );
 
 
 	GG::Camera cam2;
@@ -59,7 +59,7 @@ void PitWizard::doGameLoop()
 	cam2.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam2.setViewport( 0, 0, 0.2f, 0.2f );
 	cam2.setClearMode( GG::ClearMode::Depth  );
-	cam2.setClearColor( GG::Vector4( 0.25, 0.3, 0.2f, 1 ) );
+	cam2.setClearColor( GG::Vector4( 0.25f, 0.3f, 0.2f, 1 ) );
 
 
 	GG::RenderFactory renderFactory;
@@ -129,9 +129,14 @@ void PitWizard::doGameLoop()
 		if( follow )
 		{
 			cam.sceneNode.lookAt( &boxTransform );
+			/*GG::LOG_DEBUG(
+				"Box Position: %s\n", 
+				GG::ToString( boxTransform.getWorldPosition() )
+			);*/
 		}
-
-		cool.setPosition( GG::Vector3( 2, -1, 1 ) );
+		
+		GG::LOG_DEBUG( "Cool Matrix:\n%s\n", GG::ToString( boxTransform.modelToWorldMatrix() ) );
+		
 
 		renderFactory.addCommand( creepMat, _test, cool.modelToWorldMatrix() );
 		renderFactory.addCommand( creepMat, _test, boxTransform.modelToWorldMatrix() );

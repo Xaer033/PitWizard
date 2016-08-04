@@ -12,10 +12,13 @@ namespace GG
 {
 	SceneNode::SceneNode()
 	{
-		_parent			= nullptr;
-		_modelMatrix	= Matrix4::g_Identity;
-		_worldMatrix	= Matrix4::g_Identity;
-		_inverseMatrix	= Matrix4::g_Identity;
+		_parent				= nullptr;
+		_modelMatrix		= Matrix4::g_Identity;
+		_modelMatrix.t		= Vector3::g_Zero;
+		_worldMatrix		= Matrix4::g_Identity;
+		_worldMatrix.t		= Vector3::g_Zero;
+		_inverseMatrix		= Matrix4::g_Identity;
+		_inverseMatrix.t	= Vector3::g_Zero;
 	}
 
 	SceneNode::~SceneNode()
@@ -47,12 +50,6 @@ namespace GG
 		}
 
 		_updateHierarchy();
-
-		Vector3 l = getLocalPosition();
-		Vector3 w = getWorldPosition();
-
-		s3eDebugTracePrintf( "local Pos: %f, %f, %f", l.x, l.y, l.z ); 
-		s3eDebugTracePrintf( "World Pos: %f, %f, %f", w.x, w.y, w.z );
 	}
 
 	SceneNode * SceneNode::getParent()
