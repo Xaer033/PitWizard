@@ -17,12 +17,28 @@ namespace GG
 		}
 
 		template <typename T>
-		T const * Argument( const std::basic_string<T>  & value ) 
+		const T * Argument( const std::basic_string<T>  & value ) 
 		{
 			return value.c_str();
 		}
 // ------------------------------------------------------------------------
-		
+		template <typename ... Args>
+		int _implPrint(
+			char * buffer,
+			const size_t bufferCount,
+			const char * format, const Args & ... args )
+		{
+			const int result = snprintf(
+				buffer,
+				bufferCount,
+				format,
+				Argument( args ) ... );
+
+			IwAssert( STRING_HELPER, -1 != result );
+			return result;
+		}
+
+		void RemovePath( const std::string & in, std::string & out );
 
 		template <typename T, typename ... Args>
 		void Format( 
@@ -47,22 +63,6 @@ namespace GG
 			}
 		}
 
-		template <typename ... Args>
-		int _implPrint(
-			char * buffer,
-			const size_t bufferCount,
-			const char * format, const Args & ... args )
-		{
-			const int result = snprintf( 
-				buffer,
-				bufferCount,
-				format,
-				Argument( args ) ... );
-
-			IwAssert( STRING_HELPER, -1 != result );
-			return result;
-		}
-
-
+		
 	}
 }

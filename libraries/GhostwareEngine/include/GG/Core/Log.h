@@ -2,106 +2,202 @@
 #pragma once
 
 #include <iostream>
-#include <chrono>
+#include <vector>
+#include <string>
+#include <sstream>
+
+#include "ILogger.h"
 #include "s3eDebug.h"
 #include "Types.h"
 #include "StringHelper.h"
-#include "s3eFile.h"
+
 
 namespace GG
 {
 	class Log;
 	enum class Level;
+
 #ifdef _DEBUG
-#define LOG_DEBUG(f_, ...)		Log::Tracef( GG::Log::Level::DEBUG, f_, __VA_ARGS__ )
-#define LOG_INFO(f_, ...)		Log::Tracef( GG::Log::Level::INFO, f_, __VA_ARGS__ )
-#define LOG_WARNING(f_, ...)	Log::Tracef( GG::Log::Level::WARNING, f_, __VA_ARGS__ )
-#define LOG_ERROR(f_, ...)		Log::Tracef( GG::Log::Level::ERROR, f_, __VA_ARGS__ )
+#define LOG_DEBUG(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::DEBUG,	f_, __VA_ARGS__ )
+#define LOG_INFO(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::INFO,		f_, __VA_ARGS__ )
+#define LOG_WARNING(f_, ...)	Log::GetInstance()->logf( GG::Log::Level::WARNING,	f_, __VA_ARGS__ )
+#define LOG_ERROR(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::ERROR,	f_, __VA_ARGS__ )
+
+#define TRACE_DEBUG(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::DEBUG,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
+#define TRACE_INFO(f_, ...)		Log::GetInstance()->tracef( GG::Log::Level::INFO,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
+#define TRACE_WARNING(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::WARNING,	__FILE__, __LINE__,	f_, __VA_ARGS__ )
+#define TRACE_ERROR(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::ERROR,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
+
 #else
 #define LOG_DEBUG(f_, ...)
 #define LOG_INFO(f_, ...)
 #define LOG_WARNING(f_, ...)
 #define LOG_ERROR(f_, ...)
+
+#define TRACE_DEBUG(f_, ...)	
+#define TRACE_INFO(f_, ...)		
+#define TRACE_WARNING(f_, ...)	
+#define TRACE_ERROR(f_, ...)
 #endif
+
+	class ILog
+	{
+	public:
+	};
 
 	class Log
 	{
 	public:
 		enum class Level
 		{
-			DEBUG	= 0 << 0,
-			INFO	= 0 << 1,
-			WARNING = 0 << 2,
-			ERROR	= 0 << 3,
-
-			ALL		= DEBUG | INFO | WARNING | ERROR,
+			ALL		= 0,
+			DEBUG,
+			INFO,
+			WARNING,
+			ERROR,
 		};
 
-
-
-
-		static void Init( bool writeToFile = true )
+		static Log * GetInstance()
 		{
-			if( !writeToFile ) {
-				return;
+			if( _instance == nullptr )
+			{
+				_instance = new Log();
 			}
-
-			auto now = std::chrono::system_clock::now();
-			const std::time_t now_time = std::chrono::system_clock::to_time_t( now );
-			auto t = localtime( &now_time );
-
-			std::string logFilename;
-			StringHelper::Format(
-				logFilename,
-				"ram://logs/log_%d-%d-%d_%dh-%dm-%ds.txt",
-				t->tm_mon + 1,
-				t->tm_hour + 1,
-				t->tm_year + 1900,
-				t->tm_hour,
-				t->tm_min,
-				t->tm_sec
-			);
-
-			_fileHandle = s3eFileOpen( logFilename.c_str(), "w" );
-			IwAssert( LOGGING, _fileHandle != nullptr );
+			return _instance;
 		}
 
 		static void Shutdown()
 		{
-			if( _fileHandle != nullptr )
+			if( _instance != nullptr )
 			{
-				s3eFileFlush( _fileHandle );
-				s3eFileClose( _fileHandle );
+				delete _instance;
+				_instance = nullptr;
 			}
 		}
-
-		static void SetLogLevel( uint logLevel )
+		
+		~Log()
 		{
-			_logLevel = logLevel;
+			unregisterAllLoggers();
+		}
+
+		void registerLogger( ILogger * logger )
+		{
+			_loggerList.push_back( std::unique_ptr<ILogger>( logger ) );
+			_loggerList.back()->init();
+
+		}
+
+		void unregisterAllLoggers()
+		{
+			for( auto && logger : _loggerList )
+			{
+				logger->shutdown();
+			}
+
+			_loggerList.clear();
+		}
+
+		void setLogLevel( Level logLevel )
+		{
+			_logLevel = (uint)logLevel;
 		}
 
 		template <typename ... Args>
-		static void Tracef( Level logLevel, const char * format, const Args & ... args )
+		void logf( 
+			Level logLevel, 
+			const char * format, 
+			const Args & ... args )
 		{
-			/*if( !( _logLevel & ( uint )logLevel ) ) {
-				return;
-			}*/
-
-			std::string message;
-			StringHelper::Format( message, format, StringHelper::Argument( args ) ... );
-
-			if( _fileHandle != nullptr ) 
+			if( !_sanityCheck( logLevel ) )
 			{
-				s3eFileWrite( message.data(), sizeof( char ), message.size() * sizeof( char ), _fileHandle );
-				s3eFileFlush( _fileHandle );
+				return;
 			}
 
-			s3eDebugOutputString( message.c_str() );
+			StringHelper::Format( 
+				_messageBuffer, 
+				format, 
+				StringHelper::Argument( args ) ... );
+
+			for( auto && logger : _loggerList )
+			{
+				logger->write( _messageBuffer );
+			}
+		}
+
+		template <typename ... Args>
+		void tracef( 
+			Level logLevel, 
+			const char* filePath, 
+			uint line, 
+			const char *format, 
+			const Args & ... args )
+		{
+			if( !_sanityCheck( logLevel ) )
+			{
+				return;
+			}
+
+			StringHelper::RemovePath( filePath, _messageBuffer );
+
+			_prefix.str( _getLevelString( logLevel ));
+			_prefix << _messageBuffer << "-" << line << ": ";
+
+			StringHelper::Format( 
+				_messageBuffer, 
+				format, 
+				StringHelper::Argument( args ) ... );
+
+			_prefix << _messageBuffer << std::endl;
+
+			for( auto && logger : _loggerList )
+			{
+				logger->write( _prefix.str() );
+			}
 		}
 
 	private:
+		Log() :_logLevel((uint)Level::ALL)
+		{
+		}
 
-		static uint			_logLevel;
-		static s3eFile *	_fileHandle;
+
+
+		const std::string _getLevelString( Level logLevel )
+		{
+			switch( logLevel )
+			{
+			case Level::INFO:		return "Info - ";
+			case Level::DEBUG:		return "Debug - ";
+			case Level::WARNING:	return "Warning - ";
+			case Level::ERROR:		return "Error - ";
+			}
+
+			return "N/A";
+		}
+
+
+		bool _sanityCheck( Level level )
+		{
+			if( ( uint )level < _logLevel )
+			{
+				return false;
+			}
+
+			if( _loggerList.empty() )
+			{
+				std::cout << "No Loggers Registered!" << std::endl;
+				return false;
+			}
+
+			return true;
+		}
+
+		static Log * _instance;
+
+		uint _logLevel;
+		std::vector< std::unique_ptr<ILogger> >	_loggerList;
+
+		std::string _messageBuffer;
+		std::stringstream _prefix;
 	};
 }
