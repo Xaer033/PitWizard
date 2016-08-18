@@ -3,5 +3,4 @@ CIwResGroup
 {
     name "creep_01"
     "./models/creep_01.geo"
-	"./models/textures/diffuse.png"
 }

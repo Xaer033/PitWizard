@@ -1,0 +1,6 @@
+// Source file: C:\GameDev\Projects\PitWizard\data\creeps\creep_02.fbx
+CIwResGroup
+{
+    name "creep_02"
+    "./models/Cube.geo"
+}
