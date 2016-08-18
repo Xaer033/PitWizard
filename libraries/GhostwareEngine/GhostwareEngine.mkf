@@ -6,6 +6,7 @@ files
 		Core.h
 		Graphics.h
 		GameLayer.h
+		Input.h
 		
 # GameLayer ------------------
 	[GG/GameLayer]
@@ -46,12 +47,37 @@ files
 		Rect.h
 		Quaternion.h
 		Log.h
+		ILogger.h
+		FileLogger.h
+		ConsoleLogger.h
 		StringHelper.h
 		MathDebug.h
+		Json.h
+		
+	(include/GG/Core/JsonLib)
+		json.h
+		json-forwards.h
 		
 	(src/Core)
 		Timer.cpp
 		Log.cpp
+		FileLogger.cpp
+		StringHelper.cpp
+		Json.cpp
+		jsoncpp.cpp
+		
+
+# Input ----------------------
+	[GG/Input]
+	(include/GG/Input)
+		InputContext.h
+		RawInput.h
+		InputSystem.h
+		
+	(src/Input)
+		InputContext.cpp
+		RawInput.cpp
+		InputSystem.cpp
 }
 
 
@@ -61,5 +87,6 @@ includepaths
 	"include/GG"
 	"include/GG/GameLayer"
 	"include/GG/Graphics"
+	"include/GG/Input"
 	"include/GG/Core"
 }

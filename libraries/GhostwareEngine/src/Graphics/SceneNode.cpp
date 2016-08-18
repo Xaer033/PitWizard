@@ -7,6 +7,8 @@
 #include <GG/Core/Quaternion.h>
 
 #include "s3eDebug.h"
+#include <cmath>
+
 
 namespace GG
 {

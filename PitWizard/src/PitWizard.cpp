@@ -2,24 +2,28 @@
 #include "PitWizard.h"
 
 #include <iostream>
+#include <chrono>
+
 
 #include "s3e.h"
 #include "IwDebug.h"
-#include "IwResManager.h"
 
-#include <Photon-cpp/inc/PhotonPeer.h>
-
+//#include <Photon-cpp/inc/PhotonPeer.h>
 
 #include <GG/GameLayer.h>
 #include <GG/Graphics.h>
 #include <GG/Core.h>
+#include <GG/Input.h>
+
+using namespace GG;
 
 
-CIwMaterial * creepMat;
 
 void PitWizard::init()
 {
 	Application::init();
+	_setupLoggers();
+
 	_gameStateManager.addGameState( "Intro",					nullptr );
 	_gameStateManager.addGameState( "MainMenu",					nullptr );
 	_gameStateManager.addGameState( "SinglePlayer",				nullptr );
@@ -29,24 +33,34 @@ void PitWizard::init()
 
 	
 	
-	CIwResGroup * group = IwGetResManager()->LoadGroup( "./creeps/creep_01.group" );
-	_test		= ( CIwModel* )group->GetResNamed( "creep_01", IW_GRAPHICS_RESTYPE_MODEL );
+	CIwResGroup * group = IwGetResManager()->LoadGroup( "./creeps/creep_02.group" );
+	_test		= ( CIwModel* )group->GetResNamed( "Cube", IW_GRAPHICS_RESTYPE_MODEL );
+	
+	json config = JsonFromFile( "input_config.json" );
+	inputSystem = new InputSystem();
+	inputSystem->init( config );
 }
 
 void PitWizard::shutdown()
-{
+{	
+	inputSystem->shutdown();
+	delete( inputSystem );
+
+	Log::Shutdown();
 	Application::shutdown();
 }
+
 
 void PitWizard::doGameLoop()
 {
 	GG::SceneNode boxTransform;
 
-	float aspect = ( float )IwGxGetScreenWidth() / ( float )IwGxGetScreenHeight();
+	float aspect =	( float )IwGxGetScreenWidth() / 
+					( float )IwGxGetScreenHeight();
 	
 	GG::Camera cam;
 	cam.sceneNode.setPosition( GG::Vector3( 2, 5, 10 ) );
-	cam.sceneNode.lookAt( boxTransform.getWorldPosition(), -GG::Vector3::g_AxisY );
+	cam.sceneNode.lookAt( &boxTransform );
 	cam.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam.setViewport( 0, 0, 1, 1 );
 	cam.setClearMode( GG::ClearMode::Depth | GG::ClearMode::Color );
@@ -55,7 +69,7 @@ void PitWizard::doGameLoop()
 
 	GG::Camera cam2;
 	cam2.sceneNode.setPosition( boxTransform.getWorldPosition() + boxTransform.left() * 4.0f );
-	cam2.sceneNode.lookAt( &boxTransform, -GG::Vector3::g_AxisY );
+	cam2.sceneNode.lookAt( &boxTransform );
 	cam2.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam2.setViewport( 0, 0, 0.2f, 0.2f );
 	cam2.setClearMode( GG::ClearMode::Depth  );
@@ -69,8 +83,6 @@ void PitWizard::doGameLoop()
 	GG::SceneNode parent;
 	parent.setPosition( GG::Vector3( -4.0f, 0, 0 ) );
 	boxTransform.setParent( &parent );
-	CIwGxSurface fbo;
-	fbo.CreateSurface( nullptr, IwGxGetScreenWidth(), IwGxGetScreenHeight(), CIwGxSurface::CREATE_8888_SURFACE_F );
 	
 	
 	GG::SceneNode cool;
@@ -81,8 +93,7 @@ void PitWizard::doGameLoop()
 	while( !s3eDeviceCheckQuitRequest() )
 	{
 		//Update the input systems
-		s3eKeyboardUpdate();
-		s3ePointerUpdate();
+		inputSystem->update();
 
 		if( s3eKeyboardGetState( s3eKeyA ) & S3E_KEY_STATE_DOWN )
 		{
@@ -110,10 +121,24 @@ void PitWizard::doGameLoop()
 		{
 			parent.rotate( -0.01f, GG::Vector3( 0, 1, 0 ) );
 		}
+		
+		if( inputSystem->testAction( "WalkForward" ) )
+		{
+			cam.sceneNode.translate( cam.sceneNode.forward() * 0.5f );
+		}
+		else if( inputSystem->testAction( "WalkBackward" ) )
+		{
+			cam.sceneNode.translate( cam.sceneNode.back() * 0.5f );
+		}
 
 		if( s3eKeyboardGetState( s3eKeyF ) & S3E_KEY_STATE_PRESSED )
 		{ 
 			follow = !follow;
+		}
+
+		if( s3eKeyboardGetState( s3eKeyEsc ) & S3E_KEY_STATE_PRESSED )
+		{
+			s3eDeviceRequestQuit();
 		}
 
 		if( s3eKeyboardGetState( s3eKeyB ) & S3E_KEY_STATE_PRESSED )
@@ -129,34 +154,54 @@ void PitWizard::doGameLoop()
 		if( follow )
 		{
 			cam.sceneNode.lookAt( &boxTransform );
-			/*GG::LOG_DEBUG(
-				"Box Position: %s\n", 
-				GG::ToString( boxTransform.getWorldPosition() )
-			);*/
 		}
 		
-		GG::LOG_DEBUG( "Cool Matrix:\n%s\n", GG::ToString( boxTransform.modelToWorldMatrix() ) );
-		
+		renderFactory.addCommand( nullptr, _test, cool.modelToWorldMatrix() );
+		renderFactory.addCommand( nullptr, _test, boxTransform.modelToWorldMatrix() );
+		renderFactory.addCommand( nullptr, _test, parent.modelToWorldMatrix() );
 
-		renderFactory.addCommand( creepMat, _test, cool.modelToWorldMatrix() );
-		renderFactory.addCommand( creepMat, _test, boxTransform.modelToWorldMatrix() );
-		renderFactory.addCommand( creepMat, _test, parent.modelToWorldMatrix() );
 
-		//fbo.MakeCurrent();
 		renderFactory.renderAll( &cam );
 		renderFactory.renderAll( &cam2 );
 
 		renderFactory.clearAllCommands();
 		
-		// Standard EGL-style flush of drawing to the surface
+		//// Standard EGL-style flush of drawing to the surface
 		IwGxFlush();
-		//fbo.MakeDisplayCurrent();
-
-		// Standard EGL-style flipping of double-buffers
+	
+		//// Standard EGL-style flipping of double-buffers
 		IwGxSwapBuffers();
 
 		// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
-
 	}
+}
+
+void PitWizard::_setupLoggers()
+{
+	const std::string filePath = _getFileLogName();
+
+	Log::GetInstance()->registerLogger( new FileLogger( filePath ) );
+	Log::GetInstance()->registerLogger( new ConsoleLogger() );
+}
+
+const std::string PitWizard::_getFileLogName() const
+{
+	auto now = std::chrono::system_clock::now();
+	const std::time_t now_time = std::chrono::system_clock::to_time_t( now );
+	auto t = localtime( &now_time );
+
+	std::string logFilename;
+	GG::StringHelper::Format(
+		logFilename,
+		"ram://logs/log_%d-%d-%d_%dh-%dm-%ds.txt",
+		t->tm_mon + 1,
+		t->tm_hour + 1,
+		t->tm_year + 1900,
+		t->tm_hour,
+		t->tm_min,
+		t->tm_sec
+		);
+
+	return logFilename;
 }

@@ -48,7 +48,11 @@ options
 	cxx11
 }
 
-
+assets
+{
+	(data-ram/data-gles2-etc, data)
+	.
+}
 
 deployment
 {

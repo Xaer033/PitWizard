@@ -1,8 +1,7 @@
 #pragma once
 
-#include "GG/GameLayer/Application.h"
-#include "GG/GameLayer/GameStateManager.h"
-
+#include <GG/GameLayer.h>
+#include <GG/Input.h>
 
 class CIwModel;
 
@@ -13,7 +12,13 @@ public:
 	virtual void		doGameLoop()		final;
 	virtual void		shutdown()			final;
 
+	GG::InputSystem		* inputSystem;
+
 private:
+	void				_setupLoggers();
+	const std::string	_getFileLogName() const;
+
+	
 	GG::GameStateManager		_gameStateManager;
 	CIwModel * _test;
 };

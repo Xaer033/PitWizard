@@ -6,3 +6,4 @@ build_pitwizard_vc14_wp81toolset/
 build_pitwizard_vc14_ws81toolset/
 deployments/
 data-ram/logs/
+data-ram/data-gles2-etc/
