@@ -1,6 +1,0 @@
-// Source file: C:\GameDev\Projects\PitWizard\data\creeps\creep_01.fbx
-CIwResGroup
-{
-    name "creep_01"
-    "./models/creep_01.geo"
-}

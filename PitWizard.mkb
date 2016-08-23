@@ -12,7 +12,7 @@ files
 	
 	
 #Game Asset Files
-	(data)
+	(data/resources)
 	[PitWizard/Assets]
 	
 }
@@ -50,8 +50,12 @@ options
 
 assets
 {
+	(data)
+	configs
+	
 	(data-ram/data-gles2-etc, data)
 	.
+	
 }
 
 deployment

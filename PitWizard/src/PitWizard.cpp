@@ -33,11 +33,11 @@ void PitWizard::init()
 
 	
 	
-	CIwResGroup * group = IwGetResManager()->LoadGroup( "./creeps/creep_02.group" );
+	CIwResGroup * group = IwGetResManager()->LoadGroup( "./resources/creeps/creep_02.group" );
 	_test		= ( CIwModel* )group->GetResNamed( "Cube", IW_GRAPHICS_RESTYPE_MODEL );
 	
-	json config = JsonFromFile( "input_config.json" );
-	inputSystem = new InputSystem();
+	json config = JsonFromFile( "configs/input_config.json" );
+	inputSystem = new InputSystem( IwGxGetScreenWidth(), IwGxGetScreenHeight() );
 	inputSystem->init( config );
 }
 
@@ -122,14 +122,19 @@ void PitWizard::doGameLoop()
 			parent.rotate( -0.01f, GG::Vector3( 0, 1, 0 ) );
 		}
 		
-		if( inputSystem->testAction( "WalkForward" ) )
-		{
-			cam.sceneNode.translate( cam.sceneNode.forward() * 0.5f );
-		}
-		else if( inputSystem->testAction( "WalkBackward" ) )
-		{
-			cam.sceneNode.translate( cam.sceneNode.back() * 0.5f );
-		}
+
+		TRACE_DEBUG( "Axis: %f", inputSystem->getAxis( "RotateX" ) );
+		cam.sceneNode.rotate( inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
+
+		float walk		= inputSystem->getAxis( "Walk" );
+		float strafe	= inputSystem->getAxis( "Strafe" );
+
+		TRACE_DEBUG( "Walk: %f", walk );
+		TRACE_DEBUG( "Strafe: %f", strafe );
+
+		Vector3 move = ( cam.sceneNode.forward() * walk ) + ( cam.sceneNode.right() * strafe );
+		move = move.GetLengthSquared() > 0.001f ? move.GetNormalised() : move;
+		cam.sceneNode.translate( move * 0.4f);
 
 		if( s3eKeyboardGetState( s3eKeyF ) & S3E_KEY_STATE_PRESSED )
 		{ 
