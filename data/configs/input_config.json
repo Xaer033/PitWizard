@@ -1,0 +1,66 @@
+// List of Input Contexts
+[
+	{
+		"context" : "Default",
+		"priority": 10,
+		"input_list":
+		[
+			{
+				"name":		"RotateX",
+				"primary":
+				{
+					"type"		:	"touch",
+					"axis_type"	:	"touch_drag_x",
+					"min"		:	-1.0,
+					"max"		:	1.0
+				}
+			},
+			{
+				"name":		"Walk",
+				"primary": 
+				{
+					"type":				"axis",
+					"axis_type":		"key_button",
+					"button":			"w",
+					"negative_button":	"s",
+					"sensitivity":		0.1
+				}
+			},
+			{
+				"name":		"Strafe",
+				"primary":
+				{
+					"type":				"axis",
+					"axis_type":		"key_button",
+					"button":			"d",
+					"negative_button":	"a",
+					"sensitivity":		0.1
+				}
+			}
+			//{
+			//	"name"		: "WalkForward",
+			//	"primary"	: 
+			//	{
+			//		"type"		:	"key_button",
+			//		"mode"		:	"down",
+			//		"button"	:	45
+			//	},
+			//	"secondary" :
+			//	{
+			//		"type"		: "key_button",
+			//		"mode"		: "down",
+			//		"button"	: 39
+			//	}
+			//},
+			//{
+			//	"name"		: "WalkBackward",
+			//	"primary"	: 
+			//	{
+			//		"type"		: "key_button",
+			//		"mode"		: "down",
+			//		"button"	: 41
+			//	}
+			//}
+		]
+	}
+]

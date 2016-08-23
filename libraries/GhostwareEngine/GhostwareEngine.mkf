@@ -71,12 +71,13 @@ files
 	[GG/Input]
 	(include/GG/Input)
 		InputContext.h
-		RawInput.h
+		EventAction.h
 		InputSystem.h
+		InputDefines.h
 		
 	(src/Input)
 		InputContext.cpp
-		RawInput.cpp
+		EventAction.cpp
 		InputSystem.cpp
 }
 
