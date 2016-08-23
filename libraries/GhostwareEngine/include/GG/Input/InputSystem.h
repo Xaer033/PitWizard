@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <array>
-#include <unordered_map>
 
 #include <GG/Core/Json.h>
 
