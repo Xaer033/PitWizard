@@ -1,17 +1,19 @@
 
 #include "RenderFactory.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 #include <IwGx.h>
 #include <IwGraphics.h>
 
 #include <GG/Core/Vector.h>
 #include <GG/Core/Rect.h>
+#include <GG/Core/Log.h>
+
 
 namespace GG
 {
-
-	void RenderFactory::addCommand( Material * mat, CIwModel * geo, const Matrix4 & worldMatrix )
+	void RenderFactory::addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( RenderCommand3D { mat, geo, worldMatrix } );
 	}
@@ -21,56 +23,67 @@ namespace GG
 		_renderCommand3DList.clear();
 	}
 
-	void RenderFactory::renderAll( Camera * camera )
+	void RenderFactory::renderAll( const Camera * camera ) const
 	{
 		if( camera == nullptr )
 		{
+			LOG_ERROR( "Camera Node does not contain Camera!" );
 			return;
 		}
 
+		
 		_setViewport( camera->getViewport() );
 		_clearBuffer( camera->getClearColor(), camera->getClearMode() );
 
-		IwGxSetPerspectiveMatrix( camera->getProjectionMatrix() );
-		IwGxSetViewMatrix( camera->getViewMatrix() );
-		
+		IwGxSetPerspectiveMatrix( (float*)camera->getProjectionMatrix() );
+		IwGxSetViewMatrix( &camera->getViewMatrix() );
 
-		auto it = _renderCommand3DList.begin();
-		while(it != _renderCommand3DList.end() )
+		_render3DList();
+	}
+
+// -------------------------------------------------------------------------------
+
+	void RenderFactory::_render3DList() const
+	{
+		Material *	_currentMat		= nullptr;
+
+		for( auto it = _renderCommand3DList.begin(); it != _renderCommand3DList.end(); ++it )
 		{
-			RenderCommand3D * command = &( *it );
-			if( command != nullptr )
+			const RenderCommand3D * command = &( *it );
+			if( command == nullptr )
 			{
-				if( command->material != nullptr )
-					IwGxSetMaterial( command->material );
-
-				IwGxSetModelMatrix( &command->modelMatrix );
-
-				if( command->geometry != nullptr )
-					command->geometry->Render( false );
-
-				++it;
+				TRACE_ERROR( "Render Command is null!" );
+				continue;
 			}
-			else
+
+			IwGxSetModelMatrix( &command->modelMatrix );
+
+			Material * mat = command->material;
+			if( mat != nullptr && mat != _currentMat )
 			{
-				_renderCommand3DList.erase( it );
+				IwGxSetMaterial( mat );
+				_currentMat = mat;
+			}
+
+			if( command->geometry != nullptr )
+			{ 
+				command->geometry->Render( false );
 			}
 		}
 	}
 
-
-	void RenderFactory::_setViewport( const Vector4 & viewport )
+	void RenderFactory::_setViewport( const Vector4 & viewport ) const
 	{
 		float width		= (float)IwGxGetScreenWidth();
 		float height	= (float)IwGxGetScreenHeight();
 
 		Vector2 xVec	=	Vector2( viewport.x, viewport.z ) * width;
 		Vector2 yVec	=	Vector2( viewport.y, viewport.w ) * height;
-		//IwGxSetScissorScreenSpace(()
+
 		_IwGxSetViewRect( ( int32 )xVec.x, ( int32 )yVec.x, ( int32 )xVec.y, ( int32 )yVec.y );
 	}
 
-	void RenderFactory:: _clearBuffer( const Vector4 & clearColor, uint clearMode )
+	void RenderFactory:: _clearBuffer( const Vector4 & clearColor, uint clearMode ) const
 	{
 		const float kColorScale = 255.0f;
 

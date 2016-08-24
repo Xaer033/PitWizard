@@ -2,8 +2,7 @@
 #pragma once
 
 #include <GG/Core/Matrix.h>
-#include <IwModel.h>
-
+#include "Model.h"
 #include "Material.h"
 
 
@@ -12,7 +11,7 @@ namespace GG
 	struct RenderCommand3D
 	{
 		Material *		material;
-		CIwModel *		geometry;
+		Model *			geometry;
 		Matrix4	 		modelMatrix;
 	};
 }

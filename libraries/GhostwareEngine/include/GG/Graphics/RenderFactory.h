@@ -9,6 +9,8 @@
 #include "RenderCommand3D.h"
 #include "Camera.h"
 #include "Material.h"
+#include "Model.h"
+
 
 namespace GG
 {
@@ -18,19 +20,25 @@ namespace GG
 	class RenderFactory
 	{
 	public:
-		void		addCommand( Material * mat, CIwModel * geo, const Matrix4 & worldMatrix );
+		void		addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix );
+		
 		void		clearAllCommands();
-		void		renderAll( Camera * camera );
+		void		renderAll( const Camera * camera ) const;
 
 
 	private:
 		void		_opaqueSort( const Vector3 & cameraEye );
 		void		_transparentSort( const Vector3 & cameraEye );
 			
-		void		_setViewport( const Vector4 & viewport );
-		void		_clearBuffer( const Vector4 & clearColor, uint clearMode );
+		void		_setViewport( const Vector4 & viewport ) const;
+		void		_clearBuffer( const Vector4 & clearColor, uint clearMode ) const;
 	
+
 	private:
-		RenderCommand3DList		_renderCommand3DList;
+		void		_render3DList()		const;
+
+	private:
+		RenderCommand3DList				_renderCommand3DList;
+
 	};
 }

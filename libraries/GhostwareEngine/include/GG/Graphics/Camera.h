@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include <GG/Graphics/SceneNode.h>
+#include "MoveableObject.h"
+
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Vector.h>
 #include <GG/Core/Types.h>
+
 #include <string>
 
 #include "IwGx.h"
@@ -24,7 +26,7 @@ namespace GG
 		Depth	= IW_GX_DEPTH_BUFFER_F
 	};
 
-	class Camera
+	class Camera : public MoveableObject
 	{
 	public:
 
@@ -40,8 +42,8 @@ namespace GG
 		void				setName( const std::string & name );
 		std::string 		getName( ) const;
 		
-		void				setLayer( int16 layer );
-		int16				getLayer() const;
+		void				setRenderLayer( int16 layer );
+		int16				getRenderLayer() const;
 		
 		void				setDepth( int16 depth );
 		int16				getDepth( ) const;
@@ -60,11 +62,8 @@ namespace GG
 		void					setPerspective( float fovy, float aspect, float zNear, float zFar );
 
 
-		Matrix4	*				getViewMatrix();
-		float *					getProjectionMatrix();
-
-	public:
-		SceneNode				sceneNode;
+		Matrix4					getViewMatrix() const;
+		const float *			getProjectionMatrix() const ;
 
 	private:
 

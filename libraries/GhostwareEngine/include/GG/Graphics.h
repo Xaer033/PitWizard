@@ -6,3 +6,6 @@
 #include "Graphics/RenderCommand3D.h"
 #include "Graphics/RenderFactory.h"
 #include "Graphics/SceneNode.h"
+#include "Graphics/MoveableObject.h"
+#include "Graphics/Model.h"
+#include "Graphics/Mesh.h"

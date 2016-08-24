@@ -58,18 +58,23 @@ void PitWizard::doGameLoop()
 	float aspect =	( float )IwGxGetScreenWidth() / 
 					( float )IwGxGetScreenHeight();
 	
+	GG::SceneNode camNode_1;
 	GG::Camera cam;
-	cam.sceneNode.setPosition( GG::Vector3( 2, 5, 10 ) );
-	cam.sceneNode.lookAt( &boxTransform );
+	camNode_1.attachObject( &cam );
+	camNode_1.setPosition( GG::Vector3( 2, 5, 10 ) );
+	camNode_1.lookAt( &boxTransform );
 	cam.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam.setViewport( 0, 0, 1, 1 );
 	cam.setClearMode( GG::ClearMode::Depth | GG::ClearMode::Color );
 	cam.setClearColor( GG::Vector4( 0.1f, 0.03f, 0.14f, 1 ) );
 
 
+	GG::SceneNode camNode_2;
 	GG::Camera cam2;
-	cam2.sceneNode.setPosition( boxTransform.getWorldPosition() + boxTransform.left() * 4.0f );
-	cam2.sceneNode.lookAt( &boxTransform );
+
+	camNode_2.attachObject( &cam2 );
+	camNode_2.setPosition( boxTransform.getWorldPosition() + boxTransform.left() * 4.0f );
+	camNode_2.lookAt( &boxTransform );
 	cam2.setPerspective( 60.0f, aspect, 0.1f, 300.0f );
 	cam2.setViewport( 0, 0, 0.2f, 0.2f );
 	cam2.setClearMode( GG::ClearMode::Depth  );
@@ -88,6 +93,8 @@ void PitWizard::doGameLoop()
 	GG::SceneNode cool;
 	cool.setPosition( GG::Vector3( 1.0f, 2.0f, -3.0f ) );
 	cool.setParent( &boxTransform );
+
+	GG::Mesh mesh( _test, nullptr );
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while( !s3eDeviceCheckQuitRequest() )
@@ -122,9 +129,8 @@ void PitWizard::doGameLoop()
 			parent.rotate( -0.01f, GG::Vector3( 0, 1, 0 ) );
 		}
 		
-
 		TRACE_DEBUG( "Axis: %f", inputSystem->getAxis( "RotateX" ) );
-		cam.sceneNode.rotate( inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
+		camNode_1.rotate( inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
 
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
@@ -132,9 +138,9 @@ void PitWizard::doGameLoop()
 		TRACE_DEBUG( "Walk: %f", walk );
 		TRACE_DEBUG( "Strafe: %f", strafe );
 
-		Vector3 move = ( cam.sceneNode.forward() * walk ) + ( cam.sceneNode.right() * strafe );
+		Vector3 move = ( camNode_1.forward() * walk ) + ( camNode_1.right() * strafe );
 		move = move.GetLengthSquared() > 0.001f ? move.GetNormalised() : move;
-		cam.sceneNode.translate( move * 0.4f);
+		camNode_1.translate( move * 0.4f);
 
 		if( s3eKeyboardGetState( s3eKeyF ) & S3E_KEY_STATE_PRESSED )
 		{ 
@@ -158,19 +164,19 @@ void PitWizard::doGameLoop()
 
 		if( follow )
 		{
-			cam.sceneNode.lookAt( &boxTransform );
+			camNode_1.lookAt( &boxTransform );
 		}
 		
-		renderFactory.addCommand( nullptr, _test, cool.modelToWorldMatrix() );
-		renderFactory.addCommand( nullptr, _test, boxTransform.modelToWorldMatrix() );
-		renderFactory.addCommand( nullptr, _test, parent.modelToWorldMatrix() );
-
+		renderFactory.addCommand( mesh.material, mesh.geometry, cool.modelToWorldMatrix() );
+		renderFactory.addCommand( mesh.material, mesh.geometry, boxTransform.modelToWorldMatrix() );
+		renderFactory.addCommand( mesh.material, mesh.geometry, parent.modelToWorldMatrix() );
 
 		renderFactory.renderAll( &cam );
 		renderFactory.renderAll( &cam2 );
 
 		renderFactory.clearAllCommands();
 		
+
 		//// Standard EGL-style flush of drawing to the surface
 		IwGxFlush();
 	

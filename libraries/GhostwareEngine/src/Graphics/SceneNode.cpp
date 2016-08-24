@@ -1,6 +1,7 @@
 
 
 #include "SceneNode.h"
+#include "MoveableObject.h"
 
 #include <GG/Core/Types.h>
 #include <GG/Core/Vector.h>
@@ -12,14 +13,14 @@
 
 namespace GG
 {
-	SceneNode::SceneNode()
+	SceneNode::SceneNode() :
+		_parent( nullptr ),
+		_modelMatrix( Matrix4::g_Identity ),
+		_worldMatrix( Matrix4::g_Identity ),
+		_inverseMatrix( Matrix4::g_Identity)
 	{
-		_parent				= nullptr;
-		_modelMatrix		= Matrix4::g_Identity;
 		_modelMatrix.t		= Vector3::g_Zero;
-		_worldMatrix		= Matrix4::g_Identity;
 		_worldMatrix.t		= Vector3::g_Zero;
-		_inverseMatrix		= Matrix4::g_Identity;
 		_inverseMatrix.t	= Vector3::g_Zero;
 	}
 
@@ -33,23 +34,16 @@ namespace GG
 	void SceneNode::setParent( SceneNode * parent )
 	{
 		if( _parent == parent )
-		{
 			return;
-		}
-
 		
 		SceneNode * old = _parent;
 		_parent = parent;
 
 		if( _parent != nullptr )
-		{
 			_parent->_addChild( this );
-		}
 
 		if( old != nullptr )
-		{
 			old->_removeChild( this );
-		}
 
 		_updateHierarchy();
 	}
@@ -58,10 +52,22 @@ namespace GG
 	{
 		return _parent;
 	}
+
+	void SceneNode::attachObject( MoveableObject * moveableObject )
+	{
+		_moveableObject = moveableObject;
+		if( _moveableObject != nullptr )
+			_moveableObject->_sceneNode = this;
+	}
+
+	MoveableObject * SceneNode::getObject()
+	{
+		return _moveableObject;
+	}
+
 	void SceneNode::setPosition( const Vector3 & position )
 	{
 		_modelMatrix.t = position;
-
 		_updateHierarchy( false );
 	}
 
@@ -138,7 +144,6 @@ namespace GG
 		_modelMatrix = newRot * _modelMatrix;
 
 		_updateHierarchy();
-		//setRotation( _rotation * newRot );
 	}
 
 	const Matrix4 & SceneNode::modelToWorldMatrix() const
@@ -203,7 +208,6 @@ namespace GG
 
 	void SceneNode::_addChild( SceneNode * child )
 	{
-
 		Vector3 invPos			= child->_modelMatrix.t;
 		child->_modelMatrix		= child->_modelMatrix * worldToModelMatrix();
 		child->_modelMatrix.t	= modelToWorldMatrix().TransposeTransformVec( invPos );

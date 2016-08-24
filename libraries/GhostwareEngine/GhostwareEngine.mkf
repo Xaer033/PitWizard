@@ -29,11 +29,16 @@ files
 		RenderCommand3D.h
 		RenderFactory.h
 		SceneNode.h
+		MoveableObject.h
+		Model.h
+		Mesh.h
 		
 	(src/Graphics)
 		Camera.cpp
 		RenderFactory.cpp
 		SceneNode.cpp
+		Mesh.cpp
+		
 		
 		
 		

@@ -4,7 +4,9 @@
 #include <IwGx.h>
 
 #include <GG/Core/Matrix.h>
-#include <GG/Graphics/SceneNode.h>
+#include <GG/Core/Log.h>
+
+#include "MoveableObject.h"
 
 
 
@@ -25,7 +27,7 @@ namespace GG
 		setName( name );
 		setEnabled( true );
 		setDepth( 0 );
-		setLayer( 0 );
+		setRenderLayer( 0 );
 		setPerspective( 60, 1.333f, 0.1f, 100 );
 		setViewport( 0, 0, 1, 1 );
 		setClearColor( Vector4( 0, 0, 0, 0 ) );
@@ -55,12 +57,12 @@ namespace GG
 		return _name;
 	}
 
-	inline void Camera::setLayer( int16 layer )
+	inline void Camera::setRenderLayer( int16 layer )
 	{
 		_layer = layer;
 	}
 
-	inline int16 Camera::getLayer( ) const
+	inline int16 Camera::getRenderLayer( ) const
 	{
 		return _layer;
 	}
@@ -146,13 +148,22 @@ namespace GG
 
 	
 
-	Matrix4 * Camera::getViewMatrix( ) 
+	Matrix4 Camera::getViewMatrix( ) const
 	{
-		_viewMat = sceneNode.modelToWorldMatrix();
-		return &_viewMat;
+		const SceneNode * n = getSceneNode();
+		if( n != nullptr )
+		{
+			return n->modelToWorldMatrix();
+		}
+		else
+		{
+			TRACE_WARNING( "Camera is not attached to a scene node!" );
+		}
+
+		return _viewMat;
 	}
 
-	float * Camera::getProjectionMatrix( ) 
+	const float * Camera::getProjectionMatrix( ) const
 	{
 		return _projectionMat;
 	}
