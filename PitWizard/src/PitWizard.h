@@ -12,13 +12,13 @@ public:
 	virtual void		doGameLoop()		final;
 	virtual void		shutdown()			final;
 
-	GG::InputSystem		* inputSystem;
+	GG::InputSystem	*	inputSystem;
 
 private:
 	void				_setupLoggers();
 	const std::string	_getFileLogName() const;
 
 	
-	GG::GameStateManager		_gameStateManager;
+	GG::GameStateManager	_gameStateManager;
 	CIwModel * _test;
 };

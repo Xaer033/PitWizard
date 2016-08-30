@@ -1,3 +1,4 @@
+// Ghostware Games inc. 2016  -Julian Williams
 #pragma once
 #include <GG/Core/Types.h>
 #include <s3eKeyboard.h>

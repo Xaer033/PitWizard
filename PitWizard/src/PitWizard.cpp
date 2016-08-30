@@ -14,6 +14,7 @@
 #include <GG/Graphics.h>
 #include <GG/Core.h>
 #include <GG/Input.h>
+#include <GG/EntitySystem.h>
 
 using namespace GG;
 

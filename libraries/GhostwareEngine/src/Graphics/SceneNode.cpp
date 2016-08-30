@@ -8,12 +8,15 @@
 #include <GG/Core/Quaternion.h>
 
 #include "s3eDebug.h"
+#include "IwHashString.h"
 #include <cmath>
+#include <string>
 
 
 namespace GG
 {
-	SceneNode::SceneNode() :
+	SceneNode::SceneNode(const std::string& name ) :
+		_name(name),
 		_parent( nullptr ),
 		_modelMatrix( Matrix4::g_Identity ),
 		_worldMatrix( Matrix4::g_Identity ),
@@ -22,6 +25,8 @@ namespace GG
 		_modelMatrix.t		= Vector3::g_Zero;
 		_worldMatrix.t		= Vector3::g_Zero;
 		_inverseMatrix.t	= Vector3::g_Zero;
+
+		_id = IwHashString( name.c_str() );
 	}
 
 	SceneNode::~SceneNode()

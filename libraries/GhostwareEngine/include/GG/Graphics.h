@@ -9,3 +9,5 @@
 #include "Graphics/MoveableObject.h"
 #include "Graphics/Model.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/ISceneGraph.h"
+#include "Graphics/BasicSceneGraph.h"

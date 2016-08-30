@@ -7,6 +7,7 @@ files
 		Graphics.h
 		GameLayer.h
 		Input.h
+		EntitySystem.h
 		
 # GameLayer ------------------
 	[GG/GameLayer]
@@ -32,12 +33,15 @@ files
 		MoveableObject.h
 		Model.h
 		Mesh.h
+		ISceneGraph.h
+		BasicSceneGraph.h
 		
 	(src/Graphics)
 		Camera.cpp
 		RenderFactory.cpp
 		SceneNode.cpp
 		Mesh.cpp
+		BasicSceneGraph.cpp
 		
 		
 		
@@ -58,6 +62,10 @@ files
 		StringHelper.h
 		MathDebug.h
 		Json.h
+		Plane.h
+		Frustum.h
+		AxisAlignedBox.h
+		Sphere.h
 		
 	(include/GG/Core/JsonLib)
 		json.h
@@ -70,6 +78,10 @@ files
 		StringHelper.cpp
 		Json.cpp
 		jsoncpp.cpp
+		Plane.cpp
+		Frustum.cpp
+		AxisAlignedBox.cpp
+		Sphere.cpp
 		
 
 # Input ----------------------
@@ -84,6 +96,16 @@ files
 		InputContext.cpp
 		EventAction.cpp
 		InputSystem.cpp
+		
+# EntitySystem ----------------
+	[GG/EntitySystem]
+	(include/GG/EntitySystem)
+		Entity.h
+		WorldManager.h
+		
+	(src/EntitySystem)
+		Entity.cpp
+		WorldManager.cpp
 }
 
 
@@ -95,4 +117,5 @@ includepaths
 	"include/GG/Graphics"
 	"include/GG/Input"
 	"include/GG/Core"
+	"include/GG/EntitySystem"
 }

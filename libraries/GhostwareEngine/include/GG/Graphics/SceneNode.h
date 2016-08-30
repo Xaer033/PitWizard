@@ -2,6 +2,7 @@
 #pragma once
 
 #include <list>
+#include <string>
 
 #include <GG/Core/Vector.h>
 #include <GG/Core/Matrix.h>
@@ -24,7 +25,7 @@ namespace GG
 	class SceneNode
 	{
 	public:
-		SceneNode();
+		SceneNode( const std::string & name = "Node" );
 		~SceneNode();
 
 		void				setParent( SceneNode * parent );
@@ -82,7 +83,9 @@ namespace GG
 		void		_removeChild( SceneNode * child );
 
 	private:
-		
+		std::string			_name;
+		uint32				_id;
+
 		SceneNode *			_parent;
 		MoveableObject *	_moveableObject;
 

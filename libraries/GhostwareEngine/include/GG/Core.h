@@ -12,3 +12,6 @@
 #include "Core/FileLogger.h"
 #include "Core/ConsoleLogger.h"
 #include "Core/Log.h"
+#include "Core/Sphere.h"
+#include "Core/AxisAlignedBox.h"
+#include "Core/Frustum.h"
