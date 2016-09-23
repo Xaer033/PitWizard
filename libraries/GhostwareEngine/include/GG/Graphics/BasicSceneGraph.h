@@ -16,10 +16,10 @@ namespace GG
 		virtual void			init();
 		virtual void			shutdown();
 
-		virtual SceneNode *		createSceneNode( const std::string & name = "node" );
+		virtual SceneNode *		createSceneNode( );
 		virtual void			removeSceneNode( SceneNode * node );
 
-		virtual bool			getVisibleObjects( const Camera * cam, MoveableObjectList & renderList );
+		virtual bool			getVisibleObjects( const Camera * cam, RenderableObjectList & renderList );
 	
 	private:
 		std::vector<SceneNode> _sceneNodeList;

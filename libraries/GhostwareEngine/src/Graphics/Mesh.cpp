@@ -8,6 +8,12 @@
 
 namespace GG
 {
+	Mesh::Mesh() :
+		geometry(nullptr),
+		material(nullptr)
+	{
+	}
+
 	Mesh::Mesh( Model * geo, Material * mat ) :
 		geometry( geo ), material( mat )
 	{
@@ -17,5 +23,14 @@ namespace GG
 	{
 		geometry = nullptr;
 		material = nullptr;
+	}
+
+	void Mesh::render( RenderFactory & renderFactory )
+	{
+		renderFactory.addCommand(
+			material,
+			geometry,
+			_entity->getSceneNode()->modelToWorldMatrix()
+		);
 	}
 }

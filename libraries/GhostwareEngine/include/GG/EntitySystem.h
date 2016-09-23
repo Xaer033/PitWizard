@@ -3,4 +3,5 @@
 
 #include "EntitySystem/Entity.h"
 #include "EntitySystem/WorldManager.h"
+#include "EntitySystem/World.h"
 

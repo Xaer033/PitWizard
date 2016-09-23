@@ -30,11 +30,12 @@ files
 		RenderCommand3D.h
 		RenderFactory.h
 		SceneNode.h
-		MoveableObject.h
+		RenderableObject.h
 		Model.h
 		Mesh.h
 		ISceneGraph.h
 		BasicSceneGraph.h
+		RenderSystem.h
 		
 	(src/Graphics)
 		Camera.cpp
@@ -42,6 +43,7 @@ files
 		SceneNode.cpp
 		Mesh.cpp
 		BasicSceneGraph.cpp
+		RenderSystem.cpp
 		
 		
 		
@@ -66,6 +68,7 @@ files
 		Frustum.h
 		AxisAlignedBox.h
 		Sphere.h
+		IComponent.h
 		
 	(include/GG/Core/JsonLib)
 		json.h
@@ -82,6 +85,7 @@ files
 		Frustum.cpp
 		AxisAlignedBox.cpp
 		Sphere.cpp
+		MathDebug.cpp
 		
 
 # Input ----------------------
@@ -102,10 +106,12 @@ files
 	(include/GG/EntitySystem)
 		Entity.h
 		WorldManager.h
+		World.h
 		
 	(src/EntitySystem)
 		Entity.cpp
 		WorldManager.cpp
+		World.cpp
 }
 
 

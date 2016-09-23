@@ -16,7 +16,7 @@ namespace GG
 		LOCAL
 	};
 
-	class MoveableObject;
+	class RenderableObject;
 	class SceneNode;
 
 	typedef std::list< SceneNode * > ChildrenList;
@@ -25,14 +25,14 @@ namespace GG
 	class SceneNode
 	{
 	public:
-		SceneNode( const std::string & name = "Node" );
+		SceneNode();
 		~SceneNode();
 
 		void				setParent( SceneNode * parent );
 		SceneNode *			getParent();
 
-		void				attachObject( MoveableObject * renderable );
-		MoveableObject	*	getObject();
+		void				attachObject( RenderableObject * renderable );
+		RenderableObject *	getObject();
 
 		void				setPosition( const Vector3 & position );
 		const Vector3 		getLocalPosition() const;
@@ -54,6 +54,10 @@ namespace GG
 		const Vector3 		transformPoint( const Vector3 & point );
 		const Vector3 		inverseTransformPoint( const Vector3 & point );
 
+		void				detachChildren();
+
+		const SceneNode *	getChild( uint32 index ) const;
+		uint32				getChildrenCount() const;
 
 		inline const Vector3 		forward()	const {
 			return _modelMatrix.RowZ();
@@ -87,7 +91,7 @@ namespace GG
 		uint32				_id;
 
 		SceneNode *			_parent;
-		MoveableObject *	_moveableObject;
+		RenderableObject *	_renderableObject;
 
 		Matrix4			_modelMatrix;
 		Matrix4			_worldMatrix;

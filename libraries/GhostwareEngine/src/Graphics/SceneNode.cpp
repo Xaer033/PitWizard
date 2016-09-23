@@ -1,7 +1,7 @@
 
 
 #include "SceneNode.h"
-#include "MoveableObject.h"
+#include "RenderableObject.h"
 
 #include <GG/Core/Types.h>
 #include <GG/Core/Vector.h>
@@ -15,9 +15,9 @@
 
 namespace GG
 {
-	SceneNode::SceneNode(const std::string& name ) :
-		_name(name),
+	SceneNode::SceneNode( ) :
 		_parent( nullptr ),
+		_renderableObject( nullptr ),
 		_modelMatrix( Matrix4::g_Identity ),
 		_worldMatrix( Matrix4::g_Identity ),
 		_inverseMatrix( Matrix4::g_Identity)
@@ -25,8 +25,6 @@ namespace GG
 		_modelMatrix.t		= Vector3::g_Zero;
 		_worldMatrix.t		= Vector3::g_Zero;
 		_inverseMatrix.t	= Vector3::g_Zero;
-
-		_id = IwHashString( name.c_str() );
 	}
 
 	SceneNode::~SceneNode()
@@ -58,16 +56,14 @@ namespace GG
 		return _parent;
 	}
 
-	void SceneNode::attachObject( MoveableObject * moveableObject )
+	void SceneNode::attachObject( RenderableObject * moveableObject )
 	{
-		_moveableObject = moveableObject;
-		if( _moveableObject != nullptr )
-			_moveableObject->_sceneNode = this;
+		_renderableObject = moveableObject;
 	}
 
-	MoveableObject * SceneNode::getObject()
+	RenderableObject * SceneNode::getObject()
 	{
-		return _moveableObject;
+		return _renderableObject;
 	}
 
 	void SceneNode::setPosition( const Vector3 & position )
@@ -169,6 +165,16 @@ namespace GG
 	const Vector3 SceneNode::inverseTransformPoint( const Vector3 & point )
 	{
 		return _worldMatrix.TransposeTransformVec( point );
+	}
+
+
+	void SceneNode::detachChildren()
+	{
+		auto it = _childrenList.rbegin();
+		for(; it != _childrenList.rend(); --it )
+		{
+			_removeChild( (*it) );
+		}
 	}
 
 // ------------------------- Private Methods ----------------------------------

@@ -2,11 +2,11 @@
 #include "Camera.h"
 
 #include <IwGx.h>
-
+#include <GG/EntitySystem/Entity.h>
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Log.h>
 
-#include "MoveableObject.h"
+#include "RenderableObject.h"
 
 
 
@@ -14,20 +14,18 @@ namespace GG
 {
 	bool Camera::DepthCompare( const Camera * a, const Camera * b )
 	{
-		if( a == NULL || b == NULL )
+		if( a == nullptr || b == nullptr )
 			return false;
 
 		return a->getDepth() < b->getDepth();
 	}
 
 
-	Camera::Camera( const std::string & name) 
+	Camera::Camera() : 
+		_enabled(true), 
+		_depth(0), 
+		_layer(0)
 	{
-
-		setName( name );
-		setEnabled( true );
-		setDepth( 0 );
-		setRenderLayer( 0 );
 		setPerspective( 60, 1.333f, 0.1f, 100 );
 		setViewport( 0, 0, 1, 1 );
 		setClearColor( Vector4( 0, 0, 0, 0 ) );
@@ -47,22 +45,12 @@ namespace GG
 		return _enabled;
 	}
 
-	inline void Camera::setName( const std::string & name )
-	{
-		_name = name;
-	}
-
-	inline std::string Camera::getName( ) const 
-	{
-		return _name;
-	}
-
-	inline void Camera::setRenderLayer( int16 layer )
+	inline void Camera::setRenderLayer( int32 layer )
 	{
 		_layer = layer;
 	}
 
-	inline int16 Camera::getRenderLayer( ) const
+	inline int32 Camera::getRenderLayer( ) const
 	{
 		return _layer;
 	}
@@ -89,7 +77,6 @@ namespace GG
 	{
 		return _cachedClearColor;
 	}
-
 
 	void Camera::setClearMode( uint clearMode )
 	{
@@ -150,7 +137,7 @@ namespace GG
 
 	Matrix4 Camera::getViewMatrix( ) const
 	{
-		const SceneNode * n = getSceneNode();
+		const SceneNode * n = getEntity()->getSceneNode();
 		if( n != nullptr )
 		{
 			return n->modelToWorldMatrix();

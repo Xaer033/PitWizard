@@ -9,13 +9,15 @@
 #include <GG/Core/Vector.h>
 #include <GG/Core/Rect.h>
 #include <GG/Core/Log.h>
-
+#include <GG/Core/MathDebug.h>
 
 namespace GG
 {
 	void RenderFactory::addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix )
 	{
-		_renderCommand3DList.push_back( RenderCommand3D { mat, geo, worldMatrix } );
+		_renderCommand3DList.push_back( 
+			RenderCommand3D { mat, geo, worldMatrix } 
+		);
 	}
 
 	void RenderFactory::clearAllCommands()
@@ -47,7 +49,11 @@ namespace GG
 	{
 		Material *	_currentMat		= nullptr;
 
-		for( auto it = _renderCommand3DList.begin(); it != _renderCommand3DList.end(); ++it )
+		for(  
+			auto it = _renderCommand3DList.begin(); 
+			it != _renderCommand3DList.end(); 
+			++it 
+		)
 		{
 			const RenderCommand3D * command = &( *it );
 			if( command == nullptr )
@@ -83,7 +89,9 @@ namespace GG
 		_IwGxSetViewRect( ( int32 )xVec.x, ( int32 )yVec.x, ( int32 )xVec.y, ( int32 )yVec.y );
 	}
 
-	void RenderFactory:: _clearBuffer( const Vector4 & clearColor, uint clearMode ) const
+	void RenderFactory:: _clearBuffer( 
+		const Vector4 & clearColor, 
+		uint clearMode ) const
 	{
 		const float kColorScale = 255.0f;
 
@@ -98,7 +106,8 @@ namespace GG
 
 	void RenderFactory::_opaqueSort( const Vector3 & cameraEye )
 	{
-		auto opaqueSort = [ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )
+		auto opaqueSort = 
+			[ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )
 		{
 			if( a.material == nullptr || b.material == nullptr )
 				return false;
@@ -106,27 +115,44 @@ namespace GG
 			int16 aAlphaMode = ( int16 )a.material->GetAlphaMode();
 			int16 bAlphaMode = ( int16 )b.material->GetAlphaMode();
 
-			return	( aAlphaMode < bAlphaMode ) ||
-					( aAlphaMode == bAlphaMode  && a.material->GetUserFlags() < b.material->GetUserFlags() );
+			bool alphaCompare		=	aAlphaMode < bAlphaMode;
+			bool userFlagCompare	=	aAlphaMode == bAlphaMode  && 
+										a.material->GetUserFlags() < 
+										b.material->GetUserFlags();
+
+			return	alphaCompare || userFlagCompare;
 		};
 
-		std::sort( _renderCommand3DList.begin(), _renderCommand3DList.end(), opaqueSort );
+		std::sort( 
+			_renderCommand3DList.begin(), 
+			_renderCommand3DList.end(), 
+			opaqueSort 
+		);
 	}
 
 	void RenderFactory::_transparentSort( const Vector3 & cameraEye )
 	{
-		auto transparentSort = [ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )
+		auto transparentSort = 
+			[ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )
 		{
 			if( a.material == nullptr || b.material == nullptr )
 				return false;
 
 			int16 aAlphaMode = ( int16 )a.material->GetAlphaMode();
 			int16 bAlphaMode = ( int16 )b.material->GetAlphaMode();
+			
+			bool alphaCompare		=	aAlphaMode < bAlphaMode;
+			bool userFlagCompare	=	aAlphaMode == bAlphaMode  &&
+				a.material->GetUserFlags() <
+				b.material->GetUserFlags();
 
-			return	( aAlphaMode < bAlphaMode ) ||
-					( aAlphaMode == bAlphaMode  && a.material->GetUserFlags() < b.material->GetUserFlags() );
+			return	alphaCompare || userFlagCompare;
 		};
 
-		std::sort( _renderCommand3DList.begin(), _renderCommand3DList.end(), transparentSort );
+		std::sort( 
+			_renderCommand3DList.begin(), 
+			_renderCommand3DList.end(), 
+			transparentSort 
+		);
 	}
 }

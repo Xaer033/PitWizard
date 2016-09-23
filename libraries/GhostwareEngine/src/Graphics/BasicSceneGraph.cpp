@@ -19,7 +19,7 @@ namespace GG
 		_sceneNodeList.clear();
 	}
 
-	SceneNode* BasicSceneGraph::createSceneNode( const std::string& name )
+	SceneNode* BasicSceneGraph::createSceneNode( )
 	{
 		_sceneNodeList.emplace_back( SceneNode( ) );
 		return &_sceneNodeList.back();
@@ -37,17 +37,16 @@ namespace GG
 		}
 	}
 
-	bool BasicSceneGraph::getVisibleObjects( const Camera * cam, MoveableObjectList & renderList )
+	bool BasicSceneGraph::getVisibleObjects( const Camera * cam, RenderableObjectList & renderList )
 	{
 		for( uint i = 0; i < _sceneNodeList.size(); ++i )
 		{
-			MoveableObject* moveable = _sceneNodeList[ i ].getObject();
-			if( moveable != nullptr )
+			RenderableObject* renderable = _sceneNodeList[ i ].getObject();
+			if( renderable != nullptr )
 			{
-				renderList.push_back( moveable );
+				renderList.push_back( renderable );
 			}
 		}
-
 		return true;
 	}
 }

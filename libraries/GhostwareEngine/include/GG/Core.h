@@ -15,3 +15,4 @@
 #include "Core/Sphere.h"
 #include "Core/AxisAlignedBox.h"
 #include "Core/Frustum.h"
+#include "Core/IComponent.h"
