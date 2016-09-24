@@ -42,8 +42,7 @@ namespace GG
 
 			IComponent * component = _addComponentFromType(
 				entity, 
-				T::GetComponentId(), 
-				std::forward<Args>(args)... 
+				T::GetComponentId()
 			);
 
 			if( component == nullptr )
