@@ -2,6 +2,7 @@
 #include "PitWizard.h"
 
 #include <iostream>
+#include <fstream>
 #include <chrono>
 
 
@@ -52,36 +53,72 @@ void PitWizard::shutdown()
 }
 
 
+std::string loadFile(const std::string & filename)
+{
+	std::ifstream in(filename, std::ios::in | std::ios::binary);
+
+	std::string contents;
+
+	if(in)
+	{
+		in.seekg(0, std::ios::end);
+		contents.resize(in.tellg());
+		in.seekg(0, std::ios::beg);
+		in.read(&contents[0], contents.size());
+		in.close();
+	}
+
+	return contents;
+}
+
 void PitWizard::doGameLoop()
 {
+	CIwTexture * brickTexture = new CIwTexture();
+	brickTexture->LoadFromFile("./resources/environments/forest_road/textures/brick_albedo.png");
+	brickTexture->Upload();
+
+	CIwResGroup * group = IwGetResManager()->LoadGroup("./resources/environments/forest_road/staticGeometry.group");
+	Model * gridModel	= (Model*)group->GetResNamed("grid", IW_GRAPHICS_RESTYPE_MODEL);
+	Material * gridMat = IW_GX_ALLOC_MATERIAL();
+	gridMat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+	gridMat->SetTexture(brickTexture);
+	
+	Model * groundModel		= (Model*)group->GetResNamed("groundPlane", IW_GRAPHICS_RESTYPE_MODEL);
+	Material * groundMat	= (Material*)group->GetResNamed("groundPlane/groundMat", IW_GX_RESTYPE_MATERIAL);
+	groundMat->SetAlphaMode(CIwMaterial::AlphaMode::ALPHA_NONE);
+	groundMat->SetTexture(brickTexture, 0);
+
 	World* worldPtr = new World( new BasicSceneGraph( 1000 ) );
 	std::unique_ptr<World> world( worldPtr );
-
-	GG::SceneNode boxTransform;
 
 	float aspect =	( float )IwGxGetScreenWidth() / 
 					( float )IwGxGetScreenHeight();
 	
-	GG::Camera * cam = world->createCamera( "Camera_1" );
-	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition( GG::Vector3( 2, 5, 10 ) );
-	camNode_1->lookAt( &boxTransform );
-	cam->setPerspective( 60.0f, aspect, 0.1f, 300.0f );
-	cam->setViewport( 0, 0, 1, 1 );
-	cam->setClearMode( GG::ClearMode::Depth | GG::ClearMode::Color );
-	cam->setClearColor( GG::Vector4( 0.1f, 0.03f, 0.14f, 1 ) );
-
-
-
-	float _angle = 0;
-	GG::SceneNode parent;
-	parent.setPosition( GG::Vector3( -4.0f, 0, 0 ) );
-
-	GG::Entity *	box_1		= world->createEntity( "Box_1" );
-	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>( box_1 );
+	GG::Entity *	box_1		= world->createEntity("Box_1");
+	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>(box_1);
 	boxMesh_1->geometry = _test;
-	GG::SceneNode * boxNode_1	= box_1->getSceneNode();
-	boxNode_1->setParent( &parent );
+
+
+	GG::Camera * cam = world->createCamera("Camera_1");
+	cam->setPerspective(60.0f, aspect, 0.1f, 300.0f);
+	cam->setViewport(0, 0, 1, 1);
+	cam->setClearMode(GG::ClearMode::Depth | GG::ClearMode::Color);
+	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
+	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
+	camNode_1->setPosition(Vector3(2, -4, -10));
+	//camNode_1->lookAt(box_1->getSceneNode(), Vector3::g_AxisY);
+
+
+	Entity *	gridEntity = world->createEntity("GridMesh");
+	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
+	gridMeshInstance->geometry		= gridModel;
+	gridMeshInstance->material		= gridMat;
+
+
+	Entity *	groundEntity = world->createEntity("GroundMesh");
+	Mesh *		groundMeshInstance	= world->addComponent<Mesh>(groundEntity);
+	groundMeshInstance->geometry	= groundModel;
+	groundMeshInstance->material	= gridMat;
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while( !s3eDeviceCheckQuitRequest() )
@@ -89,18 +126,21 @@ void PitWizard::doGameLoop()
 		//Update the input systems
 		inputSystem->update();
 		
-		camNode_1->rotate( inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
+		camNode_1->rotate( 1.4f * inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
 
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
 
-		Vector3 move =	 ( camNode_1->forward() * walk ) + 
-						( camNode_1->right() * strafe );
+		Vector3 forwardYLock = camNode_1->forward();
+		forwardYLock.y = 0;
+
+		Vector3 move =	(forwardYLock * walk) +
+						(camNode_1->right() * strafe);
 
 		move = move.GetLengthSquared() > 0.001f ? move.GetNormalised() : move;
-		camNode_1->translate( move * 0.4f);
+		camNode_1->translate(move * 0.4f);
 
-		world->update( 1.0f / 60.0f );
+		world->update(1.0f / 60.0f);
 		
 		world->renderOneFrame();
 
