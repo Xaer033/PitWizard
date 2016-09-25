@@ -69,7 +69,7 @@ namespace GG
 	Plane::Side Plane::checkSideBox( const Vector3 & center, const Vector3 & halfsize ) const
 	{
 		float distance	= getDistance( center );
-		float maxDist	= fabs( normal.Dot( halfsize ) );
+		float maxDist	= fabsf( normal.Dot( halfsize ) );
 
 		if( distance > maxDist )
 			return Plane::Side::POSITIVE;
