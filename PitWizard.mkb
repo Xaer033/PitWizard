@@ -28,6 +28,7 @@ subprojects
     libraries/Photon-cpp/Photon-cpp
 	libraries/Common-cpp/Common-cpp
 	libraries/GhostwareEngine/GhostwareEngine
+	libraries/Glm/glm
 }
 
 librarys
