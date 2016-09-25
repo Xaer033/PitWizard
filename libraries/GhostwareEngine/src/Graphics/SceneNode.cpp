@@ -84,7 +84,8 @@ namespace GG
 
 	void SceneNode::setAxisAngle( float angle, const Vector3 & axis )
 	{
-		_rotation.SetAxisAngle( axis.x, axis.y, axis.z, angle );
+		
+		_rotation = glm::quat(angle, glm::vec3(axis.x, axis.y, axis.z));
 
 		Vector3 pos = getLocalPosition();
 		_modelMatrix.SetAxisAngle( axis, angle );
@@ -96,9 +97,10 @@ namespace GG
 	void SceneNode::setRotation( const Quaternion & rotation )
 	{
 		_rotation = rotation;
+		glm::vec3 axis = glm::axis(rotation);
 
 		Vector3 pos = getLocalPosition();
-		_modelMatrix.SetAxisAngle( _rotation.GetRotationAxis(), _rotation.GetRotationAngle() );
+		_modelMatrix.SetAxisAngle( Vector3(axis.x, axis.y, axis.z), glm::angle(rotation));
 		_modelMatrix.t = pos;
 
 		_updateHierarchy();
@@ -138,7 +140,7 @@ namespace GG
 
 	void SceneNode::rotate( float angle, const Vector3 & axis )
 	{
-		_rotation.SetAxisAngle( axis.x, axis.y, axis.z, angle );
+		_rotation = glm::quat(angle, glm::vec3(axis.x, axis.y, axis.z));
 
 		Matrix4 newRot;
 		newRot.SetAxisAngle( axis, angle );

@@ -1,9 +1,11 @@
 // Ghostware Games inc. 2016  -Julian Williams
 #pragma once
 
-#include <IwGeomFQuat.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace GG
 {
-	typedef CIwFQuat Quaternion;
+	typedef glm::quat	Quaternion;
 }
