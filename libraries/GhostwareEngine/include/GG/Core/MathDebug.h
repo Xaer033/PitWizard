@@ -13,5 +13,5 @@ namespace GG
 	const std::string ToString( const nVector2 & vec2 );
 	const std::string ToString( const nVector3 & vec3 );
 	const std::string ToString( const nVector4 & vec4 );
-	const std::string ToString( const Matrix4 & mat4 );
+	const std::string ToString( const nMatrix4 & mat4 );
 }

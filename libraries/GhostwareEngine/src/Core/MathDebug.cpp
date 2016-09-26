@@ -24,15 +24,15 @@ namespace GG
 		return str;
 	}
 
-	const std::string ToString( const Matrix4 & mat4 )
+	const std::string ToString( const nMatrix4 & mat4 )
 	{
 		std::string matrixFmt;
 
-		StringHelper::Format( matrixFmt, "R={ %.4f, %.4f, %.4f }\n  { %.4f, %.4f, %.4f }\n  { %.4f, %.4f, %.4f }\nT={ %.4f, %.4f, %.4f }",
-			mat4.m[ 0 ][ 0 ], mat4.m[ 1 ][ 0 ], mat4.m[ 2 ][ 0 ],
-			mat4.m[ 0 ][ 1 ], mat4.m[ 1 ][ 1 ], mat4.m[ 2 ][ 1 ],
-			mat4.m[ 0 ][ 2 ], mat4.m[ 1 ][ 2 ], mat4.m[ 2 ][ 2 ],
-			mat4.t.x, mat4.t.y, mat4.t.z );
+		StringHelper::Format(matrixFmt, "{ %.4f, %.4f, %.4f, %.4f }\n{ %.4f, %.4f, %.4f, %.4f }\n{ %.4f, %.4f, %.4f, %.4f }\n{ %.4f, %.4f, %.4f, %.4f }",
+			mat4[0][0], mat4[1][0], mat4[2][0], mat4[3][0],
+			mat4[0][1], mat4[1][1], mat4[2][1], mat4[3][1],
+			mat4[0][2], mat4[1][2], mat4[2][2], mat4[3][2],
+			mat4[0][3], mat4[1][3], mat4[2][3], mat4[3][3]);
 
 		return matrixFmt;
 	}

@@ -109,17 +109,17 @@ namespace GG
 	nVector3 Plane::projectVector( const nVector3 & point ) const
 	{
 		// Referenced Ogre3d
-		Matrix4 xform;
-		xform.m[ 0 ][ 0 ] = 1.0f - normal.x * normal.x;
-		xform.m[ 0 ][ 1 ] = -normal.x * normal.y;
-		xform.m[ 0 ][ 2 ] = -normal.x * normal.z;
-		xform.m[ 1 ][ 0 ] = -normal.y * normal.x;
-		xform.m[ 1 ][ 1 ] = 1.0f - normal.y * normal.y;
-		xform.m[ 1 ][ 2 ] = -normal.y * normal.z;
-		xform.m[ 2 ][ 0 ] = -normal.z * normal.x;
-		xform.m[ 2 ][ 1 ] = -normal.z * normal.y;
-		xform.m[ 2 ][ 2 ] = 1.0f - normal.z * normal.z;
-		Vector3 newPoint = xform.TransformVec(Vector3(point.x, point.y, point.z));
+		nMatrix4 xform;
+		xform[ 0 ][ 0 ] = 1.0f - normal.x * normal.x;
+		xform[ 0 ][ 1 ] = -normal.x * normal.y;
+		xform[ 0 ][ 2 ] = -normal.x * normal.z;
+		xform[ 1 ][ 0 ] = -normal.y * normal.x;
+		xform[ 1 ][ 1 ] = 1.0f - normal.y * normal.y;
+		xform[ 1 ][ 2 ] = -normal.y * normal.z;
+		xform[ 2 ][ 0 ] = -normal.z * normal.x;
+		xform[ 2 ][ 1 ] = -normal.z * normal.y;
+		xform[ 2 ][ 2 ] = 1.0f - normal.z * normal.z;
+		nVector4 newPoint = xform * nVector4(point, 1);
 		return nVector3(newPoint.x, newPoint.y, newPoint.z);
 	}
 }

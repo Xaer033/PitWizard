@@ -105,7 +105,7 @@ void PitWizard::doGameLoop()
 	cam->setClearMode(GG::ClearMode::Depth | GG::ClearMode::Color);
 	cam->setClearColor(GG::nVector4(0.1f, 0.03f, 0.14f, 1));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition(nVector3(2, -4, -10));
+	camNode_1->setPosition(nVector3(2, 4, -10));
 	
 
 	Entity *	gridEntity = world->createEntity("GridMesh");
@@ -118,6 +118,8 @@ void PitWizard::doGameLoop()
 	Mesh *		groundMeshInstance	= world->addComponent<Mesh>(groundEntity);
 	groundMeshInstance->geometry	= groundModel;
 	groundMeshInstance->material	= gridMat;
+
+	RenderFactory factory;
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while( !s3eDeviceCheckQuitRequest() )
@@ -141,10 +143,18 @@ void PitWizard::doGameLoop()
 
 		world->update(1.0f / 60.0f);
 		
-		world->renderOneFrame();
+		//world->renderOneFrame();
 
+		LOG_INFO("Box Info: %s", ToString(box_1->getSceneNode()->modelToWorldMatrix()));
+		LOG_INFO("Camera View: %s", ToString(cam->getViewMatrix()));
+		LOG_INFO("Camera Perspective: %s", ToString(cam->getProjectionMatrix()));
 
-		// Sleep for 0ms to allow the OS to process events etc.
+		factory.addCommand(nullptr, _test, box_1->getSceneNode()->modelToWorldMatrix());
+		factory.renderAll(cam);
+		factory.clearAllCommands();
+		IwGxFlush();
+		IwGxSwapBuffers();
+			// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
 	}
 }

@@ -13,7 +13,7 @@
 
 namespace GG
 {
-	void RenderFactory::addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix )
+	void RenderFactory::addCommand( Material * mat, Model * geo, const nMatrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( 
 			RenderCommand3D { mat, geo, worldMatrix } 
@@ -37,8 +37,9 @@ namespace GG
 		_setViewport( camera->getViewport() );
 		_clearBuffer( camera->getClearColor(), camera->getClearMode() );
 
-		IwGxSetPerspectiveMatrix( (float*)camera->getProjectionMatrix() );
-		IwGxSetViewMatrix( &camera->getViewMatrix() );
+		IwGxSetPerspMul( 8.0f );//TEMP
+		Matrix4 viewMatrix = Matrix::matConvert(camera->getViewMatrix());
+		IwGxSetViewMatrix( &viewMatrix);
 
 		_render3DList();
 	}
@@ -61,10 +62,10 @@ namespace GG
 				TRACE_ERROR( "Render Command is null!" );
 				continue;
 			}
+			Matrix4 modalMat = Matrix::matConvert(command->modelMatrix);
+			IwGxSetModelMatrix(&modalMat);
 
-			IwGxSetModelMatrix( &command->modelMatrix );
-
-			Material * mat = command->material;
+			Material * mat = nullptr;// command->material;
 			if( mat != nullptr && mat != _currentMat )
 			{
 				IwGxSetMaterial( mat );

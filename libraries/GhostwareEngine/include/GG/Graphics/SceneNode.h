@@ -48,8 +48,8 @@ namespace GG
 		void				translate( const nVector3 & move );
 		void				rotate( float angle, const nVector3 & axis );
 
-		const Matrix4 &		modelToWorldMatrix() const;
-		const Matrix4 &		worldToModelMatrix() const;
+		const nMatrix4 &	modelToWorldMatrix() const;
+		const nMatrix4 &	worldToModelMatrix() const;
 
 		const nVector3 		transformPoint( const nVector3 & point );
 		const nVector3 		inverseTransformPoint( const nVector3 & point );
@@ -60,28 +60,22 @@ namespace GG
 		uint32				getChildrenCount() const;
 
 		inline const nVector3 		forward()	const {
-			Vector3 v = _modelMatrix.RowZ();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 0, 1, 0)));
 		}
 		inline const nVector3 		back()		const {
-			Vector3 v = -_modelMatrix.RowZ();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 0, -1, 0)));
 		}
 		inline const nVector3 		right()		const {
-			Vector3 v = _modelMatrix.RowX();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(1, 0, 0, 0)));
 		}
 		inline const nVector3 		left()		const {
-			Vector3 v = -_modelMatrix.RowX();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(-1, 0, 0, 0)));
 		}
 		inline const nVector3 		up()		const {
-			Vector3 v = _modelMatrix.RowY();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 1, 0, 0)));
 		}
 		inline const nVector3 		down()		const {
-			Vector3 v = -_modelMatrix.RowY();
-			return nVector3(v.x, v.y, v.z);
+			return glm::normalize(nVector3(_modelMatrix * nVector4(0, -1, 0, 0)));
 		}
 
 	private:
@@ -99,13 +93,13 @@ namespace GG
 		SceneNode *			_parent;
 		RenderableObject *	_renderableObject;
 
-		Matrix4			_modelMatrix;
-		Matrix4			_worldMatrix;
-		Matrix4			_inverseMatrix;
+		nMatrix4			_modelMatrix;
+		nMatrix4			_worldMatrix;
+		nMatrix4			_inverseMatrix;
 
-		Quaternion		_rotation;
+		Quaternion			_rotation;
 
-		ChildrenList	_childrenList;
+		ChildrenList		_childrenList;
 
 	};
 }

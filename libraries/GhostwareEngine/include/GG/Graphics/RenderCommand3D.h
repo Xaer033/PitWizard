@@ -12,6 +12,6 @@ namespace GG
 	{
 		Material *		material;
 		Model *			geometry;
-		Matrix4	 		modelMatrix;
+		nMatrix4	 	modelMatrix;
 	};
 }
