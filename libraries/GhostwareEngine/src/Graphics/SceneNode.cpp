@@ -22,9 +22,10 @@ namespace GG
 		_worldMatrix( Matrix4::g_Identity ),
 		_inverseMatrix( Matrix4::g_Identity)
 	{
-		_modelMatrix.t		= Vector3::g_Zero;
-		_worldMatrix.t		= Vector3::g_Zero;
-		_inverseMatrix.t	= Vector3::g_Zero;
+		Vector3 zero = Vector3(0, 0, 0);
+		_modelMatrix.t		= zero;
+		_worldMatrix.t		= zero;
+		_inverseMatrix.t	= zero;
 	}
 
 	SceneNode::~SceneNode()
@@ -66,30 +67,31 @@ namespace GG
 		return _renderableObject;
 	}
 
-	void SceneNode::setPosition( const Vector3 & position )
+	void SceneNode::setPosition( const nVector3 & position )
 	{
-		_modelMatrix.t = position;
+		_modelMatrix.t = Vector3(position.x, position.y, position.z);
 		_updateHierarchy( false );
 	}
 
-	const Vector3 SceneNode::getLocalPosition() const
+	const nVector3 SceneNode::getLocalPosition() const
 	{
-		return _modelMatrix.t;
+		Vector3 pos = _modelMatrix.t;
+		return nVector3(pos.x, pos.y, pos.z);
 	}
 
-	const Vector3 SceneNode::getWorldPosition() const
+	const nVector3 SceneNode::getWorldPosition() const
 	{
-		return _worldMatrix.t;
+		Vector3 pos = _worldMatrix.t;
+		return nVector3(pos.x, pos.y, pos.z);
 	}
 
-	void SceneNode::setAxisAngle( float angle, const Vector3 & axis )
+	void SceneNode::setAxisAngle( float angle, const nVector3 & axis )
 	{
-		
-		_rotation = glm::quat(angle, glm::vec3(axis.x, axis.y, axis.z));
+		_rotation = glm::quat(angle, axis);
 
-		Vector3 pos = getLocalPosition();
-		_modelMatrix.SetAxisAngle( axis, angle );
-		_modelMatrix.t = pos;
+		nVector3 pos = getLocalPosition();
+		_modelMatrix.SetAxisAngle( Vector3(axis.x, axis.y, axis.z), angle );
+		_modelMatrix.t = Vector3(pos.x, pos.y, pos.z);
 
 		_updateHierarchy();
 	}
@@ -97,11 +99,11 @@ namespace GG
 	void SceneNode::setRotation( const Quaternion & rotation )
 	{
 		_rotation = rotation;
-		glm::vec3 axis = glm::axis(rotation);
+		nVector3 axis = glm::axis(rotation);
 
-		Vector3 pos = getLocalPosition();
+		nVector3 pos = getLocalPosition();
 		_modelMatrix.SetAxisAngle( Vector3(axis.x, axis.y, axis.z), glm::angle(rotation));
-		_modelMatrix.t = pos;
+		_modelMatrix.t = Vector3(pos.x, pos.y, pos.z);
 
 		_updateHierarchy();
 	}
@@ -112,38 +114,42 @@ namespace GG
 	}
 
 
-	void SceneNode::lookAt( const Vector3 & center, const Vector3 & up )
+	void SceneNode::lookAt( const nVector3 & center, const nVector3 & up )
 	{
-		Vector3 pos		= getWorldPosition();
-		Vector3 delta	= pos - center;
+		nVector3 pos	= getWorldPosition();
+		nVector3 delta	= pos - center;
 
 		if( ( fabs( delta.x ) < 0.001f ) &&
 			( fabs( delta.y ) < 0.001f ) &&
 			( fabs( delta.z ) < 0.001f ) )
 			return;
 
-		_modelMatrix.LookAt( pos, center, up );
+		_modelMatrix.LookAt( 
+			Vector3(pos.x, pos.y, pos.z),
+			Vector3(center.x, center.y, center.z),
+			Vector3(up.x, up.y, up.z)
+		);
 
 		_updateHierarchy();
 	}
 
-	void SceneNode::lookAt( const SceneNode * center, const Vector3 & up )
+	void SceneNode::lookAt( const SceneNode * center, const nVector3 & up )
 	{
 		lookAt( center->getWorldPosition(), up );
 	}
 
-	void SceneNode::translate( const Vector3 & move )
+	void SceneNode::translate( const nVector3 & move )
 	{
-		_modelMatrix.t += move;
+		_modelMatrix.t += Vector3(move.x, move.y, move.z);
 		_updateHierarchy();
 	}
 
-	void SceneNode::rotate( float angle, const Vector3 & axis )
+	void SceneNode::rotate( float angle, const nVector3 & axis )
 	{
-		_rotation = glm::quat(angle, glm::vec3(axis.x, axis.y, axis.z));
+		_rotation = glm::quat(angle, axis);
 
 		Matrix4 newRot;
-		newRot.SetAxisAngle( axis, angle );
+		newRot.SetAxisAngle( Vector3(axis.x, axis.y, axis.z), angle );
 		_modelMatrix = newRot * _modelMatrix;
 
 		_updateHierarchy();
@@ -159,14 +165,18 @@ namespace GG
 		return _inverseMatrix;
 	}
 
-	const Vector3 SceneNode::transformPoint( const Vector3 & point )
+	const nVector3 SceneNode::transformPoint( const nVector3 & point )
 	{
-		return _worldMatrix.TransformVec( point );
+		Vector3 p(point.x, point.y, point.z);
+		Vector3 t = _worldMatrix.TransformVec(p);
+		return nVector3(t.x, t.y, t.z);
 	}
 
-	const Vector3 SceneNode::inverseTransformPoint( const Vector3 & point )
+	const nVector3 SceneNode::inverseTransformPoint( const nVector3 & point )
 	{
-		return _worldMatrix.TransposeTransformVec( point );
+		Vector3 p(point.x, point.y, point.z);
+		Vector3 t = _worldMatrix.TransposeTransformVec(p);
+		return nVector3(t.x, t.y, t.z);
 	}
 
 
@@ -192,7 +202,7 @@ namespace GG
 			_worldMatrix = _modelMatrix *  _parent->_worldMatrix;
 		}
 
-		Vector3 invPos		= _worldMatrix.t;
+		CIwFVec3 invPos		= _worldMatrix.t;
 		_inverseMatrix		= _worldMatrix.GetTranspose();
 		_inverseMatrix.t	= _inverseMatrix.TransformVec( invPos );
 

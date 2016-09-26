@@ -17,16 +17,18 @@ namespace GG
 	{
 	}
 
-	Plane::Plane( const Vector3 & n, float _d ) : 
+	Plane::Plane( const nVector3 & n, float _d ) : 
 		normal( n ), 
 		d( -_d )
 	{
 	}
 
-	Plane::Plane( const Vector3 & p, const Vector3 & n ) : 
+	Plane::Plane( 
+		const nVector3 & p, 
+		const nVector3 & n ) : 
 		normal( n )
 	{
-		d = -p.Dot( n );
+		d = -glm::dot(p, n);
 	}
 
 	Plane::Plane( float a, float b, float c, float _d ) :
@@ -35,13 +37,13 @@ namespace GG
 	{
 	}
 
-	Plane::Plane( const Vector3 & p1, const Vector3 & p2, const Vector3 & p3 )
+	Plane::Plane( const nVector3 & p1, const nVector3 & p2, const nVector3 & p3 )
 	{
-		const Vector3 delta1 = p2 - p1;
-		const Vector3 delta2 = p3 - p1;
-		normal = delta1.Cross( delta2 );
-		normal.Normalise();	
-		d = -normal.Dot( p1 );
+		const nVector3 delta1 = p2 - p1;
+		const nVector3 delta2 = p3 - p1;
+		normal = glm::cross(delta1, delta2);
+		normal = glm::normalize(normal);
+		d = -glm::dot(normal, p1);
 	}
 
 	Plane::~Plane()
@@ -49,12 +51,12 @@ namespace GG
 	}
 	
 	
-	float Plane::getDistance( const Vector3 & point ) const
+	float Plane::getDistance( const nVector3 & point ) const
 	{
-		return normal.Dot( point ) + d;
+		return glm::dot(normal, point) + d;
 	}
 	
-	Plane::Side Plane::checkSidePoint( const Vector3 & point ) const
+	Plane::Side Plane::checkSidePoint( const nVector3 & point ) const
 	{
 		float distance = getDistance( point );
 		if( distance > 0 )
@@ -66,10 +68,10 @@ namespace GG
 		return Plane::Side::BOTH;
 	}
 
-	Plane::Side Plane::checkSideBox( const Vector3 & center, const Vector3 & halfsize ) const
+	Plane::Side Plane::checkSideBox( const nVector3 & center, const nVector3 & halfsize ) const
 	{
 		float distance	= getDistance( center );
-		float maxDist	= fabsf( normal.Dot( halfsize ) );
+		float maxDist	= fabsf( glm::dot(normal, halfsize ) );
 
 		if( distance > maxDist )
 			return Plane::Side::POSITIVE;
@@ -82,12 +84,12 @@ namespace GG
 
 	Plane::Side Plane::checkSideBox( const AxisAlignedBox & box ) const
 	{
-		Vector3 boxCenter	= box.getCenter();
-		Vector3 halfsize	= box.max - boxCenter;
+		nVector3 boxCenter	= box.getCenter();
+		nVector3 halfsize	= box.max - boxCenter;
 		return checkSideBox( boxCenter, halfsize );
 	}
 
-	Plane::Side Plane::checkSideSphere( const Vector3 & center, float radius ) const
+	Plane::Side Plane::checkSideSphere( const nVector3 & center, float radius ) const
 	{
 		float distance = getDistance( center );
 		if( distance > radius )
@@ -104,7 +106,7 @@ namespace GG
 		return checkSideSphere( sphere.center, sphere.radius );
 	}
 
-	Vector3 Plane::projectVector( const Vector3 & point ) const
+	nVector3 Plane::projectVector( const nVector3 & point ) const
 	{
 		// Referenced Ogre3d
 		Matrix4 xform;
@@ -117,6 +119,7 @@ namespace GG
 		xform.m[ 2 ][ 0 ] = -normal.z * normal.x;
 		xform.m[ 2 ][ 1 ] = -normal.z * normal.y;
 		xform.m[ 2 ][ 2 ] = 1.0f - normal.z * normal.z;
-		return xform.TransformVec( point );
+		Vector3 newPoint = xform.TransformVec(Vector3(point.x, point.y, point.z));
+		return nVector3(newPoint.x, newPoint.y, newPoint.z);
 	}
 }

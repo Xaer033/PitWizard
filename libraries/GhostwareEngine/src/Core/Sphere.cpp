@@ -7,26 +7,26 @@
 namespace GG
 {
 	Sphere::Sphere() : 
-		center( Vector3::g_Zero ), 
+		center( Vector::zero() ), 
 		radius( 0 )
 	{
 	}
 
-	Sphere::Sphere( const Vector3 & pCenter, float pRadius ) :
+	Sphere::Sphere( const nVector3 & pCenter, float pRadius ) :
 		center( pCenter ),
 		radius( pRadius )
 	{
 	}
 
-	void Sphere::set( const Vector3 & pCenter, float pRadius )
+	void Sphere::set( const nVector3 & pCenter, float pRadius )
 	{
 		center = pCenter;
 		radius = pRadius;
 	}
 
-	bool Sphere::intersectsPoint( const Vector3 & point ) const
+	bool Sphere::intersectsPoint( const nVector3 & point ) const
 	{
-		return ( center - point ).GetLengthSquared() < (radius * radius);
+		return glm::length2( center - point ) < (radius * radius);
 	}
 
 	bool Sphere::intersectsBox( const AxisAlignedBox & box ) const

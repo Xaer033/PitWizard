@@ -34,48 +34,54 @@ namespace GG
 		void				attachObject( RenderableObject * renderable );
 		RenderableObject *	getObject();
 
-		void				setPosition( const Vector3 & position );
-		const Vector3 		getLocalPosition() const;
-		const Vector3 		getWorldPosition() const;
+		void				setPosition( const nVector3 & position );
+		const nVector3 		getLocalPosition() const;
+		const nVector3 		getWorldPosition() const;
 
-		void				setAxisAngle( float angle, const Vector3 & axis );
+		void				setAxisAngle( float angle, const nVector3 & axis );
 		void				setRotation( const Quaternion & rotation );
 		const Quaternion 	getRotation() const;
 
-		void				lookAt( const Vector3 & center, const Vector3 & up = -Vector3::g_AxisY );
-		void				lookAt( const SceneNode * node, const Vector3 & up = -Vector3::g_AxisY );
+		void				lookAt( const nVector3 & center, const nVector3 & up = Vector::up());
+		void				lookAt( const SceneNode * node, const nVector3 & up = Vector::up());
 
-		void				translate( const Vector3 & move );
-		void				rotate( float angle, const Vector3 & axis );
+		void				translate( const nVector3 & move );
+		void				rotate( float angle, const nVector3 & axis );
 
 		const Matrix4 &		modelToWorldMatrix() const;
 		const Matrix4 &		worldToModelMatrix() const;
 
-		const Vector3 		transformPoint( const Vector3 & point );
-		const Vector3 		inverseTransformPoint( const Vector3 & point );
+		const nVector3 		transformPoint( const nVector3 & point );
+		const nVector3 		inverseTransformPoint( const nVector3 & point );
 
 		void				detachChildren();
 
 		const SceneNode *	getChild( uint32 index ) const;
 		uint32				getChildrenCount() const;
 
-		inline const Vector3 		forward()	const {
-			return _modelMatrix.RowZ();
+		inline const nVector3 		forward()	const {
+			Vector3 v = _modelMatrix.RowZ();
+			return nVector3(v.x, v.y, v.z);
 		}
-		inline const Vector3 		back()		const {
-			return -_modelMatrix.RowZ();
+		inline const nVector3 		back()		const {
+			Vector3 v = -_modelMatrix.RowZ();
+			return nVector3(v.x, v.y, v.z);
 		}
-		inline const Vector3 		right()		const {
-			return _modelMatrix.RowX();
+		inline const nVector3 		right()		const {
+			Vector3 v = _modelMatrix.RowX();
+			return nVector3(v.x, v.y, v.z);
 		}
-		inline const Vector3 		left()		const {
-			return -_modelMatrix.RowX();
+		inline const nVector3 		left()		const {
+			Vector3 v = -_modelMatrix.RowX();
+			return nVector3(v.x, v.y, v.z);
 		}
-		inline const Vector3 		up()		const {
-			return _modelMatrix.RowY();
+		inline const nVector3 		up()		const {
+			Vector3 v = _modelMatrix.RowY();
+			return nVector3(v.x, v.y, v.z);
 		}
-		inline const Vector3 		down()		const {
-			return -_modelMatrix.RowY();
+		inline const nVector3 		down()		const {
+			Vector3 v = -_modelMatrix.RowY();
+			return nVector3(v.x, v.y, v.z);
 		}
 
 	private:

@@ -27,11 +27,11 @@ namespace GG
 
 
 	private:
-		void		_opaqueSort( const Vector3 & cameraEye );
-		void		_transparentSort( const Vector3 & cameraEye );
+		void		_opaqueSort( const nVector3 & cameraEye );
+		void		_transparentSort( const nVector3 & cameraEye );
 			
-		void		_setViewport( const Vector4 & viewport ) const;
-		void		_clearBuffer( const Vector4 & clearColor, uint clearMode ) const;
+		void		_setViewport( const nVector4 & viewport ) const;
+		void		_clearBuffer( const nVector4 & clearColor, uint clearMode ) const;
 	
 
 	private:

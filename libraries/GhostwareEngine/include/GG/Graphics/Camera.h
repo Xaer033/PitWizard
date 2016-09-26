@@ -50,11 +50,11 @@ namespace GG
 		void				setClearMode( uint clearMode);
 		uint				getClearMode( ) const;
 		
-		void				setClearColor( const Vector4 & clearColor );
-		Vector4				getClearColor( ) const;
+		void				setClearColor( const nVector4 & clearColor );
+		nVector4				getClearColor( ) const;
 		
 		void				setViewport( float x, float y, float width, float height );
-		Vector4				getViewport() const;
+		nVector4				getViewport() const;
 
 
 		void				setOrthogonal( float left, float right, float bottom, float top, float zNear, float zFar );
@@ -79,7 +79,7 @@ namespace GG
 		Matrix4				_viewMat;
 		float 				_projectionMat[16];
 
-		Vector4				_cachedClearColor;
-		Vector4				_cachedViewport;
+		nVector4				_cachedClearColor;
+		nVector4				_cachedViewport;
 	};
 }

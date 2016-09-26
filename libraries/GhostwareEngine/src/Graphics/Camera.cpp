@@ -28,7 +28,7 @@ namespace GG
 	{
 		setPerspective( 60, 1.333f, 0.1f, 100 );
 		setViewport( 0, 0, 1, 1 );
-		setClearColor( Vector4( 0, 0, 0, 0 ) );
+		setClearColor( nVector4( 0, 0, 0, 0 ) );
 	}
 	
 	Camera::~Camera()
@@ -65,7 +65,7 @@ namespace GG
 		return _depth;
 	}
 
-	void Camera::setClearColor( const Vector4 & clearColor )
+	void Camera::setClearColor( const nVector4 & clearColor )
 	{
 		if( clearColor == _cachedClearColor )
 			return;
@@ -73,7 +73,7 @@ namespace GG
 		_cachedClearColor = clearColor;
 	}
 
-	Vector4 Camera::getClearColor( ) const
+	nVector4 Camera::getClearColor( ) const
 	{
 		return _cachedClearColor;
 	}
@@ -90,10 +90,10 @@ namespace GG
 
 	void Camera::setViewport( float x, float y, float width, float height )
 	{
-		_cachedViewport = Vector4( x, y, width, height );
+		_cachedViewport = nVector4( x, y, width, height );
 	}
 
-	Vector4 Camera::getViewport() const
+	nVector4 Camera::getViewport() const
 	{
 		return _cachedViewport;
 	}

@@ -103,11 +103,10 @@ void PitWizard::doGameLoop()
 	cam->setPerspective(60.0f, aspect, 0.1f, 300.0f);
 	cam->setViewport(0, 0, 1, 1);
 	cam->setClearMode(GG::ClearMode::Depth | GG::ClearMode::Color);
-	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
+	cam->setClearColor(GG::nVector4(0.1f, 0.03f, 0.14f, 1));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition(Vector3(2, -4, -10));
-	//camNode_1->lookAt(box_1->getSceneNode(), Vector3::g_AxisY);
-
+	camNode_1->setPosition(nVector3(2, -4, -10));
+	
 
 	Entity *	gridEntity = world->createEntity("GridMesh");
 	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
@@ -126,18 +125,18 @@ void PitWizard::doGameLoop()
 		//Update the input systems
 		inputSystem->update();
 		
-		camNode_1->rotate( 1.4f * inputSystem->getAxis( "RotateX" ), -Vector3::g_AxisY );
+		camNode_1->rotate( 1.4f * inputSystem->getAxis( "RotateX" ), -Vector::up() );
 
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
 
-		Vector3 forwardYLock = camNode_1->forward();
+		nVector3 forwardYLock = camNode_1->forward();
 		forwardYLock.y = 0;
 
-		Vector3 move =	(forwardYLock * walk) +
+		nVector3 move =	(forwardYLock * walk) +
 						(camNode_1->right() * strafe);
 
-		move = move.GetLengthSquared() > 0.001f ? move.GetNormalised() : move;
+		move = glm::length2(move) > 0.001f ? glm::normalize(move): move;
 		camNode_1->translate(move * 0.4f);
 
 		world->update(1.0f / 60.0f);

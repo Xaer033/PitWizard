@@ -59,10 +59,10 @@ namespace GG
 		_frustumPlanes[ PlaneType::FAR ].d = combo.m[ 3 ][ 3 ] - combo.m[ 2 ][ 3 ];
 
 		// Renormalise any normals which were not unit length
-		for( int i = 0; i < 6; ++i )
+		for( int i = 0; i < 6; ++i )            
 		{
-			_frustumPlanes[ i ].normal.Normalise();
-			_frustumPlanes[ i ].d /= _frustumPlanes[i].normal.GetLength();
+			_frustumPlanes[i].normal = glm::normalize(_frustumPlanes[i].normal);
+			_frustumPlanes[i].d /= glm::length(_frustumPlanes[i].normal);
 		}
 	}
 
