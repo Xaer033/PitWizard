@@ -97,7 +97,7 @@ namespace GG
 	{
 		_rotation = rotation;
 
-		Vector3 pos	= getLocalPosition();
+		Vector3 pos		= getLocalPosition();
 		_modelMatrix	= glm::toMat4(_rotation);
 
 		_modelMatrix[3][0] = pos.x;
@@ -199,7 +199,7 @@ namespace GG
 		}
 		else
 		{
-			_worldMatrix = _parent->_worldMatrix * _worldMatrix;
+			_worldMatrix = _parent->_worldMatrix * _modelMatrix;
 		}
 
 		_inverseMatrix = glm::inverse(_worldMatrix);
