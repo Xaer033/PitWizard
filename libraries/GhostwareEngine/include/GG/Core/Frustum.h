@@ -31,10 +31,10 @@ namespace GG
 		};
 
 		Frustum();
-		Frustum( const nMatrix4 & view, const nMatrix4 & projection );
+		Frustum( const Matrix4 & view, const Matrix4 & projection );
 		~Frustum();
 
-		void			recreate( const nMatrix4 & view, const nMatrix4 & projection );
+		void			recreate( const Matrix4 & view, const Matrix4 & projection );
 
 		const Plane&	getPlane( PlaneType type ) const;
 		
@@ -42,7 +42,7 @@ namespace GG
 		Result			intersectSphere( const Sphere & sphere ) const;
 
 	private:
-		void			_calculateFrustumPlanes( const nMatrix4 & view, const nMatrix4 & projection );
+		void			_calculateFrustumPlanes( const Matrix4 & view, const Matrix4 & projection );
 
 	private:
 		Plane	_frustumPlanes[ 6 ];

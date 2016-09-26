@@ -13,7 +13,7 @@
 
 namespace GG
 {
-	void RenderFactory::addCommand( Material * mat, Model * geo, const nMatrix4 & worldMatrix )
+	void RenderFactory::addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( 
 			RenderCommand3D { mat, geo, worldMatrix } 
@@ -37,9 +37,10 @@ namespace GG
 		_setViewport( camera->getViewport() );
 		_clearBuffer( camera->getClearColor(), camera->getClearMode() );
 
-		IwGxSetPerspMul( 8.0f );//TEMP
-		Matrix4 viewMatrix = Matrix::matConvert(camera->getViewMatrix());
-		IwGxSetViewMatrix( &viewMatrix);
+		IwGxSetPerspMul( 380.0f );//TEMP
+		IwGxSetFarZNearZ(80.0f, 1.0f);
+		CIwFMat viewMatrix = Matrix::matConvert(camera->getViewMatrix());
+		IwGxSetViewMatrix(&viewMatrix);
 
 		_render3DList();
 	}
@@ -62,7 +63,7 @@ namespace GG
 				TRACE_ERROR( "Render Command is null!" );
 				continue;
 			}
-			Matrix4 modalMat = Matrix::matConvert(command->modelMatrix);
+			CIwFMat modalMat = Matrix::matConvert(command->modelMatrix);
 			IwGxSetModelMatrix(&modalMat);
 
 			Material * mat = nullptr;// command->material;
@@ -79,19 +80,19 @@ namespace GG
 		}
 	}
 
-	void RenderFactory::_setViewport( const nVector4 & viewport ) const
+	void RenderFactory::_setViewport( const Vector4 & viewport ) const
 	{
 		float width		= (float)IwGxGetScreenWidth();
 		float height	= (float)IwGxGetScreenHeight();
 
-		nVector2 xVec	=	nVector2( viewport.x, viewport.z ) * width;
-		nVector2 yVec	=	nVector2( viewport.y, viewport.w ) * height;
+		Vector2 xVec	=	Vector2( viewport.x, viewport.z ) * width;
+		Vector2 yVec	=	Vector2( viewport.y, viewport.w ) * height;
 
 		_IwGxSetViewRect( ( int32 )xVec.x, ( int32 )yVec.x, ( int32 )xVec.y, ( int32 )yVec.y );
 	}
 
 	void RenderFactory:: _clearBuffer( 
-		const nVector4 & clearColor, 
+		const Vector4 & clearColor, 
 		uint clearMode ) const
 	{
 		const float kColorScale = 255.0f;
@@ -99,13 +100,13 @@ namespace GG
 		if( clearMode != ClearMode::None )
 		{
 			IwGxClear( ( uint32 )clearMode );
-			nVector4 finalColor = clearColor * kColorScale;
+			Vector4 finalColor = clearColor * kColorScale;
 			IwGxSetColClear(( uint8 )finalColor.x, ( uint8 )finalColor.y,
 							( uint8 )finalColor.z, ( uint8 )finalColor.w );
 		}
 	}
 
-	void RenderFactory::_opaqueSort( const nVector3 & cameraEye )
+	void RenderFactory::_opaqueSort( const Vector3 & cameraEye )
 	{
 		auto opaqueSort = 
 			[ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )
@@ -131,7 +132,7 @@ namespace GG
 		);
 	}
 
-	void RenderFactory::_transparentSort( const nVector3 & cameraEye )
+	void RenderFactory::_transparentSort( const Vector3 & cameraEye )
 	{
 		auto transparentSort = 
 			[ &cameraEye ]( RenderCommand3D a, RenderCommand3D b )

@@ -28,7 +28,7 @@ namespace GG
 	{
 		setPerspective( 60, 1.333f, 0.1f, 100 );
 		setViewport( 0, 0, 1, 1 );
-		setClearColor( nVector4( 0, 0, 0, 0 ) );
+		setClearColor( Vector4( 0, 0, 0, 0 ) );
 	}
 	
 	Camera::~Camera()
@@ -65,7 +65,7 @@ namespace GG
 		return _depth;
 	}
 
-	void Camera::setClearColor( const nVector4 & clearColor )
+	void Camera::setClearColor( const Vector4 & clearColor )
 	{
 		if( clearColor == _cachedClearColor )
 			return;
@@ -73,7 +73,7 @@ namespace GG
 		_cachedClearColor = clearColor;
 	}
 
-	nVector4 Camera::getClearColor( ) const
+	Vector4 Camera::getClearColor( ) const
 	{
 		return _cachedClearColor;
 	}
@@ -90,47 +90,22 @@ namespace GG
 
 	void Camera::setViewport( float x, float y, float width, float height )
 	{
-		_cachedViewport = nVector4( x, y, width, height );
+		_cachedViewport = Vector4( x, y, width, height );
 	}
 
-	nVector4 Camera::getViewport() const
+	Vector4 Camera::getViewport() const
 	{
 		return _cachedViewport;
 	}
 
 	void Camera::setPerspective( float fovy, float aspect, float zNear, float zFar )
 	{
-		const float D2R = PI / 180.0f;
-
-		float	yScale		= 1.0f / (float)tan( D2R * fovy / 2.0f );
-		float	xScale		= yScale / aspect;
-		float	nearmfar	= zNear - zFar;
-
-		_projectionMat[ 0 ]	= xScale;
-		_projectionMat[ 1 ]	= 0;
-		_projectionMat[ 2 ] = 0;
-		_projectionMat[ 3 ] = 0;
-
-
-		_projectionMat[ 4 ] = 0;
-		_projectionMat[ 5 ] = yScale;
-		_projectionMat[ 6 ] = 0;
-		_projectionMat[ 7 ] = 0;
-
-		_projectionMat[ 8 ] = 0;
-		_projectionMat[ 9 ] = 0;
-		_projectionMat[ 10] = ( zFar + zNear ) / nearmfar;
-		_projectionMat[ 11] = -1;
-
-		_projectionMat[ 12] = 0;
-		_projectionMat[ 13] = 0;
-		_projectionMat[ 14] = 2 * zFar*zNear / nearmfar;
-		_projectionMat[ 15] = 0;
+		_projectionMat = glm::perspective(fovy, aspect, zNear, zFar);
 	}
 
 	void Camera::setOrthogonal( float left, float right, float bottom, float top, float zNear, float zFar )
 	{	
-		//IwGxSetOrtho()
+		_projectionMat = glm::ortho(left, right, bottom, top, zNear, zFar);
 	}
 
 	
@@ -140,7 +115,7 @@ namespace GG
 		const SceneNode * n = getEntity()->getSceneNode();
 		if( n != nullptr )
 		{
-			return n->modelToWorldMatrix();
+			return n->worldToModelMatrix();
 		}
 		else
 		{
@@ -150,7 +125,7 @@ namespace GG
 		return _viewMat;
 	}
 
-	const float * Camera::getProjectionMatrix( ) const
+	Matrix4 Camera::getProjectionMatrix( ) const
 	{
 		return _projectionMat;
 	}

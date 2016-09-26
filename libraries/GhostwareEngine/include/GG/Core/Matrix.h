@@ -9,25 +9,24 @@
 
 namespace GG
 {
-	typedef CIwFMat		Matrix4;
-	typedef glm::mat4	nMatrix4;
+	typedef glm::mat4	Matrix4;
 	namespace Matrix
 	{
 
-		inline nMatrix4 identity()
+		inline Matrix4 identity()
 		{
-			static nMatrix4 identity = nMatrix4(1);
+			static Matrix4 identity = Matrix4(1);
 			return identity;
 		}
 
-		inline Matrix4 matConvert(const nMatrix4 & m)
+		inline CIwFMat matConvert(const Matrix4 & m)
 		{
-			Matrix4 outMat;
+			CIwFMat outMat;
 			outMat.t.x = m[3][0];
 			outMat.t.y = m[3][1];
 			outMat.t.z = m[3][2];
 
-			nMatrix4 transpose = glm::transpose(m);
+			Matrix4 transpose = glm::transpose(m);
 			for(int y = 0; y < 3; ++y)
 			{
 				for(int x = 0; x < 3; ++x)
@@ -38,12 +37,12 @@ namespace GG
 			return outMat;
 		}
 
-		/*inline nMatrix4 lookAt(
+		/*inline Matrix4 lookAt(
 			const nVector3 & eye,
 			const nVector3 & center,
 			const nVector3 & up )
 		{
-			nMatrix4 lookMat	= glm::lookAt(eye, center, up);
+			Matrix4 lookMat	= glm::lookAt(eye, center, up);
 			lookMat[3][0]		= -lookMat[3][0];
 			lookMat[3][1]		= -lookMat[3][1];
 			lookMat[3][2]		= -lookMat[3][2];

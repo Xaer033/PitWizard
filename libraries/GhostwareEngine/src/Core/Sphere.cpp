@@ -12,19 +12,19 @@ namespace GG
 	{
 	}
 
-	Sphere::Sphere( const nVector3 & pCenter, float pRadius ) :
+	Sphere::Sphere( const Vector3 & pCenter, float pRadius ) :
 		center( pCenter ),
 		radius( pRadius )
 	{
 	}
 
-	void Sphere::set( const nVector3 & pCenter, float pRadius )
+	void Sphere::set( const Vector3 & pCenter, float pRadius )
 	{
 		center = pCenter;
 		radius = pRadius;
 	}
 
-	bool Sphere::intersectsPoint( const nVector3 & point ) const
+	bool Sphere::intersectsPoint( const Vector3 & point ) const
 	{
 		return glm::length2( center - point ) < (radius * radius);
 	}

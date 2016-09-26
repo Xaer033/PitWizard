@@ -34,48 +34,48 @@ namespace GG
 		void				attachObject( RenderableObject * renderable );
 		RenderableObject *	getObject();
 
-		void				setPosition( const nVector3 & position );
-		const nVector3 		getLocalPosition() const;
-		const nVector3 		getWorldPosition() const;
+		void				setPosition( const Vector3 & position );
+		const Vector3 		getLocalPosition() const;
+		const Vector3 		getWorldPosition() const;
 
-		void				setAxisAngle( float angle, const nVector3 & axis );
+		void				setAxisAngle( float angle, const Vector3 & axis );
 		void				setRotation( const Quaternion & rotation );
 		const Quaternion 	getRotation() const;
 
-		void				lookAt( const nVector3 & center, const nVector3 & up = Vector::up());
-		void				lookAt( const SceneNode * node, const nVector3 & up = Vector::up());
+		void				lookAt( const Vector3 & center, const Vector3 & up = Vector::up());
+		void				lookAt( const SceneNode * node, const Vector3 & up = Vector::up());
 
-		void				translate( const nVector3 & move );
-		void				rotate( float angle, const nVector3 & axis );
+		void				translate( const Vector3 & move );
+		void				rotate( float angle, const Vector3 & axis );
 
-		const nMatrix4 &	modelToWorldMatrix() const;
-		const nMatrix4 &	worldToModelMatrix() const;
+		const Matrix4 &	modelToWorldMatrix() const;
+		const Matrix4 &	worldToModelMatrix() const;
 
-		const nVector3 		transformPoint( const nVector3 & point );
-		const nVector3 		inverseTransformPoint( const nVector3 & point );
+		const Vector3 		transformPoint( const Vector3 & point );
+		const Vector3 		inverseTransformPoint( const Vector3 & point );
 
 		void				detachChildren();
 
 		const SceneNode *	getChild( uint32 index ) const;
 		uint32				getChildrenCount() const;
 
-		inline const nVector3 		forward()	const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 0, 1, 0)));
+		inline const Vector3 		forward()	const {
+			return -glm::normalize(Vector3(_modelMatrix[2][0], _modelMatrix[2][1], _modelMatrix[2][2]));
 		}
-		inline const nVector3 		back()		const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 0, -1, 0)));
+		inline const Vector3 		back()		const {
+			return -forward();
 		}
-		inline const nVector3 		right()		const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(1, 0, 0, 0)));
+		inline const Vector3 		right()		const {
+			return -glm::normalize(Vector3(_modelMatrix[0][0], _modelMatrix[0][1], _modelMatrix[0][2]));
 		}
-		inline const nVector3 		left()		const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(-1, 0, 0, 0)));
+		inline const Vector3 		left()		const {
+			return -left();
 		}
-		inline const nVector3 		up()		const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(0, 1, 0, 0)));
+		inline const Vector3 		up()		const {
+			return -glm::normalize(Vector3(_modelMatrix[1][0], _modelMatrix[1][1], _modelMatrix[1][2]));
 		}
-		inline const nVector3 		down()		const {
-			return glm::normalize(nVector3(_modelMatrix * nVector4(0, -1, 0, 0)));
+		inline const Vector3 		down()		const {
+			return -down();
 		}
 
 	private:
@@ -93,9 +93,9 @@ namespace GG
 		SceneNode *			_parent;
 		RenderableObject *	_renderableObject;
 
-		nMatrix4			_modelMatrix;
-		nMatrix4			_worldMatrix;
-		nMatrix4			_inverseMatrix;
+		Matrix4			_modelMatrix;
+		Matrix4			_worldMatrix;
+		Matrix4			_inverseMatrix;
 
 		Quaternion			_rotation;
 

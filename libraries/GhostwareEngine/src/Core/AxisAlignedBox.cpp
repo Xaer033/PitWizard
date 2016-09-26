@@ -14,19 +14,19 @@ namespace GG
 	}
 
 	AxisAlignedBox::AxisAlignedBox( 
-		const nVector3 & minimum, 
-		const nVector3 & maximum ) :
+		const Vector3 & minimum, 
+		const Vector3 & maximum ) :
 		min( minimum ),
 		max( maximum )
 	{
 	}
 
-	nVector3 AxisAlignedBox::getCenter() const
+	Vector3 AxisAlignedBox::getCenter() const
 	{
 		return (min + max) / 2.0f;
 	}
 
-	bool	AxisAlignedBox::intersectsPoint( const nVector3 & point ) const
+	bool	AxisAlignedBox::intersectsPoint( const Vector3 & point ) const
 	{
 		return	point.x >= min.x && point.x <= max.x &&
 				point.y >= min.y && point.y <= max.y &&

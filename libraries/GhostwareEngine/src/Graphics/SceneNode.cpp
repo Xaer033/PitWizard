@@ -63,7 +63,7 @@ namespace GG
 		return _renderableObject;
 	}
 
-	void SceneNode::setPosition( const nVector3 & position )
+	void SceneNode::setPosition( const Vector3 & position )
 	{
 		_modelMatrix[3][0] = position.x;
 		_modelMatrix[3][1] = position.y;
@@ -72,23 +72,23 @@ namespace GG
 		_updateHierarchy( false );
 	}
 
-	const nVector3 SceneNode::getLocalPosition() const
+	const Vector3 SceneNode::getLocalPosition() const
 	{
-		return nVector3(
+		return Vector3(
 			_modelMatrix[3][0], 
 			_modelMatrix[3][1], 
 			_modelMatrix[3][2]);
 	}
 
-	const nVector3 SceneNode::getWorldPosition() const
+	const Vector3 SceneNode::getWorldPosition() const
 	{
-		return nVector3(
+		return Vector3(
 			_worldMatrix[3][0],
 			_worldMatrix[3][1],
 			_worldMatrix[3][2]);
 	}
 
-	void SceneNode::setAxisAngle( float angle, const nVector3 & axis )
+	void SceneNode::setAxisAngle( float angle, const Vector3 & axis )
 	{
 		setRotation(Quaternion(angle, axis));
 	}
@@ -97,7 +97,7 @@ namespace GG
 	{
 		_rotation = rotation;
 
-		nVector3 pos	= getLocalPosition();
+		Vector3 pos	= getLocalPosition();
 		_modelMatrix	= glm::toMat4(_rotation);
 
 		_modelMatrix[3][0] = pos.x;
@@ -113,10 +113,10 @@ namespace GG
 	}
 
 
-	void SceneNode::lookAt( const nVector3 & center, const nVector3 & up )
+	void SceneNode::lookAt( const Vector3 & center, const Vector3 & up )
 	{
-		nVector3 pos	= getWorldPosition();
-		nVector3 delta	= pos - center;
+		Vector3 pos	= getWorldPosition();
+		Vector3 delta	= pos - center;
 
 		if( ( fabs( delta.x ) < 0.001f ) &&
 			( fabs( delta.y ) < 0.001f ) &&
@@ -129,40 +129,40 @@ namespace GG
 		_updateHierarchy();
 	}
 
-	void SceneNode::lookAt( const SceneNode * center, const nVector3 & up )
+	void SceneNode::lookAt( const SceneNode * center, const Vector3 & up )
 	{
 		lookAt( center->getWorldPosition(), up );
 	}
 
-	void SceneNode::translate( const nVector3 & move )
+	void SceneNode::translate( const Vector3 & move )
 	{
 		_modelMatrix = glm::translate(_modelMatrix, move);
 		_updateHierarchy();
 	}
 
-	void SceneNode::rotate( float angle, const nVector3 & axis )
+	void SceneNode::rotate( float angle, const Vector3 & axis )
 	{
 		setRotation(glm::rotate(_rotation, angle, axis));
 	}
 
-	const nMatrix4 & SceneNode::modelToWorldMatrix() const
+	const Matrix4 & SceneNode::modelToWorldMatrix() const
 	{
 		return _worldMatrix;
 	}
 
-	const nMatrix4 & SceneNode::worldToModelMatrix() const
+	const Matrix4 & SceneNode::worldToModelMatrix() const
 	{
 		return _inverseMatrix;
 	}
 
-	const nVector3 SceneNode::transformPoint( const nVector3 & point )
+	const Vector3 SceneNode::transformPoint( const Vector3 & point )
 	{
-		return nVector3(_worldMatrix * nVector4(point, 1));
+		return Vector3(_worldMatrix * Vector4(point, 1));
 	}
 
-	const nVector3 SceneNode::inverseTransformPoint( const nVector3 & point )
+	const Vector3 SceneNode::inverseTransformPoint( const Vector3 & point )
 	{
-		return nVector3(_inverseMatrix * nVector4(point, 1));
+		return Vector3(_inverseMatrix * Vector4(point, 1));
 	}
 
 

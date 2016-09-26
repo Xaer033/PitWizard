@@ -10,16 +10,16 @@ namespace GG
 	class AxisAlignedBox
 	{
 	public:
-		nVector3 min;
-		nVector3 max;
+		Vector3 min;
+		Vector3 max;
 	
 	public:
 		AxisAlignedBox();
-		AxisAlignedBox( const nVector3 & minimum, const nVector3 & maximum );
+		AxisAlignedBox( const Vector3 & minimum, const Vector3 & maximum );
 
-		nVector3	getCenter() const;
+		Vector3	getCenter() const;
 
-		bool		intersectsPoint( const nVector3 & point ) const;
+		bool		intersectsPoint( const Vector3 & point ) const;
 		bool		intersectsBox( const AxisAlignedBox & box ) const;
 		bool		intersectsSphere( const Sphere & sphere ) const;
 	};

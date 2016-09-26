@@ -27,16 +27,15 @@ namespace GG
 	{
 	public:
 		static	bool DepthCompare( const Camera * a, const Camera * b );
+		static const uint32 GetComponentId()
+		{
+			static uint32 id = IwHashString("CameraComponent");
+			return id;
+		}
 
 	public:
 		Camera();
 		virtual ~Camera();
-
-		static const uint32 GetComponentId()
-		{
-			static uint32 id = IwHashString( "CameraComponent" );
-			return id;
-		}
 
 		void				setEnabled( bool enabled );
 		bool				isEnabled() const;
@@ -50,19 +49,19 @@ namespace GG
 		void				setClearMode( uint clearMode);
 		uint				getClearMode( ) const;
 		
-		void				setClearColor( const nVector4 & clearColor );
-		nVector4				getClearColor( ) const;
+		void				setClearColor( const Vector4 & clearColor );
+		Vector4			getClearColor( ) const;
 		
 		void				setViewport( float x, float y, float width, float height );
-		nVector4				getViewport() const;
+		Vector4			getViewport() const;
 
 
 		void				setOrthogonal( float left, float right, float bottom, float top, float zNear, float zFar );
 		void				setPerspective( float fovy, float aspect, float zNear, float zFar );
 
 
-		Matrix4				getViewMatrix() const;
-		const float *		getProjectionMatrix() const ;
+		Matrix4			getViewMatrix() const;
+		Matrix4			getProjectionMatrix() const ;
 
 	private:
 
@@ -76,10 +75,10 @@ namespace GG
 
 		std::string			_name;
 
-		Matrix4				_viewMat;
-		float 				_projectionMat[16];
+		Matrix4			_viewMat;
+		Matrix4			_projectionMat;
 
-		nVector4				_cachedClearColor;
-		nVector4				_cachedViewport;
+		Vector4			_cachedClearColor;
+		Vector4			_cachedViewport;
 	};
 }

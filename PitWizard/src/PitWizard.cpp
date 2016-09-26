@@ -82,7 +82,7 @@ void PitWizard::doGameLoop()
 	Material * gridMat = IW_GX_ALLOC_MATERIAL();
 	gridMat->SetModulateMode(CIwMaterial::MODULATE_NONE);
 	gridMat->SetTexture(brickTexture);
-	
+
 	Model * groundModel		= (Model*)group->GetResNamed("groundPlane", IW_GRAPHICS_RESTYPE_MODEL);
 	Material * groundMat	= (Material*)group->GetResNamed("groundPlane/groundMat", IW_GX_RESTYPE_MATERIAL);
 	groundMat->SetAlphaMode(CIwMaterial::AlphaMode::ALPHA_NONE);
@@ -103,9 +103,9 @@ void PitWizard::doGameLoop()
 	cam->setPerspective(60.0f, aspect, 0.1f, 300.0f);
 	cam->setViewport(0, 0, 1, 1);
 	cam->setClearMode(GG::ClearMode::Depth | GG::ClearMode::Color);
-	cam->setClearColor(GG::nVector4(0.1f, 0.03f, 0.14f, 1));
+	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition(nVector3(2, 4, -10));
+	camNode_1->setPosition(Vector3(0, 4, 10));
 	
 
 	Entity *	gridEntity = world->createEntity("GridMesh");
@@ -132,10 +132,10 @@ void PitWizard::doGameLoop()
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
 
-		nVector3 forwardYLock = camNode_1->forward();
+		Vector3 forwardYLock = camNode_1->forward();
 		forwardYLock.y = 0;
 
-		nVector3 move =	(forwardYLock * walk) +
+		Vector3 move =	(forwardYLock * walk) +
 						(camNode_1->right() * strafe);
 
 		move = glm::length2(move) > 0.001f ? glm::normalize(move): move;
@@ -143,17 +143,8 @@ void PitWizard::doGameLoop()
 
 		world->update(1.0f / 60.0f);
 		
-		//world->renderOneFrame();
+		world->renderOneFrame();
 
-		LOG_INFO("Box Info: %s", ToString(box_1->getSceneNode()->modelToWorldMatrix()));
-		LOG_INFO("Camera View: %s", ToString(cam->getViewMatrix()));
-		LOG_INFO("Camera Perspective: %s", ToString(cam->getProjectionMatrix()));
-
-		factory.addCommand(nullptr, _test, box_1->getSceneNode()->modelToWorldMatrix());
-		factory.renderAll(cam);
-		factory.clearAllCommands();
-		IwGxFlush();
-		IwGxSwapBuffers();
 			// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
 	}

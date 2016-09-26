@@ -10,7 +10,7 @@ namespace GG
 	{
 	}
 
-	Frustum::Frustum( const nMatrix4 & view, const nMatrix4 & projection )
+	Frustum::Frustum( const Matrix4 & view, const Matrix4 & projection )
 	{
 		recreate( view, projection );
 	}
@@ -19,14 +19,14 @@ namespace GG
 	{
 	}
 
-	void Frustum::recreate( const nMatrix4 & view, const nMatrix4 & projection )
+	void Frustum::recreate( const Matrix4 & view, const Matrix4 & projection )
 	{
 		_calculateFrustumPlanes( view, projection );
 	}
 
-	void Frustum::_calculateFrustumPlanes( const nMatrix4 & view, const nMatrix4 & projection )
+	void Frustum::_calculateFrustumPlanes( const Matrix4 & view, const Matrix4 & projection )
 	{
-		nMatrix4 combo = projection * view;
+		Matrix4 combo = projection * view;
 
 		_frustumPlanes[ PlaneType::LEFT ].normal.x = combo[ 3 ][ 0 ] + combo[ 0 ][ 0 ];
 		_frustumPlanes[ PlaneType::LEFT ].normal.y = combo[ 3 ][ 1 ] + combo[ 0 ][ 1 ];
