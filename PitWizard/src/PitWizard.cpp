@@ -33,20 +33,20 @@ void PitWizard::init()
 	_gameStateManager.addGameState( "MultiPlayer",				nullptr );
 	_gameStateManager.addGameState( "MultiPlayerEndScreen",		nullptr );
 
-	
-	
-	CIwResGroup * group = IwGetResManager()->LoadGroup( "./resources/creeps/creep_02.group" );
-	_test		= ( CIwModel* )group->GetResNamed( "Cube", IW_GRAPHICS_RESTYPE_MODEL );
-	
-	json config = JsonFromFile( "configs/input_config.json" );
-	inputSystem = new InputSystem( IwGxGetScreenWidth(), IwGxGetScreenHeight() );
-	inputSystem->init( config );
+
+
+	CIwResGroup * group = IwGetResManager()->LoadGroup("./resources/creeps/creep_02.group");
+	_test		= (CIwModel*)group->GetResNamed("Cube", IW_GRAPHICS_RESTYPE_MODEL);
+
+	json config = JsonFromFile("configs/input_config.json");
+	inputSystem = new InputSystem(IwGxGetScreenWidth(), IwGxGetScreenHeight());
+	inputSystem->init(config);
 }
 
 void PitWizard::shutdown()
-{	
+{
 	inputSystem->shutdown();
-	delete( inputSystem );
+	delete(inputSystem);
 
 	Log::Shutdown();
 	Application::shutdown();
@@ -88,25 +88,33 @@ void PitWizard::doGameLoop()
 	groundMat->SetAlphaMode(CIwMaterial::AlphaMode::ALPHA_NONE);
 	groundMat->SetTexture(brickTexture, 0);
 
-	World* worldPtr = new World( new BasicSceneGraph( 1000 ) );
-	std::unique_ptr<World> world( worldPtr );
+	World* worldPtr = new World(new BasicSceneGraph(1000));
+	std::unique_ptr<World> world(worldPtr);
 
-	float aspect =	( float )IwGxGetScreenWidth() / 
-					( float )IwGxGetScreenHeight();
-	
+	float aspect =	(float)IwGxGetScreenWidth() /
+		(float)IwGxGetScreenHeight();
+
 	GG::Entity *	box_1		= world->createEntity("Box_1");
 	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>(box_1);
 	boxMesh_1->geometry = _test;
+	SceneNode *		boxNode_1	= box_1->getSceneNode();
+	boxNode_1->setPosition(Vector3(0, -3, 0));
 
+	GG::Entity *	box_2		= world->createEntity("Box_2");
+	GG::Mesh *		boxMesh_2	= world->addComponent<Mesh>(box_2);
+	boxMesh_2->geometry = _test;
+	SceneNode *		boxNode_2	= box_2->getSceneNode();
+	boxNode_2->setPosition(Vector3(0, -2, 3));
+	boxNode_2->setParent(boxNode_1);
 
 	GG::Camera * cam = world->createCamera("Camera_1");
 	cam->setPerspective(60.0f, aspect, 0.1f, 300.0f);
 	cam->setViewport(0, 0, 1, 1);
-	cam->setClearMode(GG::ClearMode::Depth | GG::ClearMode::Color);
+	cam->setClearMode(Camera::ClearMode::Depth | Camera::ClearMode::Color);
 	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
 	camNode_1->setPosition(Vector3(0, 4, 10));
-	
+
 
 	Entity *	gridEntity = world->createEntity("GridMesh");
 	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
@@ -119,14 +127,34 @@ void PitWizard::doGameLoop()
 	groundMeshInstance->geometry	= groundModel;
 	groundMeshInstance->material	= gridMat;
 
-	RenderFactory factory;
-
 	// Loop forever, until the user or the OS performs some action to quit the app
-	while( !s3eDeviceCheckQuitRequest() )
+	while(!s3eDeviceCheckQuitRequest())
 	{
 		//Update the input systems
 		inputSystem->update();
-		
+
+		if(s3eKeyboardGetState(s3eKeyLeft) & S3E_KEY_STATE_DOWN)
+		{
+			boxNode_1->rotate(0.04f, Vector::up());
+		}
+		else if(s3eKeyboardGetState(s3eKeyRight) & S3E_KEY_STATE_DOWN)
+		{
+			boxNode_1->rotate(-0.04f, Vector::up());
+		}
+
+		if(s3eKeyboardGetState(s3eKeyUp) & S3E_KEY_STATE_DOWN)
+		{
+			boxNode_1->translate(boxNode_1->forward() * 0.1f);
+		}
+		else if(s3eKeyboardGetState(s3eKeyDown) & S3E_KEY_STATE_DOWN)
+		{
+			boxNode_1->translate(boxNode_1->forward() * -0.1f);
+		}
+		if(s3eKeyboardGetState(s3eKeyP) & S3E_KEY_STATE_RELEASED)
+		{
+			bool hasParent = boxNode_2->getParent() != nullptr;
+			boxNode_2->setParent(hasParent ? nullptr : boxNode_1);
+		}
 		camNode_1->rotate( 1.4f * inputSystem->getAxis( "RotateX" ), -Vector::up() );
 
 		float walk		= inputSystem->getAxis( "Walk" );

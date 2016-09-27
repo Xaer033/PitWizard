@@ -15,12 +15,7 @@
 
 namespace GG
 {
-	enum ClearMode
-	{
-		None	= 0,
-		Color	= IW_GX_COLOUR_BUFFER_F,
-		Depth	= IW_GX_DEPTH_BUFFER_F
-	};
+	
 
 
 	class Camera : public IComponent
@@ -34,6 +29,14 @@ namespace GG
 		}
 
 	public:
+		enum ClearMode
+		{
+			None	= 0,
+			Color	= IW_GX_COLOUR_BUFFER_F,
+			Depth	= IW_GX_DEPTH_BUFFER_F
+		};
+
+
 		Camera();
 		virtual ~Camera();
 

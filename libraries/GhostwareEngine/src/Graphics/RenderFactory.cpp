@@ -97,7 +97,7 @@ namespace GG
 	{
 		const float kColorScale = 255.0f;
 
-		if( clearMode != ClearMode::None )
+		if( clearMode != Camera::ClearMode::None )
 		{
 			IwGxClear( ( uint32 )clearMode );
 			Vector4 finalColor = clearColor * kColorScale;

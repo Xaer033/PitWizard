@@ -3,115 +3,53 @@ files
 # Submodule Root ------------
 	[GG]
 	(include/GG)
-		Core.h
-		Graphics.h
-		GameLayer.h
-		Input.h
-		EntitySystem.h
+		"*.h"
 		
 # GameLayer ------------------
 	[GG/GameLayer]
 	(include/GG/GameLayer)
-		Application.h
-		GameState.h
-		GameStateManager.h
+		"*.h"
 		
 	(src/GameLayer)
-		Application.cpp
-		GameState.cpp
-		GameStateManager.cpp
+		"*.cpp"
 		
 		
 # Graphics -------------------
 	[GG/Graphics]
 	(include/GG/Graphics)
-		Camera.h
-		Material.h
-		RenderCommand3D.h
-		RenderFactory.h
-		SceneNode.h
-		RenderableObject.h
-		Model.h
-		Mesh.h
-		ISceneGraph.h
-		BasicSceneGraph.h
-		RenderSystem.h
+		"*.h"
+		
 		
 	(src/Graphics)
-		Camera.cpp
-		RenderFactory.cpp
-		SceneNode.cpp
-		Mesh.cpp
-		BasicSceneGraph.cpp
-		RenderSystem.cpp
+		"*.cpp"
 		
-		
-		
-		
+	
 # Core -----------------------
 	[GG/Core]
 	(include/GG/Core)
-		Timer.h
-		Types.h
-		Vector.h
-		Matrix.h
-		Rect.h
-		Quaternion.h
-		Log.h
-		ILogger.h
-		FileLogger.h
-		ConsoleLogger.h
-		StringHelper.h
-		MathDebug.h
-		Json.h
-		Plane.h
-		Frustum.h
-		AxisAlignedBox.h
-		Sphere.h
-		IComponent.h
+		"*.h"
 		
 	(include/GG/Core/JsonLib)
-		json.h
-		json-forwards.h
+		"*.h"
 		
 	(src/Core)
-		Timer.cpp
-		Log.cpp
-		FileLogger.cpp
-		StringHelper.cpp
-		Json.cpp
-		jsoncpp.cpp
-		Plane.cpp
-		Frustum.cpp
-		AxisAlignedBox.cpp
-		Sphere.cpp
-		MathDebug.cpp
-		
+		"*.cpp"
 
 # Input ----------------------
 	[GG/Input]
 	(include/GG/Input)
-		InputContext.h
-		EventAction.h
-		InputSystem.h
-		InputDefines.h
+		"*.h"
 		
 	(src/Input)
-		InputContext.cpp
-		EventAction.cpp
-		InputSystem.cpp
+		"*.cpp"
 		
 # EntitySystem ----------------
 	[GG/EntitySystem]
 	(include/GG/EntitySystem)
-		Entity.h
-		WorldManager.h
-		World.h
+		"*.h"
 		
 	(src/EntitySystem)
-		Entity.cpp
-		WorldManager.cpp
-		World.cpp
+		"*.cpp"
 }
 
 

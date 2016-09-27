@@ -12,4 +12,8 @@
 #include "Graphics/ISceneGraph.h"
 #include "Graphics/BasicSceneGraph.h"
 #include "Graphics/RenderSystem.h"
+#include "Graphics/ObjLoader.h"
+#include "Graphics/IVertexBuffer.h"
+#include "Graphics/StaticGeometryBuffer.h"
+#include "Graphics/StreamVertexBuffer.h"
 
