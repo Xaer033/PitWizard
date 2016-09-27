@@ -102,7 +102,7 @@ namespace GG
 			shader = glCreateShader( type );
 
 		std::stringstream stream;
-		for(int i = 0; i < defineList.size(); ++i)
+		for(uint i = 0; i < defineList.size(); ++i)
 		{
 			stream << defineList[i];
 		}
