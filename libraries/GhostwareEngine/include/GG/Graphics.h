@@ -16,4 +16,5 @@
 #include "Graphics/IVertexBuffer.h"
 #include "Graphics/StaticGeometryBuffer.h"
 #include "Graphics/StreamVertexBuffer.h"
+#include "Graphics/Texture.h"
 

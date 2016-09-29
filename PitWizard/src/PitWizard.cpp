@@ -7,7 +7,6 @@
 
 
 #include "s3e.h"
-#include "IwDebug.h"
 
 //#include <Photon-cpp/inc/PhotonPeer.h>
 
@@ -20,11 +19,23 @@
 using namespace GG;
 
 
+PitWizard::PitWizard() : _deviceWidth(0), _deviceHeight(0)
+{
+
+}
+
+PitWizard::~PitWizard()
+{
+
+}
 
 void PitWizard::init()
 {
-	Application::init();
 	_setupLoggers();
+	Application::init();
+
+	_deviceWidth	= IwGLGetInt(IW_GL_WIDTH);
+	_deviceHeight	= IwGLGetInt(IW_GL_HEIGHT);
 
 	_gameStateManager.addGameState( "Intro",					nullptr );
 	_gameStateManager.addGameState( "MainMenu",					nullptr );
@@ -34,12 +45,12 @@ void PitWizard::init()
 	_gameStateManager.addGameState( "MultiPlayerEndScreen",		nullptr );
 
 
-
 	CIwResGroup * group = IwGetResManager()->LoadGroup("./resources/creeps/creep_02.group");
 	_test		= (CIwModel*)group->GetResNamed("Cube", IW_GRAPHICS_RESTYPE_MODEL);
 
 	json config = JsonFromFile("configs/input_config.json");
 	inputSystem = new InputSystem(IwGxGetScreenWidth(), IwGxGetScreenHeight());
+	//inputSystem = new InputSystem(_deviceWidth, _deviceHeight);
 	inputSystem->init(config);
 }
 
@@ -73,7 +84,7 @@ std::string loadFile(const std::string & filename)
 
 void PitWizard::doGameLoop()
 {
-	CIwTexture * brickTexture = new CIwTexture();
+	Texture * brickTexture = new Texture();
 	brickTexture->LoadFromFile("./resources/environments/forest_road/textures/brick_albedo.png");
 	brickTexture->Upload();
 

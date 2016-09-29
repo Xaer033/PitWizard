@@ -28,7 +28,7 @@ namespace GG
 		_clearCache();
 	}
 
-	void RenderState::clearRenderBuffer( int mode )
+	void RenderState::clearRenderBuffer( int mode ) const
 	{
 		glClear( mode );
 	}
@@ -108,7 +108,7 @@ namespace GG
 		_renderHeight	= height;
 	}
 
-	void RenderState::setViewport(const Vector4 & viewport)
+	void RenderState::setViewport(const Vector4 & viewport) const
 	{
 		Vector2 xVec = Vector2(viewport.x, viewport.z) * (float)_renderWidth;
 		Vector2 yVec = Vector2(viewport.y, viewport.w) * (float)_renderHeight;

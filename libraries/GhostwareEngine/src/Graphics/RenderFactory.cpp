@@ -35,7 +35,7 @@ namespace GG
 
 		
 		_setViewport( camera->getViewport() );
-		_clearBuffer( camera->getClearColor(), camera->getClearMode() );
+		_clearRenderBuffer( camera->getClearColor(), camera->getClearMode() );
 
 		IwGxSetPerspMul( 380.0f );//TEMP
 		IwGxSetFarZNearZ(80.0f, 1.0f);
@@ -51,10 +51,9 @@ namespace GG
 	{
 		Material *	_currentMat		= nullptr;
 
-		for(  
-			auto it = _renderCommand3DList.begin(); 
-			it != _renderCommand3DList.end(); 
-			++it 
+		for( auto it = _renderCommand3DList.begin(); 
+			 it != _renderCommand3DList.end(); 
+			 ++it 
 		)
 		{
 			const RenderCommand3D * command = &( *it );
@@ -89,9 +88,10 @@ namespace GG
 		Vector2 yVec	=	Vector2( viewport.y, viewport.w ) * height;
 
 		_IwGxSetViewRect( ( int32 )xVec.x, ( int32 )yVec.x, ( int32 )xVec.y, ( int32 )yVec.y );
+		//_renderState.setViewport(viewport);
 	}
 
-	void RenderFactory:: _clearBuffer( 
+	void RenderFactory:: _clearRenderBuffer( 
 		const Vector4 & clearColor, 
 		uint clearMode ) const
 	{
@@ -99,10 +99,13 @@ namespace GG
 
 		if( clearMode != Camera::ClearMode::None )
 		{
-			IwGxClear( ( uint32 )clearMode );
 			Vector4 finalColor = clearColor * kColorScale;
+			IwGxClear( ( uint32 )clearMode );
 			IwGxSetColClear(( uint8 )finalColor.x, ( uint8 )finalColor.y,
 							( uint8 )finalColor.z, ( uint8 )finalColor.w );
+
+			/*_renderState.setClearColor(clearColor);
+			_renderState.clearRenderBuffer(clearMode);*/
 		}
 	}
 
@@ -156,5 +159,19 @@ namespace GG
 			_renderCommand3DList.end(), 
 			transparentSort 
 		);
+	}
+	
+	void RenderFactory::_setMaterial(
+		const BaseMaterial * material, 
+		const Matrix4 & worldMatrix, 
+		Camera * camera) const
+	{
+		if(material == nullptr)
+		{
+			TRACE_ERROR("Material is null!");
+			return;
+		}
+
+		material->bindMaterialToShader(_renderState, worldMatrix, camera, _tempShader);
 	}
 }

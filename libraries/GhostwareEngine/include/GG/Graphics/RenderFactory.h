@@ -10,7 +10,8 @@
 #include "Camera.h"
 #include "Material.h"
 #include "Model.h"
-
+#include "RenderState.h"
+#include "Shader.h"
 
 namespace GG
 {
@@ -31,14 +32,14 @@ namespace GG
 		void		_transparentSort( const Vector3 & cameraEye );
 			
 		void		_setViewport( const Vector4 & viewport ) const;
-		void		_clearBuffer( const Vector4 & clearColor, uint clearMode ) const;
-	
-
-	private:
+		void		_clearRenderBuffer( const Vector4 & clearColor, uint clearMode ) const;
+		
+		void		_setMaterial(const BaseMaterial * material, const Matrix4 & worldMatrix, Camera * camera) const;
 		void		_render3DList()		const;
 
 	private:
+		Shader *						_tempShader;
 		RenderCommand3DList				_renderCommand3DList;
-
+		RenderState						_renderState;
 	};
 }
