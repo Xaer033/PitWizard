@@ -3,7 +3,8 @@
 
 #include "RenderFactory.h"
 #include "ISceneGraph.h"
-#include "IwHashString.h"
+#include <GG/Core/HashString.h>
+
 #include "ObjectId.h"
 #include "Mesh.h"
 
@@ -16,7 +17,7 @@ namespace GG
 	public:
 		static uint32 GetSystemId()
 		{
-			static uint32 systemId = IwHashString( "RenderSystem" );
+			static uint32 systemId = hashString( "RenderSystem" );
 			return systemId;
 		}
 

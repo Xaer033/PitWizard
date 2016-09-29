@@ -7,10 +7,9 @@
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Vector.h>
 #include <GG/Core/Types.h>
+#include <GG/Core/HashString.h>
 
 #include <string>
-
-#include "IwHashString.h"
 #include "IwGx.h"
 
 namespace GG
@@ -24,7 +23,7 @@ namespace GG
 		static	bool DepthCompare( const Camera * a, const Camera * b );
 		static const uint32 GetComponentId()
 		{
-			static uint32 id = IwHashString("CameraComponent");
+			static uint32 id = hashString("CameraComponent");
 			return id;
 		}
 

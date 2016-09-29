@@ -5,7 +5,8 @@
 #include "RenderFactory.h"
 #include "Material.h"
 #include "Model.h"
-#include "IwHashString.h"
+#include <GG/Core/HashString.h>
+
 #include <GG/EntitySystem/Entity.h>
 
 namespace GG
@@ -18,7 +19,7 @@ namespace GG
 
 		static const uint32 GetComponentId()
 		{
-			static uint32 id = IwHashString( "MeshComponent" );
+			static uint32 id = hashString( "MeshComponent" );
 			return id;
 		}
 

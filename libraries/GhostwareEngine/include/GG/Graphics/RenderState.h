@@ -50,13 +50,13 @@ namespace GG
 		RenderState();
 		~RenderState();
 
-		void	clearRenderBuffer(int mode);
+		void	clearRenderBuffer(int mode) const;
 		void	setClearColor(const Vector4 & clearColor) const;
 
 		void	setBlendmode(const BlendMode mode);
 
 		void	setRenderSize(int width, int height);
-		void	setViewport(const Vector4 & viewport);
+		void	setViewport(const Vector4 & viewport) const;
 
 		void	setDepthTesting(bool depthTest);
 		void	setDepthRange(float zNear, float zFar);

@@ -8,7 +8,6 @@
 #include <GG/Core/Quaternion.h>
 #include <GG/Core/Log.h>
 
-#include "IwHashString.h"
 #include <cmath>
 #include <string>
 
