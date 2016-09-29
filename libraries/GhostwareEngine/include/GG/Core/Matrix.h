@@ -23,9 +23,7 @@ namespace GG
 		inline CIwFMat matConvert(const Matrix4 & m)
 		{
 			CIwFMat outMat;
-			outMat.t.x = m[3][0];
-			outMat.t.y = m[3][1];
-			outMat.t.z = m[3][2];
+		
 
 			Matrix4 transpose = glm::transpose(m);
 			for(int y = 0; y < 3; ++y)
@@ -35,6 +33,9 @@ namespace GG
 					outMat.m[x][y] = transpose[x][y];
 				}
 			}
+			outMat.t.x = m[3][0];
+			outMat.t.y = m[3][1];
+			outMat.t.z = m[3][2];
 			return outMat;
 		}
 
