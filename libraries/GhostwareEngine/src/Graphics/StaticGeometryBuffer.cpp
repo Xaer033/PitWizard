@@ -323,9 +323,9 @@ namespace GG
 		const float limit = 0.001f;
 
 		Vector3 deltaPos	= v1.position - v2.position;
-		bool posResult		= (	fabs( deltaPos.x ) < limit && 
-								fabs( deltaPos.y ) < limit &&
-								fabs( deltaPos.z ) < limit	);
+		bool posResult		= (	fabsf( deltaPos.x ) < limit && 
+								fabsf( deltaPos.y ) < limit &&
+								fabsf( deltaPos.z ) < limit	);
 
         int vertexProperties = getVertexProperties();
 
@@ -333,36 +333,36 @@ namespace GG
 		if( vertexProperties & GG::TEXCOORDS )
 		{
 			Vector2 deltaTex = v1.texCoord - v2.texCoord;
-			texResult = (fabs(deltaTex.x) < limit &&
-						 fabs(deltaTex.y) < limit);
+			texResult = (fabsf(deltaTex.x) < limit &&
+						 fabsf(deltaTex.y) < limit);
 		}
 
 		bool normalResult = true;
 		if( vertexProperties & GG::NORMALS )
 		{
 			Vector3 deltaNormal = v1.normal - v2.normal;
-			normalResult = (fabs(deltaNormal.x) < limit &&
-							fabs(deltaNormal.y) < limit &&
-							fabs(deltaNormal.z) < limit);
+			normalResult = (fabsf(deltaNormal.x) < limit &&
+							fabsf(deltaNormal.y) < limit &&
+							fabsf(deltaNormal.z) < limit);
 		}
 		
 		bool colorResult = true;
 		if( vertexProperties & GG::COLORS )
 		{
 			Vector4 deltaColor = v1.color - v2.color;
-			colorResult =  (fabs(deltaColor.x) < limit &&
-							fabs(deltaColor.y) < limit &&
-							fabs(deltaColor.z) < limit &&
-							fabs(deltaColor.w) < limit);
+			colorResult =  (fabsf(deltaColor.x) < limit &&
+							fabsf(deltaColor.y) < limit &&
+							fabsf(deltaColor.z) < limit &&
+							fabsf(deltaColor.w) < limit);
 		}
 
 		bool tangentResult = true;
 		if( vertexProperties & GG::TANGENTS )
 		{
 			Vector3 deltaTangent = v1.tangent - v2.tangent;
-			tangentResult = (fabs(deltaTangent.x) < limit &&
-							 fabs(deltaTangent.y) < limit &&
-							 fabs(deltaTangent.z) < limit);
+			tangentResult = (fabsf(deltaTangent.x) < limit &&
+							 fabsf(deltaTangent.y) < limit &&
+							 fabsf(deltaTangent.z) < limit);
 		}
 
 		return posResult && texResult && normalResult && colorResult && tangentResult;
