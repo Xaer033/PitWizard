@@ -5,6 +5,6 @@
 
 namespace GG
 {
-	typedef CIwModel Model;
-	//typedef StaticGeometryBuffer Model;
+	//typedef CIwModel Model;
+	typedef StaticGeometryBuffer Model;
 }

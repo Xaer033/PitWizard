@@ -16,15 +16,15 @@ namespace GG
 	{
 	public:
 		MaterialBlock() :
-			blendMode(BlendMode::BM_NONE),
-			cullMode(CullMode::CULL_BACK),
+			blendMode(RenderState::BlendMode::BM_NONE),
+			cullMode(RenderState::CullMode::CULL_BACK),
 			isDepthTesting(true),
 			depthRange(Vector2(0.0f, 1.0f)),
 			shaderId(-1)
 		{
 		}
-		BlendMode	blendMode;
-		CullMode	cullMode;
+		RenderState::BlendMode	blendMode;
+		RenderState::CullMode	cullMode;
 
 		bool		isDepthTesting;
 		Vector2		depthRange;
@@ -37,10 +37,6 @@ namespace GG
 	public:
 		MaterialBlock	materialBlock;
 		
-		virtual void	bindMaterialToShader(
-			const RenderState & renderState,
-			const Matrix4 & worldMatrix,
-			const Camera *	camera,
-			const Shader *	shader) const = 0;
+		virtual void	bindMaterialToShader(Shader *	shader) = 0;
 	};
 }

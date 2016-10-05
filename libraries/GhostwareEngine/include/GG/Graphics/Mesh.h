@@ -26,12 +26,12 @@ namespace GG
 	public:
 
 		Mesh();
-		Mesh( Model * geo, Material * mat );
+		Mesh( Model * geo, BaseMaterial * mat );
 		virtual ~Mesh();
 
 		virtual void render( RenderFactory & renderFactory );
 
-		Model *		geometry;
-		Material *	material;
+		Model *			geometry;
+		BaseMaterial *	material;
 	};
 }

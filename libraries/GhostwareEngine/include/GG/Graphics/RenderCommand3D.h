@@ -10,8 +10,8 @@ namespace GG
 {
 	struct RenderCommand3D
 	{
-		Material *		material;
-		Model *			geometry;
-		Matrix4	 	modelMatrix;
+		BaseMaterial *		material;
+		Model *				geometry;
+		Matrix4	 			modelMatrix;
 	};
 }

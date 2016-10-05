@@ -13,19 +13,18 @@
 
 #include <GG/Core/Vector.h>
 #include <GG/Core/Matrix.h>
+#include <GG/Core/MathDebug.h>
 #include <GG/Core/Log.h>
 #include <GG/Graphics/Texture.h>
 
 
 namespace GG
 {
-	Shader::Shader()
+	Shader::Shader() :
+		vertexHandle(0),
+		pixelHandle(0),
+		programHandle(0)
 	{
-		vertexHandle	= 0;
-		pixelHandle		= 0;
-
-		programHandle	= 0;
-
 		for( int i = 0; i < 7; ++i )
 			attributeHandles.push_back("");
 
@@ -33,16 +32,28 @@ namespace GG
 
 	Shader::~Shader()
 	{
-		if( vertexHandle )
-			glDeleteShader( vertexHandle );
-
-		if( pixelHandle )
-			glDeleteShader( pixelHandle );
-
-		if( programHandle )
-			glDeleteProgram( programHandle );
+		shutdown();
 	}
 
+	void Shader::shutdown()
+	{
+		defineList.clear();
+		attributeHandles.clear();
+		parameterHandles.clear();
+
+		if(vertexHandle)
+			glDeleteShader(vertexHandle);
+
+		if(pixelHandle)
+			glDeleteShader(pixelHandle);
+
+		if(programHandle)
+			glDeleteProgram(programHandle);
+
+		vertexHandle = 0;
+		pixelHandle = 0;
+		programHandle = 0;
+	}
 
 	uint Shader::getId() const
 	{
@@ -55,7 +66,7 @@ namespace GG
 			attributeHandles[ tag ] = name;
 	}
 
-	void Shader::bind( )
+	void Shader::bind( ) const
 	{
 		glUseProgram( programHandle );
 	}
@@ -96,7 +107,7 @@ namespace GG
 
 		if( shaderSrc.empty() ) { return false; }
 
-		GLint compiled;
+		GLint compiled =  0;
 		// Create the shader object
         if( shader == 0 )
 			shader = glCreateShader( type );
@@ -107,7 +118,7 @@ namespace GG
 			stream << defineList[i];
 		}
 		stream << shaderSrc;
-		const char * shaderString = stream.str().c_str();
+		const char * shaderString = shaderSrc.c_str();// stream.str().c_str();
 		//TODO: get char array from vector of strings
 		glShaderSource( shader, 1, &shaderString, NULL );	
 
@@ -126,7 +137,7 @@ namespace GG
 				char * infoLog = (char*)malloc( sizeof(char) * infoLen );
 				glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
 					
-				LOG_ERROR("Error Compiling shader: %s", infoLog);
+				TRACE_ERROR("Error Compiling shader: %s", infoLog);
 
 				free( infoLog );
 			}
@@ -166,10 +177,9 @@ namespace GG
 			return false; 
 		}
 
-		if( programHandle == 0 )
-        { 
+		if(programHandle == 0)
 			programHandle	= glCreateProgram();
-        }
+        
 
 		glAttachShader( programHandle, vertexHandle );
 		glAttachShader( programHandle, pixelHandle );
@@ -191,7 +201,7 @@ namespace GG
 				char* infoLog = (char*)malloc(sizeof(char) * infoLen);
 				glGetProgramInfoLog( programHandle, infoLen, NULL, infoLog );
 
-				LOG_ERROR("Error Compiling shader: %s", infoLog);
+				TRACE_ERROR("Error Compiling shader: %s", infoLog);
 				free( infoLog );
 			}
 			
@@ -268,10 +278,12 @@ namespace GG
 		glUniform4f( _getParameterId( name ), v.x, v.y, v.z, v.w );
 	}
 
-	void Shader::setParameterSampler( const std::string & name, uint samplerID )
+	void Shader::setParameter( const std::string & name, uint unitIndex, uint samplerID )
 	{
 	// Set the sampler texture unit to 0
-		glUniform1i( _getParameterId( name ) , samplerID );
+		glUniform1i( _getParameterId( name ) , unitIndex );
+		glActiveTexture(GL_TEXTURE0 + unitIndex);
+		glBindTexture(GL_TEXTURE_2D, samplerID);
 	}
 
 

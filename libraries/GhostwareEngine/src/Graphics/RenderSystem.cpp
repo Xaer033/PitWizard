@@ -1,6 +1,8 @@
 #include "RenderSystem.h"
 
 #include <unordered_map>
+#include <s3e.h> //Temp
+
 #include <GG/Core/Log.h>
 
 #include "RenderFactory.h"
@@ -25,7 +27,7 @@ namespace GG
 	{
 		if( _graph == nullptr )
 		{
-			LOG_ERROR( "Render System does not have a valid scene graph!" );
+			TRACE_ERROR( "Render System does not have a valid scene graph!" );
 			return nullptr;
 		}
 		return _graph->createSceneNode( );
@@ -42,7 +44,7 @@ namespace GG
 		auto iter = _meshMap.find( id );
 		if( iter == _meshMap.end() )
 		{
-			LOG_WARNING( "Could not find mesh with id: %d", id );
+			TRACE_WARNING( "Could not find mesh with id: %d", id );
 			return nullptr;
 		}
 		return &iter->second;
@@ -59,7 +61,7 @@ namespace GG
 		auto iter = _cameraMap.find( id );
 		if( iter == _cameraMap.end() )
 		{
-			LOG_WARNING( "Could not find camera with id: %d", id );
+			TRACE_WARNING( "Could not find camera with id: %d", id );
 			return nullptr;
 		}
 		return &iter->second;
@@ -67,6 +69,10 @@ namespace GG
 
 	void RenderSystem::renderOneFrame()
 	{
+		if(s3eKeyboardGetState(s3eKeyR) & S3E_KEY_STATE_RELEASED)
+		{
+			_renderFactory.loadTempShader();
+		}
 		auto it = _cameraMap.begin();
 		for(; it != _cameraMap.end(); ++it )
 		{
@@ -85,7 +91,6 @@ namespace GG
 			_renderFactory.clearAllCommands();
 		}
 
-		IwGxFlush();
-		IwGxSwapBuffers();
+		IwGLSwapBuffers();
 	}
 }

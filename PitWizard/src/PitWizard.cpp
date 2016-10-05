@@ -16,6 +16,8 @@
 #include <GG/Input.h>
 #include <GG/EntitySystem.h>
 
+#include "materials/UnlitMaterial.h"
+
 using namespace GG;
 
 
@@ -45,13 +47,13 @@ void PitWizard::init()
 	_gameStateManager.addGameState( "MultiPlayerEndScreen",		nullptr );
 
 
-	CIwResGroup * group = IwGetResManager()->LoadGroup("./resources/creeps/creep_02.group");
-	_test		= (CIwModel*)group->GetResNamed("Cube", IW_GRAPHICS_RESTYPE_MODEL);
+	_test = nullptr;
 
 	json config = JsonFromFile("configs/input_config.json");
-	inputSystem = new InputSystem(IwGxGetScreenWidth(), IwGxGetScreenHeight());
-	//inputSystem = new InputSystem(_deviceWidth, _deviceHeight);
+	//inputSystem = new InputSystem(IwGxGetScreenWidth(), IwGxGetScreenHeight());
+	inputSystem = new InputSystem(_deviceWidth, _deviceHeight);
 	inputSystem->init(config);
+	RenderState::getInstance()->setRenderSize(_deviceWidth, _deviceHeight);
 }
 
 void PitWizard::shutdown()
@@ -84,59 +86,60 @@ std::string loadFile(const std::string & filename)
 
 void PitWizard::doGameLoop()
 {
-	Texture * brickTexture = new Texture();
-	brickTexture->LoadFromFile("./resources/environments/forest_road/textures/brick_albedo.png");
-	brickTexture->Upload();
+	UnlitMaterial * gridMat = new UnlitMaterial();
+	Model gridModel;
+	gridModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
+	ObjLoader::loadFromFile("./resources/environments/forest_road/models/grid.obj", gridModel);
 
-	CIwResGroup * group = IwGetResManager()->LoadGroup("./resources/environments/forest_road/staticGeometry.group");
-	Model * gridModel	= (Model*)group->GetResNamed("grid", IW_GRAPHICS_RESTYPE_MODEL);
-	Material * gridMat = IW_GX_ALLOC_MATERIAL();
-	gridMat->SetModulateMode(CIwMaterial::MODULATE_NONE);
-	gridMat->SetTexture(brickTexture);
-
-	Model * groundModel		= (Model*)group->GetResNamed("groundPlane", IW_GRAPHICS_RESTYPE_MODEL);
-	Material * groundMat	= (Material*)group->GetResNamed("groundPlane/groundMat", IW_GX_RESTYPE_MATERIAL);
-	groundMat->SetAlphaMode(CIwMaterial::AlphaMode::ALPHA_NONE);
-	groundMat->SetTexture(brickTexture, 0);
+	Model groundModel;
+	groundModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
+	ObjLoader::loadFromFile("./resources/environments/forest_road/models/groundPlane.obj", groundModel);
+	
+	Model playerModel;
+	playerModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
+	ObjLoader::loadFromFile("./resources/environments/forest_road/models/player.obj", playerModel);
 
 	World* worldPtr = new World(new BasicSceneGraph(1000));
 	std::unique_ptr<World> world(worldPtr);
 
-	float aspect =	(float)IwGxGetScreenWidth() /
-		(float)IwGxGetScreenHeight();
+	float aspect =	(float)_deviceWidth / (float)_deviceHeight;
 
 	GG::Entity *	box_1		= world->createEntity("Box_1");
 	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>(box_1);
-	boxMesh_1->geometry = _test;
+	boxMesh_1->geometry = &playerModel;
+	boxMesh_1->material	= gridMat;
 	SceneNode *		boxNode_1	= box_1->getSceneNode();
-	boxNode_1->setPosition(Vector3(0, -3, 0));
+	boxNode_1->setPosition(Vector3(0, 1, 0));
 
 	GG::Entity *	box_2		= world->createEntity("Box_2");
 	GG::Mesh *		boxMesh_2	= world->addComponent<Mesh>(box_2);
-	boxMesh_2->geometry = _test;
+	boxMesh_2->geometry = &playerModel;
+	boxMesh_2->material	= gridMat;
 	SceneNode *		boxNode_2	= box_2->getSceneNode();
-	boxNode_2->setPosition(Vector3(0, -2, 3));
+	boxNode_2->setPosition(Vector3(0, 0, 3));
 	boxNode_2->setParent(boxNode_1);
 
 	GG::Camera * cam = world->createCamera("Camera_1");
-	cam->setPerspective(60.0f, aspect, 0.1f, 300.0f);
+	cam->setPerspective(Angle::FromDegrees(60.0f), aspect, 0.1f, 300.0f);
 	cam->setViewport(0, 0, 1, 1);
-	cam->setClearMode(Camera::ClearMode::Depth | Camera::ClearMode::Color);
+	cam->setClearMode(RenderState::ClearMode::CM_DEPTH | RenderState::ClearMode::CM_COLOR);
 	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition(Vector3(0, 4, 10));
-
+	camNode_1->setPosition(Vector3(0.0f, 3.0f, -7.0f));
+	camNode_1->lookAt(boxNode_1);
 
 	Entity *	gridEntity = world->createEntity("GridMesh");
 	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
-	gridMeshInstance->geometry		= gridModel;
+	gridMeshInstance->geometry		= &gridModel;
 	gridMeshInstance->material		= gridMat;
 
 
 	Entity *	groundEntity = world->createEntity("GroundMesh");
 	Mesh *		groundMeshInstance	= world->addComponent<Mesh>(groundEntity);
-	groundMeshInstance->geometry	= groundModel;
+	groundMeshInstance->geometry	= &groundModel;
 	groundMeshInstance->material	= gridMat;
+	
+	const float camSpeed	= 0.185f;
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while(!s3eDeviceCheckQuitRequest())
@@ -146,11 +149,11 @@ void PitWizard::doGameLoop()
 
 		if(s3eKeyboardGetState(s3eKeyLeft) & S3E_KEY_STATE_DOWN)
 		{
-			boxNode_1->rotate(0.04f, Vector::up());
+			boxNode_1->rotate(Angle::FromDegrees(3.0f), Vector::up());
 		}
 		else if(s3eKeyboardGetState(s3eKeyRight) & S3E_KEY_STATE_DOWN)
 		{
-			boxNode_1->rotate(-0.04f, Vector::up());
+			boxNode_1->rotate(Angle::FromDegrees(-3.0f), Vector::up());
 		}
 
 		if(s3eKeyboardGetState(s3eKeyUp) & S3E_KEY_STATE_DOWN)
@@ -166,19 +169,26 @@ void PitWizard::doGameLoop()
 			bool hasParent = boxNode_2->getParent() != nullptr;
 			boxNode_2->setParent(hasParent ? nullptr : boxNode_1);
 		}
-		camNode_1->rotate( 1.4f * inputSystem->getAxis( "RotateX" ), -Vector::up() );
+
+		if(s3eKeyboardGetState(s3eKeyZ) & S3E_KEY_STATE_DOWN)
+		{
+			camNode_1->translate(Vector::down() * camSpeed);
+		}
+		else if(s3eKeyboardGetState(s3eKeyX) & S3E_KEY_STATE_DOWN)
+		{
+			camNode_1->translate(Vector::up() * camSpeed);
+		}
+		camNode_1->rotate(Angle::FromDegrees(70.0f) * inputSystem->getAxis( "RotateX" ), Vector::right() );
 
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
 
-		Vector3 forwardYLock = camNode_1->forward();
-		forwardYLock.y = 0;
-
-		Vector3 move =	(forwardYLock * walk) +
+		Vector3 move =	(camNode_1->forward() * walk) +
 						(camNode_1->right() * strafe);
 
 		move = glm::length2(move) > 0.001f ? glm::normalize(move): move;
-		camNode_1->translate(move * 0.4f);
+		move.y = 0;
+		camNode_1->translate(move * camSpeed);
 
 		world->update(1.0f / 60.0f);
 		
@@ -187,6 +197,7 @@ void PitWizard::doGameLoop()
 			// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
 	}
+	delete gridMat;
 }
 
 void PitWizard::_setupLoggers()

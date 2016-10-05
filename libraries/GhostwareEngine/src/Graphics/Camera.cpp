@@ -5,6 +5,7 @@
 #include <GG/EntitySystem/Entity.h>
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Log.h>
+#include <GG/Core/Angle.h>
 
 #include "RenderableObject.h"
 
@@ -26,9 +27,9 @@ namespace GG
 		_depth(0), 
 		_layer(0)
 	{
-		setPerspective( 60, 1.333f, 0.1f, 100 );
+		setPerspective( Angle::FromDegrees(60.0f), 1.333f, 0.1f, 100 );
 		setViewport( 0, 0, 1, 1 );
-		setClearColor( Vector4( 0, 0, 0, 0 ) );
+		setClearColor( Vector4( 0, 0, 0, 1 ) );
 	}
 	
 	Camera::~Camera()
@@ -98,9 +99,9 @@ namespace GG
 		return _cachedViewport;
 	}
 
-	void Camera::setPerspective( float fovy, float aspect, float zNear, float zFar )
+	void Camera::setPerspective( const Angle & fovy, float aspect, float zNear, float zFar )
 	{
-		_projectionMat = glm::perspective(fovy, aspect, zNear, zFar);
+		_projectionMat = glm::perspective(fovy.toRadians(), aspect, zNear, zFar);
 	}
 
 	void Camera::setOrthogonal( float left, float right, float bottom, float top, float zNear, float zFar )
@@ -115,7 +116,8 @@ namespace GG
 		const SceneNode * n = getEntity()->getSceneNode();
 		if( n != nullptr )
 		{
-			return n->worldToModelMatrix();
+
+			return glm::inverse(n->modelToWorldMatrix());
 		}
 		else
 		{

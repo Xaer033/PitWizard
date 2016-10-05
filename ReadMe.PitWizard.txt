@@ -1,4 +1,2 @@
-Created: Tue Jul 5 21:04:04 2016
-By: Julian
-
-Stop the collapse of our world
+Hello,
+I am applying here at Harbar 13 because while I have a few years of mobile game development experience, I've always wanted to make Triple A games. Working on the mobile platform has been an extremely valuable learning opportunity. Without the hardware power of PC's and consoles, you are forced to focus on innovative game play to reach your player base. I happened to see a game play trailer of Mafia III and was very impressed with what I saw. The graphics where very nice and the animations were very well done (especially the facial expressions). I was most especially drawn to the game play elements, with the ability for the player to choose how to go about the missions. Being able to choose between either playing stealthy or guns blazing. This is the kind of game that I enjoy playing and would love the opportunity to contribute towards. With my passion for fun and addicting game play and my knowledge of many different aspects of game development, I believe I would be a great asset to your team!

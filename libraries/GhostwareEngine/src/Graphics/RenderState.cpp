@@ -8,6 +8,9 @@
 #include <IwGL.h>
 #include <IwGLExt.h>
 
+#include <GG/Core/Log.h>
+#include <GG/Core/MathDebug.h>
+
 #include <GG/Graphics/Shader.h>
 #include <GG/Graphics/Texture.h>
 //#include <FrameBufferObject.h>
@@ -18,6 +21,8 @@
 
 namespace GG
 {
+	RenderState * RenderState::_instance = nullptr;
+
 	RenderState::RenderState()
 	{
 		_clearCache();
@@ -122,7 +127,7 @@ namespace GG
 	{
 		TextureCache::iterator it =  _cachedTextures.find( samplerID );
 
-		uint32 texHandle = texture.m_HWID;
+		uint32 texHandle = texture.getId();
 
 		if( it == _cachedTextures.end() )
 			_setTexture( samplerID, texHandle );
@@ -170,4 +175,41 @@ namespace GG
 
 		_cachedTextures[ samplerId ] = texHandle;
 	}
+
+	void RenderState::setModelMatrix(const Matrix4 & modelMatrix)
+	{
+		//LOG_DEBUG("Model: %s", ToString(modelMatrix));
+
+		_modelMatrix = modelMatrix;
+	}
+
+	const Matrix4 & RenderState::getModelMatrix() const
+	{
+		return _modelMatrix;
+	}
+
+	void RenderState::setViewMatrix(const Matrix4 & viewMatrix)
+	{
+		//LOG_DEBUG("View: %s", ToString(viewMatrix));
+
+		_viewMatrix = viewMatrix;
+	}
+
+	const Matrix4 & RenderState::getViewMatrix() const
+	{
+		return _viewMatrix;
+	}
+
+	void RenderState::setProjectionMatrix(const Matrix4 & projectionMatrix)
+	{
+		//LOG_DEBUG("Projection: %s", ToString(projectionMatrix));
+
+		_projectionMatrix = projectionMatrix;
+	}
+
+	const Matrix4 & RenderState::getProjectionMatrix() const
+	{
+		return _projectionMatrix;
+	}
+
 }

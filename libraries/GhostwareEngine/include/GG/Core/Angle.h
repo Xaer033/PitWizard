@@ -27,12 +27,12 @@ namespace GG
 		}
 
 
-		float toDegrees() const
+		inline float toDegrees() const
 		{
 			return TO_DEGREES(value);
 		}
 
-		float toRadians() const
+		inline float toRadians() const
 		{
 			return value;
 		}

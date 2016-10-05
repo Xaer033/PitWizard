@@ -21,11 +21,15 @@ namespace GG
 	class RenderFactory
 	{
 	public:
-		void		addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix );
+		RenderFactory();
+		~RenderFactory();
+
+		void		addCommand(BaseMaterial * mat, Model * geo, const Matrix4 & worldMatrix );
 		
 		void		clearAllCommands();
-		void		renderAll( const Camera * camera ) const;
+		void		renderAll( const Camera * camera );
 
+		void		loadTempShader();
 
 	private:
 		void		_opaqueSort( const Vector3 & cameraEye );
@@ -34,12 +38,15 @@ namespace GG
 		void		_setViewport( const Vector4 & viewport ) const;
 		void		_clearRenderBuffer( const Vector4 & clearColor, uint clearMode ) const;
 		
-		void		_setMaterial(const BaseMaterial * material, const Matrix4 & worldMatrix, Camera * camera) const;
-		void		_render3DList()		const;
+		void		_setMaterial( BaseMaterial * material);
+		void		_render3DList(const Camera * camera);
 
+	
 	private:
 		Shader *						_tempShader;
 		RenderCommand3DList				_renderCommand3DList;
-		RenderState						_renderState;
+		Texture	*						_tempTexture;
+		Texture *						_roughnessTex;
+		Texture *						_normalTex;
 	};
 }

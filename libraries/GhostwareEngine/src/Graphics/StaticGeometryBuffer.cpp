@@ -6,7 +6,7 @@
 
 #include "StaticGeometryBuffer.h"
 
-#include <IVertexBuffer.h>
+#include "IVertexBuffer.h"
 
 #include <vector>
 #include <cmath>
@@ -15,6 +15,7 @@
 #include <IwGL.h>
 
 #include <GG/Core/Vector.h>
+#include <GG/Core/MathDebug.h>
 #include <GG/Core/Log.h>
 
 
@@ -23,10 +24,12 @@
 
 namespace GG
 {
-	StaticGeometryBuffer::StaticGeometryBuffer() :
-        IVertexBuffer(),        _vertexBufferHandle(0), 
-        _indexBufferHandle(0),  _arrayBufferHandle(0 )
+	StaticGeometryBuffer::StaticGeometryBuffer()  :
+		_vertexBufferHandle(0), 
+        _indexBufferHandle(0),  
+		_arrayBufferHandle(0)
 	{
+		_vertexProperties = 0;
 		_vertexList.clear();
 		_indexList.clear();
 	}
@@ -224,19 +227,17 @@ namespace GG
 
     void StaticGeometryBuffer::bind() const
     {
-
         glBindBuffer( GL_ARRAY_BUFFER,          _vertexBufferHandle );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,  _indexBufferHandle  );
 
-
         glEnableVertexAttribArray( VertexTags::Position );
         glVertexAttribPointer(VertexTags::Position, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 0 ) );
-
+			
         int vertexProperties = getVertexProperties();
 
         if( vertexProperties & GG::TEXCOORDS )
         {
-            glEnableVertexAttribArray(VertexTags::Uv0 );
+            glEnableVertexAttribArray(VertexTags::Uv0);
             glVertexAttribPointer(VertexTags::Uv0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 3 * sizeof( float ) ) );
         }
         else
@@ -247,7 +248,7 @@ namespace GG
         if( vertexProperties & GG::NORMALS )
         {
             glEnableVertexAttribArray(VertexTags::Normal );
-            glVertexAttribPointer( Normal, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 5 * sizeof( float ) ) );
+            glVertexAttribPointer(VertexTags::Normal, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 5 * sizeof( float ) ) );
         }
         else
         {
@@ -287,6 +288,10 @@ namespace GG
 
     void StaticGeometryBuffer::render( const DrawMode & drawMode ) const
     {
+		/*for(auto &v : _vertexList)
+		{
+			TRACE_DEBUG("V: %s %s %s", ToString(v.position), ToString(v.texCoord), ToString(v.normal));
+		}*/
         glDrawElements( ( GLenum )drawMode, _indexList.size(), GL_UNSIGNED_INT, NULL );
     }
 

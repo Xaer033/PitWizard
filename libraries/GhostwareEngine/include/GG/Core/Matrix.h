@@ -6,8 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <IwGeom.h>//Delete this after Gx Removal!!
-
 namespace GG
 {
 	typedef glm::mat4	Matrix4;
@@ -19,7 +17,7 @@ namespace GG
 			static Matrix4 identity = Matrix4(1);
 			return identity;
 		}
-
+/*
 		inline CIwFMat matConvert(const Matrix4 & m)
 		{
 			CIwFMat outMat;
@@ -38,7 +36,7 @@ namespace GG
 			outMat.t.z = m[3][2];
 			return outMat;
 		}
-
+*/
 		/*inline Matrix4 lookAt(
 			const nVector3 & eye,
 			const nVector3 & center,

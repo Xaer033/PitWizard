@@ -14,7 +14,7 @@ namespace GG
 	{
 	}
 
-	Mesh::Mesh( Model * geo, Material * mat ) :
+	Mesh::Mesh( Model * geo, BaseMaterial * mat ) :
 		geometry( geo ), material( mat )
 	{
 	}

@@ -10,7 +10,7 @@
 				"primary":
 				{
 					"type"		:	"touch",
-					"axis_type"	:	"touch_drag_x",
+					"axis_type"	:	"touch_drag_y",
 					"min"		:	-1.0,
 					"max"		:	1.0
 				}

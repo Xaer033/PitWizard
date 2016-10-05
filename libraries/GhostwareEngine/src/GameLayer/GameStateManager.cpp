@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <s3e.h>
-#include <IwUtil.h>
+#include <GG/Core/Log.h>
 
 #include "GameState.h"
 
@@ -26,7 +26,7 @@ namespace GG
 	{
 		if( name.size() == 0 || newView == nullptr )
 		{
-			IwDebugTraceLinePrintf( "Could not add game view, input invalid!" );
+			TRACE_WARNING( "Could not add game view, input invalid!" );
 			return false;
 		}
 		_stateMap[ name ] = newView;

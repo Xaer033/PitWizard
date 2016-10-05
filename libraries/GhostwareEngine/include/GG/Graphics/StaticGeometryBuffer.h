@@ -7,9 +7,9 @@
 #pragma once
 
 #include "Vector.h"
-#include "IwTypes.h"
 #include "IwGL.h"
 
+#include <GG/Core/Types.h>
 #include <IVertexBuffer.h>
 #include <vector>
 

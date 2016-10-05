@@ -23,29 +23,29 @@ namespace GG
 
 	void Application::init()
 	{
-		IwGxInit();
+		/*IwGxInit();
 		IwGraphicsInit();
 		IwAnimInit();
-		IwResManagerInit();
-		//s3eSurfaceSetup(S3E_SURFACE_PIXEL_TYPE_RGB888);
+		IwResManagerInit();*/
+		s3eSurfaceSetup(S3E_SURFACE_PIXEL_TYPE_RGB888);
 
-		////Initialise graphics system(s)
-		//if(!IwGLInit())
-		//{
-		//	LOG_ERROR("IwGLInit failed");
-		//	return;
-		//}
+		//Initialise graphics system(s)
+		if(!IwGLInit())
+		{
+			TRACE_ERROR("IwGLInit failed");
+			return;
+		}
 
-		//IwGLSwapBuffers();
-		//s3eDeviceYield(0);
+		IwGLSwapBuffers();
+		s3eDeviceYield(0);
 	}
 
 	void Application::shutdown()
 	{
-		IwResManagerTerminate();
+		/*IwResManagerTerminate();
 		IwAnimTerminate();
 		IwGraphicsTerminate();
-		IwGxTerminate();
-		//IwGLTerminate();
+		IwGxTerminate();*/
+		IwGLTerminate();
 	}
 }

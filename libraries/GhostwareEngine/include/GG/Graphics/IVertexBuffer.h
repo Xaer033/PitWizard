@@ -1,6 +1,4 @@
-#ifndef _I_VERTEX_BUFFER_H_
-#define _I_VERTEX_BUFFER_H_
-
+#pragma once
 /*
 Module: Vertex Buffer Interface
 Description: Interface for Vertex Buffers
@@ -8,9 +6,9 @@ Author: Julian Williams
 */
 
 
-#include <IwTypes.h>
+#include <GG/Core/Types.h>
 #include <IwGL.h>
-#include <Vector.h>
+#include <GG/Core/Vector.h>
 
 namespace GG
 {
@@ -62,7 +60,6 @@ namespace GG
     {
         public:
             IVertexBuffer();
-
             virtual         ~IVertexBuffer();
 
             void            setVertexProperties( int vertexProperties );
@@ -83,12 +80,10 @@ namespace GG
 
             virtual void    render( const DrawMode & drawMode ) const   = 0;
 
-        private:
+        protected:
 
             int             _vertexProperties;
 
     };
 
 }
-
-#endif
