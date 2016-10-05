@@ -87,9 +87,9 @@ namespace GG
 			_worldMatrix[3][2]);
 	}
 
-	void SceneNode::setAxisAngle( float angle, const Vector3 & axis )
+	void SceneNode::setAxisAngle( const Angle & angle, const Vector3 & axis )
 	{
-		setRotation(Quaternion(angle, axis));
+		setRotation(Quaternion(angle.toDegrees(), axis));
 	}
 
 	void SceneNode::setRotation( const Quaternion & rotation )
@@ -133,15 +133,28 @@ namespace GG
 		lookAt( center->getWorldPosition(), up );
 	}
 
-	void SceneNode::translate( const Vector3 & move )
+	void SceneNode::translate( const Vector3 & move, const Space & space)
 	{
-		_modelMatrix = glm::translate(_modelMatrix, move);
-		_updateHierarchy();
+		if(space == Space::WORLD)
+		{
+			_modelMatrix[3][0] += move.x;
+			_modelMatrix[3][1] += move.y;
+			_modelMatrix[3][2] += move.z;
+
+			_updateHierarchy(false);
+		}
+		else
+		{
+			_modelMatrix = glm::translate(_modelMatrix, move);
+			_updateHierarchy();
+		}
 	}
 
-	void SceneNode::rotate( float angle, const Vector3 & axis )
+	void SceneNode::rotate( const Angle & angle, const Vector3 & axis )
 	{
-		setRotation(glm::rotate(_rotation, angle, axis));
+		//setRotation(glm::rotate(_rotation, angle.toRadians(), axis));
+		_modelMatrix = glm::rotate(_modelMatrix, angle.toRadians(), axis);
+		_updateHierarchy();
 	}
 
 	const Matrix4 & SceneNode::modelToWorldMatrix() const

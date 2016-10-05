@@ -8,15 +8,12 @@
 #include <GG/Core/Vector.h>
 #include <GG/Core/Types.h>
 #include <GG/Core/HashString.h>
+#include <GG/Core/Angle.h>
 
 #include <string>
-#include "IwGx.h"
 
 namespace GG
 {
-	
-
-
 	class Camera : public IComponent
 	{
 	public:
@@ -28,13 +25,6 @@ namespace GG
 		}
 
 	public:
-		enum ClearMode
-		{
-			None	= 0,
-			Color	= IW_GX_COLOUR_BUFFER_F,
-			Depth	= IW_GX_DEPTH_BUFFER_F
-		};
-
 
 		Camera();
 		virtual ~Camera();
@@ -52,18 +42,18 @@ namespace GG
 		uint				getClearMode( ) const;
 		
 		void				setClearColor( const Vector4 & clearColor );
-		Vector4			getClearColor( ) const;
+		Vector4				getClearColor( ) const;
 		
 		void				setViewport( float x, float y, float width, float height );
-		Vector4			getViewport() const;
+		Vector4				getViewport() const;
 
 
 		void				setOrthogonal( float left, float right, float bottom, float top, float zNear, float zFar );
-		void				setPerspective( float fovy, float aspect, float zNear, float zFar );
+		void				setPerspective( const Angle & fovy, float aspect, float zNear, float zFar );
 
 
-		Matrix4			getViewMatrix() const;
-		Matrix4			getProjectionMatrix() const ;
+		Matrix4				getViewMatrix() const;
+		Matrix4				getProjectionMatrix() const ;
 
 	private:
 
@@ -77,10 +67,10 @@ namespace GG
 
 		std::string			_name;
 
-		Matrix4			_viewMat;
-		Matrix4			_projectionMat;
+		Matrix4				_viewMat;
+		Matrix4				_projectionMat;
 
-		Vector4			_cachedClearColor;
-		Vector4			_cachedViewport;
+		Vector4				_cachedClearColor;
+		Vector4				_cachedViewport;
 	};
 }
