@@ -15,8 +15,7 @@
 #include <GG/Core.h>
 #include <GG/Input.h>
 #include <GG/EntitySystem.h>
-
-#include "materials/UnlitMaterial.h"
+#include <GG/Graphics/MaterialSerializer.h>
 
 using namespace GG;
 
@@ -86,7 +85,23 @@ std::string loadFile(const std::string & filename)
 
 void PitWizard::doGameLoop()
 {
-	UnlitMaterial * gridMat = new UnlitMaterial();
+	Material * gridMat = new Material();
+	std::string jsonMat = loadFile("ram://mat.txt");
+	MaterialSerializer matSerializer;
+	//matSerializer.serialize(*gridMat, jsonMat);
+	matSerializer.deserialize(*gridMat, jsonMat);
+
+	/*s3eFile * _fileHandle = s3eFileOpen("ram://mat.txt", "w");
+
+	s3eFileWrite(
+		jsonMat.data(),
+		sizeof(char),
+		jsonMat.size() * sizeof(char),
+		_fileHandle
+	);
+
+	s3eFileFlush(_fileHandle);
+*/
 	Model gridModel;
 	gridModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
 	ObjLoader::loadFromFile("./resources/environments/forest_road/models/grid.obj", gridModel);
@@ -120,10 +135,10 @@ void PitWizard::doGameLoop()
 	boxNode_2->setParent(boxNode_1);
 
 	GG::Camera * cam = world->createCamera("Camera_1");
-	cam->setPerspective(Angle::FromDegrees(60.0f), aspect, 0.1f, 300.0f);
+	cam->setPerspective(Angle::FromDegrees(80.0f), aspect, 0.1f, 300.0f);
 	cam->setViewport(0, 0, 1, 1);
 	cam->setClearMode(RenderState::ClearMode::CM_DEPTH | RenderState::ClearMode::CM_COLOR);
-	cam->setClearColor(GG::Vector4(0.1f, 0.03f, 0.14f, 1));
+	cam->setClearColor(GG::Vector4(0.43f, 0.48f, 0.67f, 1.0f));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
 	camNode_1->setPosition(Vector3(0.0f, 3.0f, -7.0f));
 	camNode_1->lookAt(boxNode_1);
@@ -183,7 +198,7 @@ void PitWizard::doGameLoop()
 		float walk		= inputSystem->getAxis( "Walk" );
 		float strafe	= inputSystem->getAxis( "Strafe" );
 
-		Vector3 move =	(camNode_1->forward() * walk) +
+		Vector3 move =	(Vector::forward() * walk) +
 						(camNode_1->right() * strafe);
 
 		move = glm::length2(move) > 0.001f ? glm::normalize(move): move;

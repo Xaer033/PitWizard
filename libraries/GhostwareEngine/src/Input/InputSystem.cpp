@@ -192,7 +192,7 @@ namespace GG
 		float delta	= a - o;
 
 		outputRange = ( ( fabsf( delta ) < e.dead ) ? 0.0f : delta ) * e.sensitivity;
-		TRACE_DEBUG( "Axis: %f, Prev: %f, Delta: %f, Range: %f", a, o, delta, outputRange );
+		//TRACE_DEBUG( "Axis: %f, Prev: %f, Delta: %f, Range: %f", a, o, delta, outputRange );
 		return true;
 	}
 

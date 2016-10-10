@@ -139,7 +139,7 @@ namespace GG
 				fabsf( tangent.y ) < kEpsilon &&
 				fabsf( tangent.z ) < kEpsilon)
 			{
-				LOG_WARNING("Tangent vector has length of 0");
+				TRACE_WARNING("Tangent vector has length of 0");
 			}
 
 			for( uint j = 0; j < 3; ++j )
@@ -153,12 +153,12 @@ namespace GG
     
     void StaticGeometryBuffer::build( DrawHint drawHint )
 	{
+		if(getVertexProperties() & TANGENTS)
+			_generateTangents();
 
 		_generateIndices();
 		
-		if( getVertexProperties() & TANGENTS )
-			_generateTangents();
-
+		
         if( _vertexBufferHandle == 0 )
             glGenBuffers( 1, &_vertexBufferHandle );
 
@@ -320,12 +320,12 @@ namespace GG
 	///check 2 verticies to see if they're the same
     bool StaticGeometryBuffer::_isSameVertex( const Vertex & v1, const Vertex & v2 ) const
 	{
-		const float limit = 0.001f;
+		const float kLimit = 0.001f;
 
 		Vector3 deltaPos	= v1.position - v2.position;
-		bool posResult		= (	fabsf( deltaPos.x ) < limit && 
-								fabsf( deltaPos.y ) < limit &&
-								fabsf( deltaPos.z ) < limit	);
+		bool posResult		= (	fabsf( deltaPos.x ) < kLimit && 
+								fabsf( deltaPos.y ) < kLimit &&
+								fabsf( deltaPos.z ) < kLimit	);
 
         int vertexProperties = getVertexProperties();
 
@@ -333,36 +333,36 @@ namespace GG
 		if( vertexProperties & GG::TEXCOORDS )
 		{
 			Vector2 deltaTex = v1.texCoord - v2.texCoord;
-			texResult = (fabsf(deltaTex.x) < limit &&
-						 fabsf(deltaTex.y) < limit);
+			texResult = (fabsf(deltaTex.x) < kLimit &&
+						 fabsf(deltaTex.y) < kLimit);
 		}
 
 		bool normalResult = true;
 		if( vertexProperties & GG::NORMALS )
 		{
 			Vector3 deltaNormal = v1.normal - v2.normal;
-			normalResult = (fabsf(deltaNormal.x) < limit &&
-							fabsf(deltaNormal.y) < limit &&
-							fabsf(deltaNormal.z) < limit);
+			normalResult = (fabsf(deltaNormal.x) < kLimit &&
+							fabsf(deltaNormal.y) < kLimit &&
+							fabsf(deltaNormal.z) < kLimit);
 		}
 		
 		bool colorResult = true;
 		if( vertexProperties & GG::COLORS )
 		{
 			Vector4 deltaColor = v1.color - v2.color;
-			colorResult =  (fabsf(deltaColor.x) < limit &&
-							fabsf(deltaColor.y) < limit &&
-							fabsf(deltaColor.z) < limit &&
-							fabsf(deltaColor.w) < limit);
+			colorResult =  (fabsf(deltaColor.x) < kLimit &&
+							fabsf(deltaColor.y) < kLimit &&
+							fabsf(deltaColor.z) < kLimit &&
+							fabsf(deltaColor.w) < kLimit);
 		}
 
 		bool tangentResult = true;
 		if( vertexProperties & GG::TANGENTS )
 		{
 			Vector3 deltaTangent = v1.tangent - v2.tangent;
-			tangentResult = (fabsf(deltaTangent.x) < limit &&
-							 fabsf(deltaTangent.y) < limit &&
-							 fabsf(deltaTangent.z) < limit);
+			tangentResult = (fabsf(deltaTangent.x) < kLimit &&
+							 fabsf(deltaTangent.y) < kLimit &&
+							 fabsf(deltaTangent.z) < kLimit);
 		}
 
 		return posResult && texResult && normalResult && colorResult && tangentResult;

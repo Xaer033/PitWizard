@@ -99,7 +99,7 @@ namespace GG
 		}
 	}
 
-	void RenderFactory::addCommand(BaseMaterial * mat, Model * geo, const Matrix4 & worldMatrix )
+	void RenderFactory::addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( 
 			RenderCommand3D { mat, geo, worldMatrix } 
@@ -133,7 +133,7 @@ namespace GG
 	void RenderFactory::_render3DList(const Camera * camera)
 	{
 		RenderState * rs = RenderState::getInstance();
-		BaseMaterial *	currentMat		= nullptr;
+		Material *	currentMat		= nullptr;
 
 		Matrix4 viewProjection = rs->getProjectionMatrix() * rs->getViewMatrix();
 
@@ -151,16 +151,18 @@ namespace GG
 
 			rs->setModelMatrix(command->modelMatrix);
 
-			BaseMaterial * mat = command->material;
+			Material * mat = command->material;
 			if(mat != nullptr && mat != currentMat)
 			{
 				_setMaterial(mat);
 				currentMat = mat;
 			}
-
+		
 			_tempShader->setParameter("inMVP", viewProjection * command->modelMatrix);
+			_tempShader->setParameter("inViewMat", rs->getViewMatrix());
 			_tempShader->setParameter("inModelMat", command->modelMatrix);
 			_tempShader->setParameter("inEyePos", camera->getEntity()->getSceneNode()->getWorldPosition());
+			
 
 			if( command->geometry != nullptr )
 			{ 
@@ -240,7 +242,7 @@ namespace GG
 		);
 	}
 	
-	void RenderFactory::_setMaterial(BaseMaterial * material)
+	void RenderFactory::_setMaterial(Material * material)
 	{
 		if(material == nullptr)
 		{
@@ -249,20 +251,39 @@ namespace GG
 		}
 
 		RenderState * rs = RenderState::getInstance();
-		rs->setBlendmode(material->materialBlock.blendMode);
-		rs->setCullMode(material->materialBlock.cullMode);
-		rs->setDepthTesting(material->materialBlock.isDepthTesting);
+		rs->setBlendmode(material->renderStateBlock.blendMode);
+		rs->setCullMode(material->renderStateBlock.cullMode);
+		rs->setDepthTesting(material->renderStateBlock.isDepthTesting);
+		rs->setWindingMode(material->renderStateBlock.windingMode);
 		rs->setDepthRange(
-			material->materialBlock.depthRange.x,
-			material->materialBlock.depthRange.y
+			material->renderStateBlock.depthRange.x,
+			material->renderStateBlock.depthRange.y
 		);
 
 		_tempShader->bind();
+		static float t = 0.0f;
+		t += 0.016f;
+		_tempShader->setParameter("time", t);
 
 		_tempShader->setParameter("tintColor", Vector4(1.0f));
 		_tempShader->setParameter("albedoMap", 0, _tempTexture->getId());
 		_tempShader->setParameter("roughnessMap", 1, _roughnessTex->getId());
 		_tempShader->setParameter("normalMap", 2, _normalTex->getId());
+
+		_tempShader->setParameter("lightList[0].position", Vector3(1.0f, 3.0f, 5.0f));
+		_tempShader->setParameter("lightList[0].color", Vector4(.8, 0.749, 0.681, 6.0f));
+		_tempShader->setParameter("lightList[0].radius", 20.0f);
+		_tempShader->setParameter("lightList[0].type", 1);
+
+		_tempShader->setParameter("lightList[1].position", Vector3((sinf(t) * 10.0f) - 5.0f, 4.0f, -8.0f));
+		_tempShader->setParameter("lightList[1].color", Vector4(.3, 0.849, 0.481, 3.5f));
+		_tempShader->setParameter("lightList[1].radius", 20.0f);
+		_tempShader->setParameter("lightList[1].type", 1);
+
+		_tempShader->setParameter("lightList[2].position", Vector3(10.0f, 3.0f, (cosf(t* 3.0f) * 10.0f) - 5.0f));
+		_tempShader->setParameter("lightList[2].color", Vector4(.8f, 0.849, 0.21, 1.5f));
+		_tempShader->setParameter("lightList[2].radius", 7.0f);
+		_tempShader->setParameter("lightList[2].type", 1);
 
 		//material->bindMaterialToShader(_tempShader);
 	}

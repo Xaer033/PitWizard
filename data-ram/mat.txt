@@ -1,0 +1,43 @@
+{
+   "materialValues" : [
+      {
+         "name" : "thing",
+         "type" : "int",
+         "value" : 2
+      },
+      {
+         "name" : "uvThing",
+         "type" : "vector2",
+         "value" : [ 1, 399 ]
+      },
+      {
+         "name" : "eyePos",
+         "type" : "vector3",
+         "value" : [ 2, 4, 1 ]
+      },
+      {
+         "name" : "tintColorz",
+         "type" : "vector4",
+         "value" : [ 1, 0.20000000298023224, 0.30000001192092896, 1 ]
+      },
+      {
+         "name" : "normalMap",
+         "type" : "texture",
+         "value" : 43
+      },
+      {
+         "name" : "albedo",
+         "type" : "texture",
+         "value" : 23
+      }
+   ],
+   "renderStateBlock" : {
+      "blendMode" 	: "none",
+      "cullMode" 	: "back",
+	  "windingMode"	: "ccw",
+      "depthRange" 	: [ 0, 1 ],
+      "depthTest" 	: true,
+      "shaderId" 	: -1
+   },
+   "version" : 1
+}

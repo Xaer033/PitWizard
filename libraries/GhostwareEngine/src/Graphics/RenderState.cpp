@@ -82,10 +82,10 @@ namespace GG
 
 	void RenderState::setBlendmode( const BlendMode mode )
 	{
-		if( _cachedBlendmode == mode )
+		if( _cachedBlendMode == mode )
 			return;
 
-		_cachedBlendmode = mode;
+		_cachedBlendMode = mode;
 
 
         if( mode == BM_NONE )
@@ -106,6 +106,15 @@ namespace GG
 		}
 	}
 
+	void RenderState::setWindingMode(const WindingMode windingMode)
+	{
+		if(_cachedWindingMode == windingMode)
+			return;
+
+		_cachedWindingMode = windingMode;
+
+		glFrontFace(windingMode);
+	}
 
 	void RenderState::setRenderSize( int width, int height )
 	{
@@ -160,7 +169,9 @@ namespace GG
 
 		_cachedFrameBuffer	= 0;
 
-		_cachedCullMode		= CULL_BACK;
+		_cachedCullMode		= (CullMode)-1;
+		_cachedWindingMode	= (WindingMode)-1;
+		_cachedBlendMode	= (BlendMode)-1;
 
 		_renderWidth		= IwGLGetInt( IW_GL_WIDTH );
 		_renderHeight		= IwGLGetInt( IW_GL_HEIGHT );

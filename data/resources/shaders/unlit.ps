@@ -1,5 +1,16 @@
 precision mediump float;
 
+struct Light
+{
+	vec3	position;
+	vec4	color;
+	float	radius;
+	int		type;
+};
+#define MAX_LIGHTS 3
+
+uniform Light		lightList[MAX_LIGHTS];
+
 uniform vec4		tintColor;
 uniform vec3		inEyePos;
 uniform sampler2D	albedoMap;
@@ -13,16 +24,14 @@ varying vec4		worldPos;
 varying mat3		tbnMat;
 varying vec3		tangent;
 varying vec3		bitangent;
+varying vec4		viewSpace;
 
 
-float cookTorrenceSpecular( vec3 inNormal, vec3 inLightDir, vec3 inEyeDir, float inRoughness )
+float cookTorrenceSpecular( vec3 inNormal, vec3 inLightDir, vec3 inEyeDir, float inRoughness, float F0 )
 {
 	const float PI = 3.14159;
 
-	//Material Values
-	const float F0 = 0.8; // fresnel reflectance at normal incidence
-
-	vec3 eyeDir = normalize(inEyeDir);
+	vec3 eyeDir = inEyeDir;
 
 	// calculate intermediary values
 	float NdotL		= dot(inNormal, inLightDir);
@@ -61,8 +70,8 @@ float orenNayarLighting(vec3 inNormal, vec3 inLightDir, vec3 inEyeDir, float rou
     const float PI = 3.14159;
 
     // interpolating normals will change the length of the normal, so renormalize the normal.
-    vec3 normal = normalize(inNormal);
-    vec3 eyeDir = normalize(inEyeDir);
+    vec3 normal = inNormal;
+    vec3 eyeDir = inEyeDir;
     
     // calculate intermediary values
     float NdotL = dot(normal, inLightDir);
@@ -123,44 +132,70 @@ float getAttinuation( float radius, float distance )
 
 vec3 unpackNormal( mat3 inTBNMat, vec3 tangentNormal )
 {
-	vec3 outNormal = (tangentNormal * 2.0 - 1.0) * 0.5;
+	vec3 outNormal = tangentNormal * 2.0 - 1.0;
 	return normalize(inTBNMat * outNormal);
+}
+
+float fogAmount( in float distance, in float density )
+{
+	float fogFactor = 1.0 /exp( (distance * density)* (distance * density));
+	return 1.0 - clamp( fogFactor, 0.0, 1.0 );
 }
 
 void main()
 { 
-	vec4 albedoTex		= texture2D( albedoMap, uv );
-	vec4 roughnessTex	= texture2D( roughnessMap, uv );
-	vec4 normalTex		= texture2D( normalMap, uv);
 
-	vec3 worldNormal	= normal;//unpackNormal( tbnMat, normalTex.xyz );
+	const float uvScale = 12.0;
 
-	const vec4	lightPos		= vec4(0, 5, 0, 1);
-	const vec4	lightColor		= vec4(1.0, 0.93, 0.83, 1.0);
+	vec4 albedoTex		= texture2D( albedoMap, uv * uvScale );
+	vec4 roughnessTex	= texture2D( roughnessMap, uv * uvScale );
+	vec4 normalTex		= texture2D( normalMap, uv * uvScale);
+	
+	const float F0 = 0.474;
+	float k		= 1.0 - F0;
 
-	const float lightIntensity	= 3.0;
-	const float lightRadius		= 20.0;
-	const float k				= 0.5;
-	float roughness				= 1.0 - roughnessTex.r;
+	float roughness		= 1.0 - roughnessTex.r;
+	vec3 worldNormal	= normalize(normal);//unpackNormal( tbnMat, normalTex.xyz );
+	
+	vec3 eyeDir			= normalize(inEyePos - worldPos.xyz); 
+	float fogDist		= distance(worldPos.xyz, inEyePos);
 
-	vec3 lightDir	= (lightPos - worldPos).xyz;
-	float dirMag	= length(lightDir);
-	lightDir		= normalize(lightDir);
-
-	float attin		= getAttinuation(lightRadius, dirMag);
-
-	vec3 eyeDir		= normalize(inEyePos - worldPos.xyz); 
-//Diffuse reflection
-	float diffuse	= orenNayarLighting(worldNormal, lightDir, eyeDir, roughness);
-
-//Specular reflection
-	float NdotL		= dot(normal, lightDir);
-	float specular	= 1.0;
-	if(NdotL > 0.0 )
+	vec4 ambient		= vec4(albedoTex.xyz * 0.01, 0);
+	
+	vec3 lightContrib	= vec3(0);
+	for(int i = 0; i < MAX_LIGHTS; ++i)
 	{
-		specular	= k + cookTorrenceSpecular(worldNormal, lightDir, eyeDir, roughness) * (1.0 - k);
-	}
+		bool directional = lightList[i].type == 0;
+		vec3 lightDir	= -lightList[i].position;
+		float attin		= 1.0;
+		
 
-	vec4 finalColor = albedoTex * lightColor * max(diffuse * specular * lightIntensity * attin, 0.02);
-	gl_FragColor	= finalColor;
+		if(!directional)
+		{
+			lightDir	= lightList[i].position - worldPos.xyz;
+			float dirMag	= length(lightDir);
+			attin		= getAttinuation(lightList[i].radius, dirMag);
+		}
+
+		
+		lightDir		= normalize(lightDir);
+		
+	//Diffuse reflection
+		float diffuse	= dot(normal, lightDir) * (1.0 - F0);
+
+	//Specular reflection
+		float specular	= 0.0;
+		if(diffuse > 0.0 )
+		{
+			specular	= k + cookTorrenceSpecular(worldNormal, lightDir, eyeDir, roughness, F0) * (1.0 - k);
+		}
+
+		lightContrib += lightList[i].color.rgb * lightList[i].color.a * diffuse * specular * attin;
+	}
+	
+	float depth = length(viewSpace);
+	float fog = fogAmount(depth, 0.011);
+
+	vec4 finalColor = ambient + albedoTex * vec4(lightContrib, 1.0);
+	gl_FragColor	= mix(clamp(finalColor, vec4(0), vec4(1)), vec4(0.43, 0.48, 0.67, 1), fog);
 }

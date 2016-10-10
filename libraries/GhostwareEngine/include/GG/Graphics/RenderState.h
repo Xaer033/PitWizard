@@ -50,6 +50,12 @@ namespace GG
 			CULL_FRONT_AND_BACK = GL_FRONT_AND_BACK
 		};
 
+		enum WindingMode
+		{
+			WM_CLOCKWISE = GL_CW,
+			WM_COUNTER_CLOCKWISE = GL_CCW
+		};
+
 	public:
 		static RenderState * getInstance()
 		{
@@ -80,6 +86,8 @@ namespace GG
 
 		void	setCullMode(const CullMode cullMode);
 
+		void	setWindingMode(const WindingMode windingMode);
+
 		void	bindTexture2d(uint samplerID, const Texture & texture);
 		void	bindShader(const Shader & shader);
 
@@ -102,13 +110,15 @@ namespace GG
 
 		TextureCache		_cachedTextures;
 
-		BlendMode			_cachedBlendmode;
+		BlendMode			_cachedBlendMode;
 
 		bool				_cachedDepthTest;
 
 		uint				_cachedFrameBuffer;
 
 		CullMode			_cachedCullMode;
+
+		WindingMode			_cachedWindingMode;
 
 		Matrix4				_modelMatrix;
 		Matrix4				_viewMatrix;

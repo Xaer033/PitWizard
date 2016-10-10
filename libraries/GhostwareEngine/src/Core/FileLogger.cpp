@@ -17,9 +17,7 @@ namespace GG
 
 	void FileLogger::init()
 	{
-#ifdef _DEBUG
 		_fileHandle = s3eFileOpen( _filePath.c_str(), "w" );
-#endif
 		IwAssert( LOGGING, _fileHandle != nullptr );
 	}
 

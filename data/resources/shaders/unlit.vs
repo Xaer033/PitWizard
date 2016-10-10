@@ -8,6 +8,7 @@ attribute mediump vec3		inBitangent;
 
 uniform mediump mat4    	inMVP;
 uniform mediump	mat4		inModelMat;
+uniform mediump mat4		inViewMat;
 
 varying vec2	uv;
 varying vec3	normal;
@@ -15,14 +16,15 @@ varying vec4	worldPos;
 varying mat3	tbnMat;
 varying vec3	tangent;
 varying vec3	bitangent;
-
+varying vec4	viewSpace;
 void main() 
 { 
 	gl_Position =	inMVP * inVert;
 
 	uv          = inUV0; 
 	worldPos	= inModelMat * inVert;
-	
+	viewSpace	= inViewMat * inModelMat * inVert;
+
 	normal		= (inModelMat * vec4(inNormal, 0)).xyz;
 	tangent		= (inModelMat * vec4(inTangent, 0)).xyz;
 	bitangent	= (inModelMat * vec4(inBitangent, 0)).xyz;

@@ -70,7 +70,7 @@ namespace GG
 		if(_image == nullptr)
 			return false;
 
-		int interalFormat = (_image->HasAlpha() > 0) ? GL_RGBA : GL_RGB;
+		int internalFormat = (_image->HasAlpha() > 0) ? GL_RGBA : GL_RGB;
 
 		if(_id == 0)
 			glGenTextures(1, &_id);
@@ -78,7 +78,7 @@ namespace GG
 		glBindTexture(GL_TEXTURE_2D, _id);
 
 		//gluBuild2DMipmaps( GL_TEXTURE_2D, 4, texture.getSize().x, texture.getSize().y, GL_RGBA, GL_UNSIGNED_BYTE, texture.getPixelsPtr() );
-		glTexImage2D(GL_TEXTURE_2D, 0, interalFormat, _image->GetWidth(), _image->GetHeight(), 0, interalFormat, GL_UNSIGNED_BYTE, _image->GetTexels());
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _image->GetWidth(), _image->GetHeight(), 0, internalFormat, GL_UNSIGNED_BYTE, _image->GetTexels());
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);// GL_CLAMP_TO_EDGE);

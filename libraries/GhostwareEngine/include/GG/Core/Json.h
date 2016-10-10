@@ -8,5 +8,6 @@ namespace GG
 
 	// *TODO use Resource Manager
 	json JsonFromFile( const std::string & filename );
+	json JsonFromString(const std::string & str);
 	
 }

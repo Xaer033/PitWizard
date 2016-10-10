@@ -9,10 +9,7 @@ files
 	"*.cpp"
     "*.h"
 	
-	[PitWizard/src/Materials]
-	(PitWizard/src/materials)
-	#"*.cpp"
-	"*.h"
+	
 	
 #Game Asset Files
 	(data/resources)

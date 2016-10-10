@@ -24,7 +24,7 @@ namespace GG
 		RenderFactory();
 		~RenderFactory();
 
-		void		addCommand(BaseMaterial * mat, Model * geo, const Matrix4 & worldMatrix );
+		void		addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix );
 		
 		void		clearAllCommands();
 		void		renderAll( const Camera * camera );
@@ -38,7 +38,7 @@ namespace GG
 		void		_setViewport( const Vector4 & viewport ) const;
 		void		_clearRenderBuffer( const Vector4 & clearColor, uint clearMode ) const;
 		
-		void		_setMaterial( BaseMaterial * material);
+		void		_setMaterial( Material * material);
 		void		_render3DList(const Camera * camera);
 
 	
