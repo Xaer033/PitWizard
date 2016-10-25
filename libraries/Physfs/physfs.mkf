@@ -1,0 +1,42 @@
+#!/usr/bin/env mkb
+
+
+files
+{
+    [source]
+	"*.c"
+	"*.h"
+	"platform/windows.c"
+	"platform/posix.c"
+	"platform/macosx.c"
+	"platform/unix.c"
+	"platform/pocketpc.c"
+	"platform/os2.c"
+	
+	(archivers)
+	"*.c"
+	
+	#(platform)
+	#"*.c"
+	
+	(zlib123)
+	"*.c"
+	"*.h"
+   
+}
+
+includepaths
+{
+	.
+    #archivers
+	#platform
+	#zlib123
+}
+
+define PHYSFS_SUPPORTS_ZIP=1
+define PHYSFS_SUPPORTS_GRP=1
+define PHYSFS_SUPPORTS_WAD=1
+define PHYSFS_SUPPORTS_HOG=1
+define PHYSFS_SUPPORTS_MVL=1
+define PHYSFS_SUPPORTS_QPAK=1
+define PHYSFS_NO_CDROM_SUPPORT=1
