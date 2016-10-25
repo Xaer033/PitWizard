@@ -1,6 +1,0 @@
-CIwMaterial
-{
-    name "groundPlane/groundMat"
-    colAmbient {0.200000,0.200000,0.200000,1.000000}
-    colDiffuse {0.800000,0.800000,0.800000,1.000000}
-}

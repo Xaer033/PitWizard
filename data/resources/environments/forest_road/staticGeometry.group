@@ -1,7 +1,0 @@
-// Source file: C:\GameDev\Projects\PitWizard\data\resources\environments\forest_road\staticGeometry.fbx
-CIwResGroup
-{
-    name "staticGeometry"
-    "./models/grid.geo"
-    "./models/groundPlane.geo"
-}
