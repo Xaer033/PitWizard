@@ -1,0 +1,36 @@
+{
+
+   "version" 	: 1,
+   "group"		: "default",
+   
+   "paths" :
+   [
+		"resources/TestGroup.zip"
+   ],
+
+   "resources" 	: 
+   [
+		{
+			"id"			: "brick_albedo",
+			"type"			: "Texture2D",
+			"source"		: "textures/brick_albedo.png",
+			"mipMapping" 	: true,
+			"wrapMode"		: "repeat"
+		},
+		{
+			"id"			: "brick_spec",
+			"type"			: "Texture2D",
+			"source"		: "textures/brick_spec.png",
+			"mipMapping" 	: true,
+			"wrapMode"		: "repeat"
+		},
+		{
+			"id"			: "brick_norm",
+			"type"			: "Texture2D",
+			"source"		: "textures/brick_norm.png",
+			"mipMapping" 	: true,
+			"wrapMode"		: "repeat"
+		}
+		
+   ]
+}

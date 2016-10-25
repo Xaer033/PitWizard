@@ -15,7 +15,7 @@ public:
 	virtual void		doGameLoop()		final;
 	virtual void		shutdown()			final;
 
-	GG::InputSystem	*	inputSystem;
+	std::unique_ptr<GG::InputSystem>	inputSystem;
 
 private:
 	void				_setupLoggers();

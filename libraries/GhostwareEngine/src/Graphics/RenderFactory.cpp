@@ -11,6 +11,7 @@
 #include <GG/Core/Log.h>
 #include <GG/Core/MathDebug.h>
 #include <GG/Graphics/IVertexBuffer.h>
+#include <GG/Resources/ResourceManager.h>
 
 namespace GG
 {
@@ -63,31 +64,18 @@ namespace GG
 
 	RenderFactory::RenderFactory() : _tempShader(nullptr)
 	{
-		_tempTexture = new Texture();
-		_tempTexture->loadFromFile("./resources/environments/forest_road/textures/brick_albedo.png");
-		_tempTexture->uploadToGPU();
-		
-		_roughnessTex = new Texture();
-		_roughnessTex->loadFromFile("./resources/environments/forest_road/textures/brick_spec.png");
-		_roughnessTex->uploadToGPU();
+		ResourceManager * rm = ResourceManager::GetInstance();
+		_tempTexture	= rm->getResource<Texture2D>(STRING_ID("brick_albedo"));
+		_roughnessTex	= rm->getResource<Texture2D>(STRING_ID("brick_spec"));
+		_normalTex		= rm->getResource<Texture2D>(STRING_ID("brick_norm"));
 
-		_normalTex = new Texture();
-		_normalTex->loadFromFile("./resources/environments/forest_road/textures/brick_norm.png");
-		_normalTex->uploadToGPU();
 
 		loadTempShader();
 	}
 
 	RenderFactory::~RenderFactory()
 	{
-		if(_tempTexture != nullptr)
-			delete _tempTexture;
 
-		if(_roughnessTex != nullptr)
-			delete _roughnessTex;
-
-		if(_normalTex != nullptr)
-			delete _normalTex;
 	}
 
 	void RenderFactory::loadTempShader()
@@ -122,8 +110,8 @@ namespace GG
 		_setViewport( camera->getViewport() );
 		_clearRenderBuffer( camera->getClearColor(), camera->getClearMode() );
 
-		RenderState::getInstance()->setViewMatrix(camera->getViewMatrix());
-		RenderState::getInstance()->setProjectionMatrix(camera->getProjectionMatrix());
+		RenderState::GetInstance()->setViewMatrix(camera->getViewMatrix());
+		RenderState::GetInstance()->setProjectionMatrix(camera->getProjectionMatrix());
 
 		_render3DList(camera);
 	}
@@ -132,7 +120,7 @@ namespace GG
 
 	void RenderFactory::_render3DList(const Camera * camera)
 	{
-		RenderState * rs = RenderState::getInstance();
+		RenderState * rs = RenderState::GetInstance();
 		Material *	currentMat		= nullptr;
 
 		Matrix4 viewProjection = rs->getProjectionMatrix() * rs->getViewMatrix();
@@ -174,7 +162,7 @@ namespace GG
 
 	void RenderFactory::_setViewport( const Vector4 & viewport ) const
 	{
-		RenderState::getInstance()->setViewport(viewport);
+		RenderState::GetInstance()->setViewport(viewport);
 	}
 
 	void RenderFactory:: _clearRenderBuffer( 
@@ -183,8 +171,8 @@ namespace GG
 	{
 		if( clearMode != RenderState::ClearMode::CM_NONE )
 		{
-			RenderState::getInstance()->setClearColor(clearColor);
-			RenderState::getInstance()->clearRenderBuffer(clearMode);
+			RenderState::GetInstance()->setClearColor(clearColor);
+			RenderState::GetInstance()->clearRenderBuffer(clearMode);
 		}
 	}
 
@@ -250,7 +238,7 @@ namespace GG
 			return;
 		}
 
-		RenderState * rs = RenderState::getInstance();
+		RenderState * rs = RenderState::GetInstance();
 		rs->setBlendmode(material->renderStateBlock.blendMode);
 		rs->setCullMode(material->renderStateBlock.cullMode);
 		rs->setDepthTesting(material->renderStateBlock.isDepthTesting);
@@ -266,9 +254,9 @@ namespace GG
 		_tempShader->setParameter("time", t);
 
 		_tempShader->setParameter("tintColor", Vector4(1.0f));
-		_tempShader->setParameter("albedoMap", 0, _tempTexture->getId());
-		_tempShader->setParameter("roughnessMap", 1, _roughnessTex->getId());
-		_tempShader->setParameter("normalMap", 2, _normalTex->getId());
+		_tempShader->setParameter("albedoMap", 0, _tempTexture.get()->getId());
+		_tempShader->setParameter("roughnessMap", 1, _roughnessTex.get()->getId());
+		_tempShader->setParameter("normalMap", 2, _normalTex.get()->getId());
 
 		_tempShader->setParameter("lightList[0].position", Vector3(1.0f, 3.0f, 5.0f));
 		_tempShader->setParameter("lightList[0].color", Vector4(.8, 0.749, 0.681, 6.0f));

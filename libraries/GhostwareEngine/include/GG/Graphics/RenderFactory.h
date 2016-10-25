@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include <IwGraphics.h>
-
 #include <GG/Core/Vector.h>
 #include "RenderCommand3D.h"
 #include "Camera.h"
@@ -12,6 +10,7 @@
 #include "Model.h"
 #include "RenderState.h"
 #include "Shader.h"
+#include "GG/Resources//ResourceHandle.h"
 
 namespace GG
 {
@@ -45,8 +44,9 @@ namespace GG
 	private:
 		Shader *						_tempShader;
 		RenderCommand3DList				_renderCommand3DList;
-		Texture	*						_tempTexture;
-		Texture *						_roughnessTex;
-		Texture *						_normalTex;
+
+		ResourceHandle<Texture2D>		_tempTexture;
+		ResourceHandle<Texture2D>		_roughnessTex;
+		ResourceHandle<Texture2D>		_normalTex;
 	};
 }

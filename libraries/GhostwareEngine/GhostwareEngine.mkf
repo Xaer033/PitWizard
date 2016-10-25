@@ -50,6 +50,15 @@ files
 		
 	(src/EntitySystem)
 		"*.cpp"
+		
+# Resources -------------------
+	[GG/Resources]
+	(include/GG/Resources)
+		"*.h"
+		
+	(src/Resources)
+		"*.cpp"
+	
 }
 
 
@@ -62,4 +71,5 @@ includepaths
 	"include/GG/Input"
 	"include/GG/Core"
 	"include/GG/EntitySystem"
+	"include/GG/Resources"
 }

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <chrono>
 
+#include <Physfs/physfs.h>
 
 #include "s3e.h"
 
@@ -15,7 +16,11 @@
 #include <GG/Core.h>
 #include <GG/Input.h>
 #include <GG/EntitySystem.h>
+
 #include <GG/Graphics/MaterialSerializer.h>
+
+#include <GG/Resources/ResourceManager.h>
+#include <GG/Resources/IResourceDescriptor.h>
 
 using namespace GG;
 
@@ -33,7 +38,20 @@ PitWizard::~PitWizard()
 void PitWizard::init()
 {
 	_setupLoggers();
-	Application::init();
+
+	s3eSurfaceSetup(S3E_SURFACE_PIXEL_TYPE_RGB888);
+
+	//Initialise graphics system(s)
+	if(!IwGLInit())
+	{
+		TRACE_ERROR("IwGLInit failed");
+		return;
+	}
+
+	IwGLSwapBuffers();
+	s3eDeviceYield(0);
+
+
 
 	_deviceWidth	= IwGLGetInt(IW_GL_WIDTH);
 	_deviceHeight	= IwGLGetInt(IW_GL_HEIGHT);
@@ -48,20 +66,40 @@ void PitWizard::init()
 
 	_test = nullptr;
 
+
 	json config = JsonFromFile("configs/input_config.json");
-	//inputSystem = new InputSystem(IwGxGetScreenWidth(), IwGxGetScreenHeight());
-	inputSystem = new InputSystem(_deviceWidth, _deviceHeight);
+	inputSystem = std::unique_ptr<InputSystem>(new InputSystem(_deviceWidth, _deviceHeight));
 	inputSystem->init(config);
-	RenderState::getInstance()->setRenderSize(_deviceWidth, _deviceHeight);
+
+	RenderState::GetInstance()->setRenderSize(_deviceWidth, _deviceHeight);
+
+	PHYSFS_init(nullptr);
+
+	const char* error = PHYSFS_getLastError();
+	PHYSFS_mount("rom://", NULL, 1);
+	PHYSFS_mount("ram://", NULL, 1);
+	PHYSFS_mount("/", NULL, 1);
+	PHYSFS_setWriteDir("ram://");
+
+	const PHYSFS_ArchiveInfo **i = PHYSFS_supportedArchiveTypes();
+	for(; *i != NULL; i++)
+	{
+		LOG_INFO("INFO: %s, %s", (*i)->extension, (*i)->description);
+	}
+
+	ResourceManager::GetInstance()->registerType<Texture2D>();
+	FileStream stream("resources/TestGroup.group", OpenMode::OPEN_READ);
+	ResourceGroup* group = ResourceManager::GetInstance()->createGroup(&stream);
+	group->loadAllAssets();
 }
 
 void PitWizard::shutdown()
 {
+	PHYSFS_deinit();
 	inputSystem->shutdown();
-	delete(inputSystem);
 
 	Log::Shutdown();
-	Application::shutdown();
+	IwGLTerminate();
 }
 
 
@@ -154,7 +192,7 @@ void PitWizard::doGameLoop()
 	groundMeshInstance->geometry	= &groundModel;
 	groundMeshInstance->material	= gridMat;
 	
-	const float camSpeed	= 0.185f;
+	const float camSpeed	= 0.035f;
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while(!s3eDeviceCheckQuitRequest())

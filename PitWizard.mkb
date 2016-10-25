@@ -19,17 +19,14 @@ files
 
 subprojects
 {
-    iwutil
-	iwgeom
-	iwgraphics
-    iwgx
-	iwresmanager
-	iwanim
+	iwgl
     libraries/Photon-cpp/Photon-cpp
 	libraries/Common-cpp/Common-cpp
 	libraries/GhostwareEngine/GhostwareEngine
 	libraries/Glm/glm
+	libraries/Physfs/physfs
 }
+
 
 librarys
 {
@@ -42,6 +39,7 @@ includepaths
 	"libraries/Common-cpp/inc"
 	"libraries/Photon-cpp/inc"
 	"libraries/GhostwareEngine/GhostwareEngine/include"
+	"libraries/Physfs/"
 }
 
 options

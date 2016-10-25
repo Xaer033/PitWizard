@@ -16,7 +16,7 @@ uniform vec3		inEyePos;
 uniform sampler2D	albedoMap;
 uniform sampler2D	roughnessMap;
 uniform sampler2D	normalMap;
-
+uniform float		time;
 
 varying vec2		uv;
 varying vec3		normal;
@@ -151,7 +151,7 @@ void main()
 	vec4 roughnessTex	= texture2D( roughnessMap, uv * uvScale );
 	vec4 normalTex		= texture2D( normalMap, uv * uvScale);
 	
-	const float F0 = 0.474;
+	const float F0 = 0.284;
 	float k		= 1.0 - F0;
 
 	float roughness		= 1.0 - roughnessTex.r;
@@ -194,7 +194,7 @@ void main()
 	}
 	
 	float depth = length(viewSpace);
-	float fog = fogAmount(depth, 0.011);
+	float fog = fogAmount(depth, 0.014);
 
 	vec4 finalColor = ambient + albedoTex * vec4(lightContrib, 1.0);
 	gl_FragColor	= mix(clamp(finalColor, vec4(0), vec4(1)), vec4(0.43, 0.48, 0.67, 1), fog);
