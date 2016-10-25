@@ -35,7 +35,7 @@ PitWizard::~PitWizard()
 
 }
 
-void PitWizard::init()
+void PitWizard::init(int argc, char** argv)
 {
 	_setupLoggers();
 
@@ -73,21 +73,15 @@ void PitWizard::init()
 
 	RenderState::GetInstance()->setRenderSize(_deviceWidth, _deviceHeight);
 
-	PHYSFS_init(nullptr);
-
-	const char* error = PHYSFS_getLastError();
-	PHYSFS_mount("rom://", NULL, 1);
-	PHYSFS_mount("ram://", NULL, 1);
-	PHYSFS_mount("/", NULL, 1);
-	PHYSFS_setWriteDir("ram://");
-
-	const PHYSFS_ArchiveInfo **i = PHYSFS_supportedArchiveTypes();
-	for(; *i != NULL; i++)
-	{
-		LOG_INFO("INFO: %s, %s", (*i)->extension, (*i)->description);
-	}
+	const char * argv0 = (argc > 0) ? argv[0] : nullptr;
+	FileSystem::Init(argv0);
+	FileSystem::Mount("rom://", "/", true);
+	FileSystem::Mount("ram://", "/", true);
+	FileSystem::Mount("/", "/", true);
+	FileSystem::SetWriteDirectory("ram://");
 
 	ResourceManager::GetInstance()->registerType<Texture2D>();
+
 	FileStream stream("resources/TestGroup.group", OpenMode::OPEN_READ);
 	ResourceGroup* group = ResourceManager::GetInstance()->createGroup(&stream);
 	group->loadAllAssets();
@@ -95,11 +89,11 @@ void PitWizard::init()
 
 void PitWizard::shutdown()
 {
-	PHYSFS_deinit();
 	inputSystem->shutdown();
 
 	Log::Shutdown();
 	IwGLTerminate();
+	FileSystem::Shutdown();
 }
 
 

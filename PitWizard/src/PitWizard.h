@@ -5,15 +5,15 @@
 
 class CIwModel;
 
-class PitWizard : public GG::Application
+class PitWizard : public GG::IApplication
 {
 public:
 	PitWizard();
 	~PitWizard();
 
-	virtual void		init()				final;
-	virtual void		doGameLoop()		final;
-	virtual void		shutdown()			final;
+	virtual void		init(int argc, char** argv)	final;
+	virtual void		doGameLoop()				final;
+	virtual void		shutdown()					final;
 
 	std::unique_ptr<GG::InputSystem>	inputSystem;
 

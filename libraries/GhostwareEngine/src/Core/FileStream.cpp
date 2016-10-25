@@ -1,8 +1,7 @@
 
 #include "FileStream.h"
 #include <GG/Core/Log.h>
-
-#include <Physfs/physfs.h>
+#include <GG/Core/FileSystem.h>
 
 namespace GG
 {
@@ -42,7 +41,7 @@ namespace GG
 		if(!_file)
 			return -1;
 
-		return PHYSFS_close(_file);
+		return FileSystem::CloseFile(_file);
 	}
 
 	uint64 FileStream::getSize() const
@@ -52,7 +51,7 @@ namespace GG
 			TRACE_WARNING("Trying to get size from an invalid file stream!");
 			return -1;
 		}
-		return PHYSFS_fileLength(_file);
+		return FileSystem::FileLength(_file);
 	}
 
 
@@ -64,7 +63,7 @@ namespace GG
 			return -1; 
 		}
 
-		return PHYSFS_read(_file, buffer, size, count); 
+		return FileSystem::Read(_file, buffer, size, count); 
 	}
 
 	int64 FileStream::write(const void* buffer, uint32 size, uint32 count)
@@ -75,7 +74,7 @@ namespace GG
 			return -1;
 		}
 
-		return PHYSFS_write(_file, buffer, size, count);
+		return FileSystem::Write(_file, buffer, size, count);
 	}
 
 	int64 FileStream::seek(uint64 position)
@@ -86,7 +85,7 @@ namespace GG
 			return -1;
 		}
 
-		return PHYSFS_seek(_file, position);
+		return FileSystem::Seek(_file, position);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -97,9 +96,9 @@ namespace GG
 	{
 		switch(openMode)
 		{
-		case OpenMode::OPEN_READ:	return PHYSFS_openRead(fileName.c_str());
-		case OpenMode::OPEN_WRITE:	return PHYSFS_openWrite(fileName.c_str());
-		case OpenMode::OPEN_APPEND:	return PHYSFS_openAppend(fileName.c_str());
+		case OpenMode::OPEN_READ:	return FileSystem::OpenFileRead(fileName);
+		case OpenMode::OPEN_WRITE:	return FileSystem::OpenFileWrite(fileName);
+		case OpenMode::OPEN_APPEND:	return FileSystem::OpenFileAppend(fileName);
 		}
 		return nullptr;
 	}

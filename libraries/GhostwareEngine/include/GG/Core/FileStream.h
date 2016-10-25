@@ -1,8 +1,7 @@
 #pragma once
 #include <string>
 #include "IStream.h"
-
-struct PHYSFS_File;
+#include <GG/Core/FileSystem.h>	
 
 namespace GG
 {
@@ -31,8 +30,8 @@ namespace GG
 		virtual uint64	getSize() const;
 
 	private:
-		PHYSFS_File *	_openFile(const std::string & fileName, const OpenMode & openMode) const;
+		FileHandle *	_openFile(const std::string & fileName, const OpenMode & openMode) const;
 	private:
-		PHYSFS_File *	_file;
+		FileHandle *	_file;
 	};
 }

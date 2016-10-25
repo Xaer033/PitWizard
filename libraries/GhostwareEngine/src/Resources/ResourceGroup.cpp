@@ -3,6 +3,7 @@
 
 #include <GG/Core/StringId.h>
 #include <GG/Core/Log.h>
+#include <GG/Core/FileSystem.h>
 #include <GG/Graphics/Texture2D.h>
 #include <cassert>
 #include <Physfs/physfs.h>
@@ -19,10 +20,11 @@ namespace GG
 		Json::Value paths	= j.get("paths", Json::arrayValue);
 		for(uint i = 0; i < paths.size(); ++i)
 		{
-			int result = PHYSFS_mount(paths[i].asCString(), nullptr, 1);
-			if(result != 0)
+			std::string path = paths[i].asString();
+			bool result = FileSystem::Mount(path, "/", false);
+			if(!result)
 			{
-				TRACE_WARNING("Error adding path: %s", PHYSFS_getLastError());
+				TRACE_WARNING("Error adding path: %s", FileSystem::GetLastError());
 			}
 		}
 		return group;
