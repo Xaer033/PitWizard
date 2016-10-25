@@ -4,11 +4,11 @@
 #include <s3e.h> //Temp
 
 #include <GG/Core/Log.h>
+#include <GG/Core/StringId.h>
 
 #include "RenderFactory.h"
 #include "ISceneGraph.h"
 #include "Mesh.h"
-#include "ObjectId.h"
 
 namespace GG
 {
@@ -33,13 +33,13 @@ namespace GG
 		return _graph->createSceneNode( );
 	}
 
-	Mesh * RenderSystem::addMeshComponent( const ObjectId & id )
+	Mesh * RenderSystem::addMeshComponent( const StringId & id )
 	{
 		_meshMap[ id ] = Mesh(nullptr, nullptr);
 		return &_meshMap[ id ];
 	}
 
-	Mesh * RenderSystem::getMeshComponent( const ObjectId & id )
+	Mesh * RenderSystem::getMeshComponent( const StringId & id )
 	{
 		auto iter = _meshMap.find( id );
 		if( iter == _meshMap.end() )
@@ -50,13 +50,13 @@ namespace GG
 		return &iter->second;
 	}
 
-	Camera * RenderSystem::addCamera( const ObjectId & id )
+	Camera * RenderSystem::addCamera( const StringId & id )
 	{
 		_cameraMap[ id ] = Camera();
 		return &_cameraMap[ id ];
 	}
 
-	Camera * RenderSystem::getCamera( const ObjectId & id )
+	Camera * RenderSystem::getCamera( const StringId & id )
 	{
 		auto iter = _cameraMap.find( id );
 		if( iter == _cameraMap.end() )
@@ -69,10 +69,12 @@ namespace GG
 
 	void RenderSystem::renderOneFrame()
 	{
+		// TEMP RESOURCE RELOADING!!! -Julian
 		if(s3eKeyboardGetState(s3eKeyR) & S3E_KEY_STATE_RELEASED)
 		{
 			_renderFactory.loadTempShader();
 		}
+
 		auto it = _cameraMap.begin();
 		for(; it != _cameraMap.end(); ++it )
 		{
@@ -81,7 +83,7 @@ namespace GG
 
 			for( uint i = 0; i < _renderableList.size(); ++i )
 			{
-				RenderableObject * renderable = _renderableList[ i ];
+				IRenderableObject * renderable = _renderableList[ i ];
 				if( renderable == nullptr ) continue;
 
 				renderable->render( _renderFactory );

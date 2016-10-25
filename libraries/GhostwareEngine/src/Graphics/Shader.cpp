@@ -15,7 +15,7 @@
 #include <GG/Core/Matrix.h>
 #include <GG/Core/MathDebug.h>
 #include <GG/Core/Log.h>
-#include <GG/Graphics/Texture.h>
+#include <GG/Graphics/Texture2D.h>
 
 
 namespace GG

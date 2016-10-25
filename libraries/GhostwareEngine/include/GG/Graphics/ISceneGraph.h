@@ -9,7 +9,7 @@
 
 namespace GG
 {
-	typedef std::vector<RenderableObject*> RenderableObjectList;
+	typedef std::vector<IRenderableObject*> RenderableObjectList;
 	class ISceneGraph
 	{
 	public:

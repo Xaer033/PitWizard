@@ -58,25 +58,9 @@ namespace GG
 	        {
 			case '#':
 			case 's':
-				continue;
-
 			case 'm':
-			{
-
-			char mat[128];
-
-			sscanf(line, "mtllib %s", &mat);
-			}
-			break;
-
-		case 'u':
-			{
-				char mat[128];
-				sscanf(line, "usemtl %s", &mat);
-
-			}
-			break;
-
+			case 'u':
+				continue;
 	//Handle Vertices
 	        case 'v':   // v, vt, or vn
 	            switch( line[1] )

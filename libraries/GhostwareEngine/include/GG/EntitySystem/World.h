@@ -16,7 +16,7 @@ namespace GG
 	class World
 	{
 	public:
-		static const uint kMaxEntities = 3000;
+		static uint kMaxEntities;
 
 	public:
 		World( ISceneGraph * graph );
@@ -47,7 +47,7 @@ namespace GG
 
 			if( component == nullptr )
 			{
-				LOG_ERROR( "Component for entity %s did was not created properly!" );
+				LOG_ERROR( "Component for entity %s did was not created properly!", entity->getName() );
 				return nullptr;
 			}
 

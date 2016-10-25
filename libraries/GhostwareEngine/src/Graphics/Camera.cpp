@@ -1,7 +1,7 @@
 
 #include "Camera.h"
 
-#include <IwGx.h>
+#include <IwGL.h>
 #include <GG/EntitySystem/Entity.h>
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Log.h>

@@ -18,15 +18,15 @@ namespace GG
 	enum class Level;
 //
 //#ifdef _DEBUG
-#define LOG_DEBUG(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::DEBUG,	f_, __VA_ARGS__ )
-#define LOG_INFO(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::INFO,		f_, __VA_ARGS__ )
-#define LOG_WARNING(f_, ...)	Log::GetInstance()->logf( GG::Log::Level::WARNING,	f_, __VA_ARGS__ )
-#define LOG_ERROR(f_, ...)		Log::GetInstance()->logf( GG::Log::Level::ERROR,	f_, __VA_ARGS__ )
+#define LOG_DEBUG(f_, ...)		GG::Log::GetInstance()->logf( GG::Log::Level::DEBUG,	f_, ##__VA_ARGS__ )
+#define LOG_INFO(f_, ...)		GG::Log::GetInstance()->logf( GG::Log::Level::INFO,		f_, ##__VA_ARGS__ )
+#define LOG_WARNING(f_, ...)	GG::Log::GetInstance()->logf( GG::Log::Level::WARNING,	f_, ##__VA_ARGS__ )
+#define LOG_ERROR(f_, ...)		GG::Log::GetInstance()->logf( GG::Log::Level::ERROR,	f_, ##__VA_ARGS__ )
 
-#define TRACE_DEBUG(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::DEBUG,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
-#define TRACE_INFO(f_, ...)		Log::GetInstance()->tracef( GG::Log::Level::INFO,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
-#define TRACE_WARNING(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::WARNING,	__FILE__, __LINE__,	f_, __VA_ARGS__ )
-#define TRACE_ERROR(f_, ...)	Log::GetInstance()->tracef( GG::Log::Level::ERROR,		__FILE__, __LINE__,	f_, __VA_ARGS__ )
+#define TRACE_DEBUG(f_, ...)	GG::Log::GetInstance()->tracef( GG::Log::Level::DEBUG,		__FILE__, __LINE__,	f_, ##__VA_ARGS__ )
+#define TRACE_INFO(f_, ...)		GG::Log::GetInstance()->tracef( GG::Log::Level::INFO,		__FILE__, __LINE__,	f_, ##__VA_ARGS__ )
+#define TRACE_WARNING(f_, ...)	GG::Log::GetInstance()->tracef( GG::Log::Level::WARNING,	__FILE__, __LINE__,	f_, ##__VA_ARGS__ )
+#define TRACE_ERROR(f_, ...)	GG::Log::GetInstance()->tracef( GG::Log::Level::ERROR,		__FILE__, __LINE__,	f_, ##__VA_ARGS__ )
 
 //#else
 //#define LOG_DEBUG(f_, ...)

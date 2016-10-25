@@ -6,7 +6,7 @@ namespace GG
 {
 	class RenderFactory;
 
-	class RenderableObject 
+	class IRenderableObject 
 	{
 	public:
 		virtual void	render( RenderFactory & renderFactory ) = 0;

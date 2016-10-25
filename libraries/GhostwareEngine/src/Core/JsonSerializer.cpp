@@ -13,7 +13,8 @@ namespace GG
 	
 	void JsonSerializer::saveToFile(const std::string & filePath) const
 	{
-		std::ofstream file(filePath);
+		std::ofstream file;
+		file.open(filePath, std::ios::out);
 		file << js.toStyledString();
 		file.close();
 	}

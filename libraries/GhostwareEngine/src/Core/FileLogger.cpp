@@ -32,7 +32,7 @@ namespace GG
 		s3eFileWrite( 
 			message.data(), 
 			kCharSize,
-			message.size() * kCharSize,
+			message.size(),
 			_fileHandle 
 		);
 

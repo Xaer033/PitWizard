@@ -11,7 +11,7 @@
 
 namespace GG
 {
-	class RenderableObject;
+	class IRenderableObject;
 	class SceneNode;
 
 	typedef std::list< SceneNode * > ChildrenList;
@@ -31,8 +31,8 @@ namespace GG
 		void				setParent( SceneNode * parent );
 		SceneNode *			getParent();
 
-		void				attachObject( RenderableObject * renderable );
-		RenderableObject *	getObject();
+		void				attachObject( IRenderableObject * renderable );
+		IRenderableObject *	getObject();
 
 		void				setPosition( const Vector3 & position );
 		const Vector3 		getLocalPosition() const;
@@ -92,7 +92,7 @@ namespace GG
 		uint32				_id;
 
 		SceneNode *			_parent;
-		RenderableObject *	_renderableObject;
+		IRenderableObject *	_renderableObject;
 
 		Matrix4				_modelMatrix;
 		Matrix4				_worldMatrix;

@@ -152,8 +152,6 @@ namespace GG
 	EventAction::EventAction( const json & j )
 	{
 		name	= j.get( "name", Json::nullValue ).asString();
-		TRACE_DEBUG( "EventAction Name: %s", name );
-
 
 		auto primValue				= j.get( "primary", json::nullRef );
 		primary.type				= _GetTypeFromString( primValue.get( "type", "" ).asString() );

@@ -16,3 +16,4 @@
 #include "Core/AxisAlignedBox.h"
 #include "Core/Frustum.h"
 #include "Core/IComponent.h"
+#include "Core/FileStream.h"

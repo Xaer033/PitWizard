@@ -7,6 +7,8 @@
 
 namespace GG
 {
+	uint World::kMaxEntities = 3000;
+
 	World::World( ISceneGraph * graph ) :
 		_renderSystem( new RenderSystem( graph ) )
 	{

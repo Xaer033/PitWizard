@@ -10,7 +10,7 @@ namespace GG
 	}
 
 	Entity::Entity( 
-		const ObjectId & id, 
+		const StringId & id, 
 		const std::string & name, 
 		SceneNode * node ) :
 			_id( id ),
@@ -35,7 +35,7 @@ namespace GG
 		_name = name;
 	}
 
-	const ObjectId Entity::getId() const
+	const StringId Entity::getId() const
 	{
 		return _id;
 	}

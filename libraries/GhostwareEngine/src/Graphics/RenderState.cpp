@@ -12,7 +12,7 @@
 #include <GG/Core/MathDebug.h>
 
 #include <GG/Graphics/Shader.h>
-#include <GG/Graphics/Texture.h>
+#include <GG/Graphics/Texture2D.h>
 //#include <FrameBufferObject.h>
 
 
@@ -132,7 +132,7 @@ namespace GG
 
 
 
-	void RenderState::bindTexture2d( uint samplerID, const Texture & texture )
+	void RenderState::bindTexture2d( uint samplerID, const Texture2D & texture )
 	{
 		TextureCache::iterator it =  _cachedTextures.find( samplerID );
 

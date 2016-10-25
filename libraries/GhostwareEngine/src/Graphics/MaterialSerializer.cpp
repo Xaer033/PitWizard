@@ -84,7 +84,7 @@ namespace GG
 		if(key == "ccw") { return RenderState::WindingMode::WM_COUNTER_CLOCKWISE; }
 		else if(key == "cw") { return RenderState::WindingMode::WM_CLOCKWISE; }
 
-		TRACE_WARNING("Could not interpret cull mode: %s", key);
+		TRACE_WARNING("Could not interpret winding mode: %s", key);
 		return RenderState::WindingMode::WM_COUNTER_CLOCKWISE;
 	}
 
@@ -93,7 +93,7 @@ namespace GG
 	{
 		json j;
 
-		json renderState = json::Value( Json::objectValue );
+		json renderState = Json::Value( Json::objectValue );
 		const RenderStateBlock & block	= material.renderStateBlock;
 		renderState["depthTest"]		= block.isDepthTesting;
 		renderState["depthRange"]		= ToJson(block.depthRange);
@@ -102,7 +102,7 @@ namespace GG
 		renderState["windingMode"]		= getStringFromWindingMode(block.windingMode);
 		renderState["shaderId"]			= block.shaderId;
 
-		json materialValues = json::Value(Json::arrayValue);
+		json materialValues = Json::Value(Json::arrayValue);
 		
 		uint uniformCount = 0;
 		for(const auto & pair : material._intUniforms)

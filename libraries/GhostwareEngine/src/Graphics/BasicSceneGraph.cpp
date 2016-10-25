@@ -41,7 +41,7 @@ namespace GG
 	{
 		for( uint i = 0; i < _sceneNodeList.size(); ++i )
 		{
-			RenderableObject* renderable = _sceneNodeList[ i ].getObject();
+			IRenderableObject* renderable = _sceneNodeList[ i ].getObject();
 			if( renderable != nullptr )
 			{
 				renderList.push_back( renderable );

@@ -13,7 +13,7 @@ Author: Julian Williams
 
 #include <GG/Core/Types.h>
 #include <GG/Core/Vector.h>
-#include <GG/Graphics/Texture.h>
+#include <GG/Graphics/Texture2D.h>
 #include <GG/Graphics/Shader.h>
 
 namespace GG
@@ -57,7 +57,7 @@ namespace GG
 		};
 
 	public:
-		static RenderState * getInstance()
+		static RenderState * GetInstance()
 		{
 			if(_instance == nullptr)
 				_instance = new RenderState();
@@ -88,7 +88,7 @@ namespace GG
 
 		void	setWindingMode(const WindingMode windingMode);
 
-		void	bindTexture2d(uint samplerID, const Texture & texture);
+		void	bindTexture2d(uint samplerID, const Texture2D & texture);
 		void	bindShader(const Shader & shader);
 
 		void	setViewMatrix(const Matrix4 & viewMatrix);

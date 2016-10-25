@@ -7,7 +7,7 @@
 #include <GG/Core/Matrix.h>
 #include <GG/Core/Vector.h>
 #include <GG/Core/Types.h>
-#include <GG/Core/HashString.h>
+#include <GG/Core/StringId.h>
 #include <GG/Core/Angle.h>
 
 #include <string>
@@ -20,7 +20,7 @@ namespace GG
 		static	bool DepthCompare( const Camera * a, const Camera * b );
 		static const uint32 GetComponentId()
 		{
-			static uint32 id = hashString("CameraComponent");
+			static StringId id = STRING_ID("CameraComponent");
 			return id;
 		}
 

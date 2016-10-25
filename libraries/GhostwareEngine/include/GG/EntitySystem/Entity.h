@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include <GG/Core/ObjectId.h>
+#include <GG/Core/StringId.h>
 #include <GG/Graphics/SceneNode.h>
 
 namespace GG
@@ -21,7 +21,7 @@ namespace GG
 		const std::string & getName() const;
 		void				setName( const std::string & name );
 
-		const ObjectId		getId() const;
+		const StringId		getId() const;
 
 		const SceneNode *	getSceneNode() const;
 		SceneNode *			getSceneNode();
@@ -30,14 +30,14 @@ namespace GG
 	private:
 		Entity();
 		Entity(
-			const ObjectId & id,
+			const StringId & id,
 			const std::string & name,
 			SceneNode * node
 		);
 
 		SceneNode *		_sceneNode;
 		std::string		_name;
-		ObjectId		_id;
+		StringId		_id;
 	};
 }
 

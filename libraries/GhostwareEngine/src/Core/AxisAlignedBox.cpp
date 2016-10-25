@@ -3,7 +3,6 @@
 
 #include "Vector.h"
 #include "Sphere.h"
-#include "IwGeomFSphere.h"
 
 namespace GG
 {

@@ -52,12 +52,12 @@ namespace GG
 		return _parent;
 	}
 
-	void SceneNode::attachObject( RenderableObject * moveableObject )
+	void SceneNode::attachObject( IRenderableObject * moveableObject )
 	{
 		_renderableObject = moveableObject;
 	}
 
-	RenderableObject * SceneNode::getObject()
+	IRenderableObject * SceneNode::getObject()
 	{
 		return _renderableObject;
 	}

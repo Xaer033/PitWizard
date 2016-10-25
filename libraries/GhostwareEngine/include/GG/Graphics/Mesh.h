@@ -5,21 +5,21 @@
 #include "RenderFactory.h"
 #include "Material.h"
 #include "Model.h"
-#include <GG/Core/HashString.h>
+#include <GG/Core/StringId.h>
 
 #include <GG/EntitySystem/Entity.h>
 
 namespace GG
 {
 	class Mesh : 
-		public RenderableObject, 
+		public IRenderableObject, 
 		public IComponent
 	{
 	public:
 
 		static const uint32 GetComponentId()
 		{
-			static uint32 id = hashString( "MeshComponent" );
+			static StringId id = STRING_ID( "MeshComponent" );
 			return id;
 		}
 
