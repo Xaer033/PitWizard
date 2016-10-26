@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <cassert>
 #include <unordered_map>
 
 #include <GG/Core/StringId.h>

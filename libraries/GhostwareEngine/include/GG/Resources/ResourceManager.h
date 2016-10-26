@@ -143,7 +143,7 @@ namespace GG
 			const StringId resourceType = T::GetResourceType();
 			ResourceFactory<T> * resFactory =  (ResourceFactory<T>*)_getFactory(resourceType);
 			assert(resFactory != nullptr);
-			return resFactory->getResource(streams);
+			return resFactory->getResource(stream);
 		}
 
 

@@ -1,5 +1,5 @@
-#pragma once // Ghostware Games inc. 2016  -Julian Williams
-
+// Ghostware Games inc. 2016  -Julian Williams
+#pragma once 
 
 namespace GG
 {

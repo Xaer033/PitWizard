@@ -7,7 +7,8 @@
 #include <GG/Core/Json.h>
 
 #include <GG/Resources/IResource.h>
-#include <GG/Resources/IResourceDescriptor.h>
+
+#include "Texture2DDescriptor.h"
 
 class CIwImage;//Get Rid of this soon!!!
 
