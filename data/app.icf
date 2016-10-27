@@ -53,3 +53,6 @@ EGL_SAMPLE_BUFFERS = 1
 EGL_SAMPLES=4
 
 AllowNoDepthBufferClear = 1
+
+[TRACE]
+ALL = 0
