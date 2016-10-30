@@ -20,7 +20,6 @@
 #include <GG/Graphics/MaterialSerializer.h>
 
 #include <GG/Resources/ResourceManager.h>
-#include <GG/Resources/IResourceDescriptor.h>
 
 using namespace GG;
 
@@ -51,8 +50,6 @@ void PitWizard::init(int argc, char** argv)
 	IwGLSwapBuffers();
 	s3eDeviceYield(0);
 
-
-
 	_deviceWidth	= IwGLGetInt(IW_GL_WIDTH);
 	_deviceHeight	= IwGLGetInt(IW_GL_HEIGHT);
 
@@ -62,10 +59,6 @@ void PitWizard::init(int argc, char** argv)
 	_gameStateManager.addGameState( "SinglePlayerEndScreen",	nullptr );
 	_gameStateManager.addGameState( "MultiPlayer",				nullptr );
 	_gameStateManager.addGameState( "MultiPlayerEndScreen",		nullptr );
-
-
-	_test = nullptr;
-
 
 	json config = JsonFromFile("configs/input_config.json");
 	inputSystem = std::unique_ptr<InputSystem>(new InputSystem(_deviceWidth, _deviceHeight));
@@ -80,7 +73,8 @@ void PitWizard::init(int argc, char** argv)
 	FileSystem::Mount("/", "/", true);
 	FileSystem::SetWriteDirectory("ram://");
 
-	ResourceManager::GetInstance()->registerType<Texture2D>();
+	ResourceManager::GetInstance()->registerType<Texture2D>(new Texture2DLoader());
+	ResourceManager::GetInstance()->registerType<Shader>(new ShaderLoader());
 
 	FileStream stream("resources/TestGroup.group", OpenMode::OPEN_READ);
 	ResourceGroup* group = ResourceManager::GetInstance()->createGroup(&stream);
@@ -90,6 +84,8 @@ void PitWizard::init(int argc, char** argv)
 void PitWizard::shutdown()
 {
 	inputSystem->shutdown();
+
+	ResourceManager::ShutDown();
 
 	Log::Shutdown();
 	IwGLTerminate();
@@ -117,23 +113,12 @@ std::string loadFile(const std::string & filename)
 
 void PitWizard::doGameLoop()
 {
-	Material * gridMat = new Material();
+	std::unique_ptr<Material> gridMat(new Material());
 	std::string jsonMat = loadFile("ram://mat.txt");
 	MaterialSerializer matSerializer;
 	//matSerializer.serialize(*gridMat, jsonMat);
-	matSerializer.deserialize(*gridMat, jsonMat);
+	matSerializer.deserialize(*(gridMat.get()), jsonMat);
 
-	/*s3eFile * _fileHandle = s3eFileOpen("ram://mat.txt", "w");
-
-	s3eFileWrite(
-		jsonMat.data(),
-		sizeof(char),
-		jsonMat.size() * sizeof(char),
-		_fileHandle
-	);
-
-	s3eFileFlush(_fileHandle);
-*/
 	Model gridModel;
 	gridModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
 	ObjLoader::loadFromFile("./resources/environments/forest_road/models/grid.obj", gridModel);
@@ -146,6 +131,7 @@ void PitWizard::doGameLoop()
 	playerModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
 	ObjLoader::loadFromFile("./resources/environments/forest_road/models/player.obj", playerModel);
 
+
 	World* worldPtr = new World(new BasicSceneGraph(1000));
 	std::unique_ptr<World> world(worldPtr);
 
@@ -154,14 +140,14 @@ void PitWizard::doGameLoop()
 	GG::Entity *	box_1		= world->createEntity("Box_1");
 	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>(box_1);
 	boxMesh_1->geometry = &playerModel;
-	boxMesh_1->material	= gridMat;
+	boxMesh_1->material	= gridMat.get();
 	SceneNode *		boxNode_1	= box_1->getSceneNode();
 	boxNode_1->setPosition(Vector3(0, 1, 0));
 
 	GG::Entity *	box_2		= world->createEntity("Box_2");
 	GG::Mesh *		boxMesh_2	= world->addComponent<Mesh>(box_2);
 	boxMesh_2->geometry = &playerModel;
-	boxMesh_2->material	= gridMat;
+	boxMesh_2->material	= gridMat.get();
 	SceneNode *		boxNode_2	= box_2->getSceneNode();
 	boxNode_2->setPosition(Vector3(0, 0, 3));
 	boxNode_2->setParent(boxNode_1);
@@ -178,19 +164,24 @@ void PitWizard::doGameLoop()
 	Entity *	gridEntity = world->createEntity("GridMesh");
 	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
 	gridMeshInstance->geometry		= &gridModel;
-	gridMeshInstance->material		= gridMat;
+	gridMeshInstance->material		= gridMat.get();
 
 
 	Entity *	groundEntity = world->createEntity("GroundMesh");
 	Mesh *		groundMeshInstance	= world->addComponent<Mesh>(groundEntity);
 	groundMeshInstance->geometry	= &groundModel;
-	groundMeshInstance->material	= gridMat;
+	groundMeshInstance->material	= gridMat.get();
 	
-	const float camSpeed	= 0.035f;
+	const float camSpeed	= 5.0f;
+
+	Time clock;
 
 	// Loop forever, until the user or the OS performs some action to quit the app
 	while(!s3eDeviceCheckQuitRequest())
 	{
+		clock.update();
+		float deltaTime = clock.getDeltaTime();
+
 		//Update the input systems
 		inputSystem->update();
 
@@ -219,11 +210,11 @@ void PitWizard::doGameLoop()
 
 		if(s3eKeyboardGetState(s3eKeyZ) & S3E_KEY_STATE_DOWN)
 		{
-			camNode_1->translate(Vector::down() * camSpeed);
+			camNode_1->translate(Vector::down() * camSpeed * deltaTime);
 		}
 		else if(s3eKeyboardGetState(s3eKeyX) & S3E_KEY_STATE_DOWN)
 		{
-			camNode_1->translate(Vector::up() * camSpeed);
+			camNode_1->translate(Vector::up() * camSpeed * deltaTime);
 		}
 		camNode_1->rotate(Angle::FromDegrees(70.0f) * inputSystem->getAxis( "RotateX" ), Vector::right() );
 
@@ -234,8 +225,7 @@ void PitWizard::doGameLoop()
 						(camNode_1->right() * strafe);
 
 		move = glm::length2(move) > 0.001f ? glm::normalize(move): move;
-		move.y = 0;
-		camNode_1->translate(move * camSpeed);
+		camNode_1->translate(move * camSpeed * deltaTime);
 
 		world->update(1.0f / 60.0f);
 		
@@ -244,7 +234,6 @@ void PitWizard::doGameLoop()
 			// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
 	}
-	delete gridMat;
 }
 
 void PitWizard::_setupLoggers()
@@ -254,6 +243,7 @@ void PitWizard::_setupLoggers()
 	Log::GetInstance()->registerLogger( new FileLogger( filePath ) );
 	Log::GetInstance()->registerLogger( new ConsoleLogger() );
 }
+
 
 const std::string PitWizard::_getFileLogName() const
 {

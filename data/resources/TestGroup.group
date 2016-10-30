@@ -5,32 +5,51 @@
    
    "paths" :
    [
+		"resources",
 		"resources/TestGroup.zip"
    ],
 
    "resources" 	: 
    [
+   // Textures
 		{
 			"id"			: "brick_albedo",
 			"type"			: "Texture2D",
-			"source"		: "textures/brick_albedo.png",
+			"source"		: "textures/stone_albedo.png",
 			"mipMapping" 	: true,
 			"wrapMode"		: "repeat"
 		},
 		{
 			"id"			: "brick_spec",
 			"type"			: "Texture2D",
-			"source"		: "textures/brick_spec.png",
+			"source"		: "textures/stone_rough.png",
 			"mipMapping" 	: true,
 			"wrapMode"		: "repeat"
 		},
 		{
 			"id"			: "brick_norm",
 			"type"			: "Texture2D",
-			"source"		: "textures/brick_norm.png",
+			"source"		: "textures/stone_normal.png",
 			"mipMapping" 	: true,
 			"wrapMode"		: "repeat"
-		}
+		},
 		
+	// Shaders
+		{
+			"id"			: "cookTorrence",
+			"type"			: "Shader",
+			"source"		: "shaders/unlit",
+			"vertexSource"	: "shaders/unlit.vs",
+			"pixelSource"	: "shaders/unlit.ps",
+			
+			"vertexAttributeLayout" :
+			{
+				"Position"	: "inVert",    
+				"Uv0"		: "inUV0", 
+				"Normal"	: "inNormal",
+				"Tangent"	: "inTangent",
+				"Bitangent"	: "inBitangent"
+			}
+		}
    ]
 }

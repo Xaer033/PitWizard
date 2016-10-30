@@ -1,10 +1,4 @@
-/*
-Module: Object to handle gl code for binding / rendering
-Description:	Camera object to see the world through and apply
-camera view matrix to world geometry
-Author: Julian Williams
-*/
-
+// Ghostware Games inc. 2016  -Julian Williams
 #pragma once
 
 #include <unordered_map>

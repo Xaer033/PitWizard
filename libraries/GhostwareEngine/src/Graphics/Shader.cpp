@@ -15,7 +15,7 @@
 #include <GG/Core/Matrix.h>
 #include <GG/Core/MathDebug.h>
 #include <GG/Core/Log.h>
-#include <GG/Graphics/Texture2D.h>
+#include <GG/Core/Json.h>
 
 
 namespace GG
@@ -23,16 +23,42 @@ namespace GG
 	Shader::Shader() :
 		vertexHandle(0),
 		pixelHandle(0),
+		programHandle(0),
+		IResource()
+	{
+		for( uint i = 0; i < 7; ++i )
+			attributeHandles.push_back("");
+	}
+
+	Shader::Shader(const json & j) :
+		vertexHandle(0),
+		pixelHandle(0),
 		programHandle(0)
 	{
-		for( int i = 0; i < 7; ++i )
+		for(uint i = 0; i < 7; ++i)
 			attributeHandles.push_back("");
 
+		_descriptor = ShaderDescriptor::FromJson(j);
 	}
 
 	Shader::~Shader()
 	{
 		shutdown();
+	}
+
+
+	IResourceDescriptor * Shader::getDescriptor()
+	{
+		return &_descriptor;
+	}
+
+	StringId Shader::getType() const
+	{
+		return GetResourceType();
+	}
+
+	void Shader::init()
+	{
 	}
 
 	void Shader::shutdown()
@@ -50,9 +76,9 @@ namespace GG
 		if(programHandle)
 			glDeleteProgram(programHandle);
 
-		vertexHandle = 0;
-		pixelHandle = 0;
-		programHandle = 0;
+		vertexHandle	= 0;
+		pixelHandle		= 0;
+		programHandle	= 0;
 	}
 
 	uint Shader::getId() const
@@ -87,7 +113,7 @@ namespace GG
 
 		if (length > 0)
 		{
-			LOG_ERROR("Program %d linker: %s", programHandle, buffer);
+			TRACE_ERROR("Program %d linker: %s", programHandle, buffer);
 		}
 
 		glValidateProgram( programHandle );
@@ -102,15 +128,15 @@ namespace GG
 	}
 
 
-	bool Shader::loadShader( GLuint & shader, const std::string & shaderSrc, GLenum type )
+	bool Shader::_loadShader( uint & outShader, const std::string & shaderSrc, uint type )
 	{
 
 		if( shaderSrc.empty() ) { return false; }
 
 		GLint compiled =  0;
 		// Create the shader object
-        if( shader == 0 )
-			shader = glCreateShader( type );
+        if(outShader == 0)
+			outShader = glCreateShader( type );
 
 		std::stringstream stream;
 		for(uint i = 0; i < defineList.size(); ++i)
@@ -120,29 +146,29 @@ namespace GG
 		stream << shaderSrc;
 		const char * shaderString = shaderSrc.c_str();// stream.str().c_str();
 		//TODO: get char array from vector of strings
-		glShaderSource( shader, 1, &shaderString, NULL );	
+		glShaderSource(outShader, 1, &shaderString, nullptr );
 
 		// Compile the shader
-		glCompileShader( shader );
+		glCompileShader(outShader);
 		// Check the compile status
-		glGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
+		glGetShaderiv(outShader, GL_COMPILE_STATUS, &compiled );
 
 		if( !compiled )
 		{
 			GLint infoLen = 0;
-			glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &infoLen );
+			glGetShaderiv(outShader, GL_INFO_LOG_LENGTH, &infoLen );
 
 			if( infoLen > 1 )
 			{
 				char * infoLog = (char*)malloc( sizeof(char) * infoLen );
-				glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+				glGetShaderInfoLog(outShader, infoLen, nullptr, infoLog);
 					
 				TRACE_ERROR("Error Compiling shader: %s", infoLog);
 
 				free( infoLog );
 			}
 
-			glDeleteShader( shader );
+			glDeleteShader(outShader);
 			return false;
 		}
         return true;
@@ -168,12 +194,12 @@ namespace GG
 	{
 		int linked	= 0;
 
-		bool vertSuccess	= loadShader( vertexHandle,  vertexShader,   GL_VERTEX_SHADER    );
-		bool pixelSuccess	= loadShader( pixelHandle,   pixelShader,    GL_FRAGMENT_SHADER  );
+		bool vertSuccess	= _loadShader( vertexHandle,  vertexShader,   GL_VERTEX_SHADER    );
+		bool pixelSuccess	= _loadShader( pixelHandle,   pixelShader,    GL_FRAGMENT_SHADER  );
 			
 		if( !vertSuccess || !pixelSuccess ) 
 		{
-			LOG_ERROR("Vertex or Pixel shader did not load properly!");
+			TRACE_ERROR("Vertex or Pixel shader did not load properly!");
 			return false; 
 		}
 
@@ -214,12 +240,6 @@ namespace GG
 
 		return true;
 	}
-
-	void Shader::update( )
-	{
-
-	}
-
 		
 	int Shader::_getParameterId( const std::string & name )
 	{

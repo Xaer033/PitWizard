@@ -1,6 +1,7 @@
+// Ghostware Games inc. 2016  -Julian Williams
 #pragma once
 #include <string>
-#include "JsonLib\json.h"
+#include "JsonLib/json.h"
 
 namespace GG
 {

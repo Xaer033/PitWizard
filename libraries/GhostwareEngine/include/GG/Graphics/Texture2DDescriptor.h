@@ -30,7 +30,6 @@ namespace GG
 			wrapMode(WM_REPEAT),
 			isMipmapped(true)
 		{
-
 		}
 
 		int16	wrapMode;

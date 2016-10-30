@@ -12,7 +12,8 @@ namespace GG
 	Texture2D::Texture2D() :
 		_id(0),
 		_width(0),
-		_height(0)
+		_height(0),
+		IResource()
 	{
 	}
 
@@ -26,51 +27,29 @@ namespace GG
 
 	Texture2D::~Texture2D()
 	{
+		shutdown();
+	}
+
+	void Texture2D::init()
+	{
+	}
+
+	void Texture2D::shutdown()
+	{
 		if(_id)
 			glDeleteTextures(1, &_id);
 
-		TRACE_DEBUG("Texture deleted");
-	}
-
-	bool Texture2D::loadFromFile(const std::string & location)
-	{
-		CIwImage image;
-		image.LoadFromFile(location.c_str());
-		_uploadToGPU(image);
-		return true;
-	}
-
-	bool Texture2D::loadFromMemory(uint32 size, const void* data)
-	{
-		CIwImage image;
-		s3eFile * f = s3eFileOpenFromMemory((void*)data, size);
-		image.ReadFile(f);
-		s3eFileClose(f);
-		_uploadToGPU(image);
-		return true;
-	}
-
-	bool Texture2D::loadFromStream(IStream * stream)
-	{
-		if(stream == nullptr)
-		{
-			TRACE_WARNING("Stream pointer not valid!");
-			return false;
-		}
-
-
-		uint32 size = (uint32)stream->getSize();
-		char * buffer = (char*)malloc(size);
-		stream->read((void*)buffer, sizeof(char), size);
-		loadFromMemory(size, buffer);
-
-		free(buffer);
-		return true;
+		_id = 0;
 	}
 
 	IResourceDescriptor * Texture2D::getDescriptor()
 	{
 		return &_descriptor;
+	}
+
+	StringId	Texture2D::getType() const
+	{
+		return Texture2D::GetResourceType();
 	}
 
 	uint Texture2D::getWidth() const
@@ -88,12 +67,8 @@ namespace GG
 		return _id;
 	}
 
-
-	bool Texture2D::_uploadToGPU(const CIwImage & image)
+	bool Texture2D::uploadToGPU(const CIwImage & image)
 	{
-		/*Texture2DDescriptor * texDesc= (Texture2DDescriptor*)desc;
-		if(!texDesc) return false;
-*/
 		if(_id == 0)
 			glGenTextures(1, &_id);
 

@@ -28,7 +28,7 @@ namespace GG
 		void		clearAllCommands();
 		void		renderAll( const Camera * camera );
 
-		void		loadTempShader();
+		void		loadTempAssets();
 
 	private:
 		void		_opaqueSort( const Vector3 & cameraEye );
@@ -42,7 +42,7 @@ namespace GG
 
 	
 	private:
-		Shader *						_tempShader;
+		ResourceHandle<Shader>			_tempShader;
 		RenderCommand3DList				_renderCommand3DList;
 
 		ResourceHandle<Texture2D>		_tempTexture;

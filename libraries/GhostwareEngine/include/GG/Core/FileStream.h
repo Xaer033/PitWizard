@@ -27,6 +27,7 @@ namespace GG
 		virtual int64	read(void* buffer, uint32 size, uint32 count);
 		virtual int64	write(const void* buffer, uint32 size, uint32 count);
 		virtual int64	seek(uint64 position);
+		virtual int64	tell() const;
 		virtual uint64	getSize() const;
 
 	private:

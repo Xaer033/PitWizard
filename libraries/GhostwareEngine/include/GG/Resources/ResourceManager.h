@@ -58,8 +58,14 @@ namespace GG
 		}
 
 		template<class T>
-		void	registerType()
+		void	registerType( IResourceLoader * loader)
 		{
+			if(loader == nullptr)
+			{
+				TRACE_ERROR("Resource Loader pointer is not valid!");
+				return;
+			}
+
 			const StringId resourceType = T::GetResourceType();
 			auto it = _factoryMap.find(resourceType);
 			if(it != _factoryMap.end())
@@ -68,7 +74,8 @@ namespace GG
 				return;
 			}
 			
-			_factoryMap[resourceType] = std::unique_ptr<ResourceFactory<T>>(new ResourceFactory<T>());
+			ResourceFactory<T> * factory = new ResourceFactory<T>(loader);
+			_factoryMap[resourceType] = std::unique_ptr<ResourceFactory<T>>(factory);
 		}
 
 

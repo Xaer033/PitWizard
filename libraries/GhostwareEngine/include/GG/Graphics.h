@@ -19,3 +19,6 @@
 #include "Graphics/Texture2D.h"
 #include "Graphics/Shader.h"
 #include "Graphics/MaterialSerializer.h"
+#include "Graphics/Texture2DLoader.h"
+#include "Graphics/ShaderLoader.h"
+

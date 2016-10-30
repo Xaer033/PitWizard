@@ -5,6 +5,7 @@
 
 #include <GG/Core/Log.h>
 #include <GG/Core/StringId.h>
+#include <GG/Resources/ResourceManager.h>
 
 #include "RenderFactory.h"
 #include "ISceneGraph.h"
@@ -72,7 +73,8 @@ namespace GG
 		// TEMP RESOURCE RELOADING!!! -Julian
 		if(s3eKeyboardGetState(s3eKeyR) & S3E_KEY_STATE_RELEASED)
 		{
-			_renderFactory.loadTempShader();
+			ResourceManager::GetInstance()->findGroup(STRING_ID("default"))->reloadAllAssets();
+			_renderFactory.loadTempAssets();
 		}
 
 		auto it = _cameraMap.begin();

@@ -1,3 +1,4 @@
+
 attribute highp vec4    	inVert;    // Vertices    
 attribute mediump vec2   	inUV0; // UV Stream 0
 attribute mediump vec3		inNormal;
@@ -17,6 +18,7 @@ varying mat3	tbnMat;
 varying vec3	tangent;
 varying vec3	bitangent;
 varying vec4	viewSpace;
+
 void main() 
 { 
 	gl_Position =	inMVP * inVert;

@@ -54,6 +54,9 @@ namespace GG
 
 			AbstractResourceFactory *	factory = factoryMap[resourceType].get();
 			IResourceDescriptor *		desc	= _createDescriptor(jsonDesc, factory);
+			
+			TRACE_INFO("Created Description for asset: %s", GetStringFromId(desc->resourceId));
+			
 			if(desc == nullptr)
 			{
 				TRACE_ERROR("Resource of type: %s couldn't be created!", GetStringFromId(resourceType));
@@ -74,11 +77,19 @@ namespace GG
 			const StringId resourceId			= it->first;
 			const IResourceDescriptor * desc	= it->second;
 			const StringId resourceType			= desc->type;
+			assert(desc != nullptr);
 
-			assert(desc);
+
+			std::string resourceName = GetStringFromId(resourceId);
+			TRACE_DEBUG("Loading Resource: %s", resourceName);
+
 			bool result = (*_factoryMap)[resourceType]->loadResource(resourceId);
-			assert(result);
+			if(!result)
+			{
+				TRACE_WARNING("Error trying to load resource: %", resourceName);
+			}
 		}
+
 		return true;
 	}
 
@@ -97,6 +108,13 @@ namespace GG
 
 		}
 		_descriptorMap.clear();
+	}
+
+	void ResourceGroup::reloadAllAssets()
+	{
+		removeAllAssets();
+		createAllAssets(*_factoryMap);
+		loadAllAssets();
 	}
 
 	const IResourceDescriptor * ResourceGroup::getDescriptor(const StringId & id) const

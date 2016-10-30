@@ -8,7 +8,6 @@ namespace GG
 	FileStream::FileStream() : 
 		_file(nullptr)
 	{
-
 	}
 
 	FileStream::FileStream(const std::string & fileName, const OpenMode & openMode)
@@ -86,6 +85,17 @@ namespace GG
 		}
 
 		return FileSystem::Seek(_file, position);
+	}
+
+	int64 FileStream::tell() const
+	{
+		if(!isOpen())
+		{
+			TRACE_WARNING("Trying to tell in an invalid file stream!");
+			return -1;
+		}
+
+		return FileSystem::Tell(_file);
 	}
 
 	// --------------------------------------------------------------------------------

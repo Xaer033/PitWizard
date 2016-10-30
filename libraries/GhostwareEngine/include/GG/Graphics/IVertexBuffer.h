@@ -1,14 +1,10 @@
+// Ghostware Games inc. 2016  -Julian Williams
 #pragma once
-/*
-Module: Vertex Buffer Interface
-Description: Interface for Vertex Buffers
-Author: Julian Williams
-*/
-
 
 #include <GG/Core/Types.h>
-#include <IwGL.h>
 #include <GG/Core/Vector.h>
+#include <IwGL.h>
+#include "VertexLayout.h"
 
 namespace GG
 {
@@ -34,17 +30,7 @@ namespace GG
         BITANGENTS  = 1 << 5
     };
 
-	enum VertexTags
-	{
-		Position = 0,
-		Uv0,
-		Normal,
-		Tangent,
-		Bitangent,
-		Color,
 
-		VertexTagMax
-	};
 
     enum DrawHint
     {

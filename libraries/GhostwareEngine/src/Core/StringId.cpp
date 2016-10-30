@@ -25,12 +25,10 @@ namespace GG
 	StringId	STRING_ID(const std::string & str)
 	{
 		StringId id = HashString(str);
+
 		auto it = g_stringIdTable.find(id);
 		if(it != g_stringIdTable.end())
-		{
-			TRACE_WARNING("String Id: %d already generated for string: %s", id, str);
 			return it->first;
-		}
 
 		g_stringIdTable[id] = str;
 		return id;

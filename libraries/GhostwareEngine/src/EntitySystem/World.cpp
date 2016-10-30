@@ -58,6 +58,7 @@ namespace GG
 
 	void World::update( float deltaTime )
 	{
+
 	}
 
 	void World::renderOneFrame()

@@ -16,7 +16,7 @@
 # Some conditional operations are also permitted, see the
 # S3E documentation for details.
 [S3E]
-MemSize 	= 60000000
+MemSize 	= 20000000
 MemSizeDebug	= 80000000
 
 DispFixRot 	= Landscape

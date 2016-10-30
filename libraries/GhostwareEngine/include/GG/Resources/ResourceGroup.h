@@ -25,6 +25,7 @@ namespace GG
 		bool	createAllAssets( FactoryMap & factoryMap);
 		bool	loadAllAssets();
 		void	removeAllAssets();
+		void	reloadAllAssets();
 
 		// Use this to create resource that isn't in asset database
 		// like a Temporary resource or a placeholder asset

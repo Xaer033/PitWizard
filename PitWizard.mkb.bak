@@ -60,10 +60,3 @@ assets
 deployment
 {
 }
-#### AUTO GENERATED deployment settings from DeployTool.exe. Do not edit below this line ####
-deployments
-{
-	["Default"]
-	caption='PitWizard'
-	name='PitWizard'
-}

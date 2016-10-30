@@ -15,7 +15,6 @@ class CIwImage;//Get Rid of this soon!!!
 
 namespace GG
 {
-
 	class Texture2D : public IResource
 	{
 	public:
@@ -32,10 +31,10 @@ namespace GG
 
 		virtual ~Texture2D();
 
-		virtual bool	loadFromFile(const std::string & location)		final;
-		virtual bool	loadFromMemory(uint32 size, const void* data)	final;
-		virtual bool	loadFromStream(IStream * stream)				final;
-		virtual IResourceDescriptor* getDescriptor()					final;
+		virtual void	init() final;
+		virtual void	shutdown() final;
+		virtual IResourceDescriptor*	getDescriptor()	final;
+		virtual StringId	getType() const				final;
 
 
 		uint	getWidth()  const;
@@ -43,6 +42,7 @@ namespace GG
 
 		uint	getId()		const;
 
+		bool	uploadToGPU(const CIwImage & image);
 
 	private:
 		uint	_id;
@@ -50,7 +50,6 @@ namespace GG
 		uint	_width;
 		uint	_height;
 
-		bool	_uploadToGPU(const CIwImage & image);
 
 		Texture2DDescriptor _descriptor;
 	};

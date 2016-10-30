@@ -2,9 +2,9 @@
 // Ghostware Games inc. 2016  -Julian Williams
 #pragma once
 
-#include <string>
-#include "IResourceDescriptor.h"
+#include <GG/Core/StringId.h>
 #include <GG/Core/IStream.h>
+#include "IResourceDescriptor.h"
 
 
 namespace GG
@@ -12,11 +12,35 @@ namespace GG
 	class IResource
 	{
 	public:
+		enum class State
+		{
+			UNKNOWN = 0,
+			UNLOADED,
+			LOADED
+		};
+
+		IResource() : _state(State::UNKNOWN) {}
 		virtual			~IResource() {}
 
-		virtual bool	loadFromFile(const std::string & filePath)		= 0;
-		virtual bool	loadFromMemory(uint32 size, const void* data)	= 0;
-		virtual bool	loadFromStream(IStream * stream)				= 0;
-		virtual IResourceDescriptor * getDescriptor()					= 0;
+		virtual void					init()			= 0;
+		virtual	void					shutdown()		= 0;
+
+		virtual	StringId				getType() const	= 0;
+		virtual IResourceDescriptor *	getDescriptor()	= 0;
+		
+		
+
+		inline State	getState() const
+		{
+			return _state;
+		}
+
+		inline void		setState(State resourceState)
+		{
+			_state = resourceState;
+		}
+
+	protected:
+		State	_state;
 	};
 }
