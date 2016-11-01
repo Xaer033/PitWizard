@@ -8,20 +8,30 @@
 #include <GG/Core/Log.h>
 #include <GG/Core/FileStream.h>
 #include "Shader.h"
-
+#include <GG/Core/StreamHelper.h>
 
 namespace GG
 {
-	std::string ReadStringFromStream(IStream * stream)
+	bool ShaderLoader::loadDefault(IResource * outResource)
 	{
-		uint32 size = (uint32)stream->getSize();
-		char * buffer = (char*)malloc(size);
-		stream->read((void*)buffer, sizeof(char), size);
+		Shader * shader = (Shader*)outResource;
+		static const char * vertexShader =
+			"uniform mat4 inMVP;\n"
+			"attribute vec4 inVert;\n"
+			"varying vec3 modelVert;\n"
+			"void main() {\n"
+			"   gl_Position = inMVP * inVert;\n"
+			"   modelVert = inVert.xyz;\n"
+			"}\n";
+		static const char * pixelShader =
+			"precision mediump float;\n"
+			"varying vec3 modelVert;\n"
+			"void main(){\n"
+			"   gl_FragColor = vec4(abs(cos(modelVert.x)), abs(modelVert.y), abs(sin(modelVert.z)), 1);  \n"
+			"}\n";
 
-		std::string resultStr(buffer, size);
-
-		free(buffer);
-		return resultStr;
+		shader->bindAttribute(VertexTags::Position, "inVert");
+		return shader->compile(vertexShader, pixelShader);
 	}
 	bool ShaderLoader::loadFromFile(IResource * outResource, const std::string & filePath)
 	{
@@ -60,12 +70,12 @@ namespace GG
 
 	// Vertex shader
 		FileStream vertShaderStream(shaderDesc->vertexShaderSource, OpenMode::OPEN_READ);
-		std::string vertShader = ReadStringFromStream(&vertShaderStream);
+		std::string vertShader = Stream::ReadStringFromStream(&vertShaderStream);
 		vertShaderStream.close();
 	
 	// Pixel shader
 		FileStream pixelShaderStream(shaderDesc->pixelShaderSource, OpenMode::OPEN_READ);
-		std::string pixelShader = ReadStringFromStream(&pixelShaderStream);
+		std::string pixelShader = Stream::ReadStringFromStream(&pixelShaderStream);
 		pixelShaderStream.close();
 
 		return shader->compile(vertShader, pixelShader);

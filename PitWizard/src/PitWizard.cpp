@@ -17,8 +17,6 @@
 #include <GG/Input.h>
 #include <GG/EntitySystem.h>
 
-#include <GG/Graphics/MaterialSerializer.h>
-
 #include <GG/Resources/ResourceManager.h>
 
 using namespace GG;
@@ -75,6 +73,7 @@ void PitWizard::init(int argc, char** argv)
 
 	ResourceManager::GetInstance()->registerType<Texture2D>(new Texture2DLoader());
 	ResourceManager::GetInstance()->registerType<Shader>(new ShaderLoader());
+	ResourceManager::GetInstance()->registerType<Material>(new MaterialLoader());
 
 	FileStream stream("resources/TestGroup.group", OpenMode::OPEN_READ);
 	ResourceGroup* group = ResourceManager::GetInstance()->createGroup(&stream);
@@ -93,31 +92,10 @@ void PitWizard::shutdown()
 }
 
 
-std::string loadFile(const std::string & filename)
-{
-	std::ifstream in(filename, std::ios::in | std::ios::binary);
-
-	std::string contents;
-
-	if(in)
-	{
-		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
-		in.seekg(0, std::ios::beg);
-		in.read(&contents[0], contents.size());
-		in.close();
-	}
-
-	return contents;
-}
-
 void PitWizard::doGameLoop()
 {
-	std::unique_ptr<Material> gridMat(new Material());
-	std::string jsonMat = loadFile("ram://mat.txt");
-	MaterialSerializer matSerializer;
-	//matSerializer.serialize(*gridMat, jsonMat);
-	matSerializer.deserialize(*(gridMat.get()), jsonMat);
+	ResourceManager * rm = ResourceManager::GetInstance();
+	ResourceH<Material> gridMat = rm->getResource<Material>("marble");
 
 	Model gridModel;
 	gridModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
@@ -130,6 +108,7 @@ void PitWizard::doGameLoop()
 	Model playerModel;
 	playerModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
 	ObjLoader::loadFromFile("./resources/environments/forest_road/models/player.obj", playerModel);
+	ResourceHandle<Material> tempHolder = rm->getResource<Material>("marble");
 
 
 	World* worldPtr = new World(new BasicSceneGraph(1000));
@@ -181,9 +160,17 @@ void PitWizard::doGameLoop()
 	{
 		clock.update();
 		float deltaTime = clock.getDeltaTime();
-
+		
 		//Update the input systems
 		inputSystem->update();
+		// TEMP RESOURCE RELOADING!!! -Julian
+		if(s3eKeyboardGetState(s3eKeyR) & S3E_KEY_STATE_RELEASED)
+		{
+			/*ResourceHandle<Shader> shader = rm->getResource<Shader>(STRING_ID("cookTorrence"));
+			shader->setState(IResource::State::UNLOADED);
+*/
+			rm->findGroup(STRING_ID("default"))->reloadAllAssets();
+		}
 
 		if(s3eKeyboardGetState(s3eKeyLeft) & S3E_KEY_STATE_DOWN)
 		{

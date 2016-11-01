@@ -10,7 +10,8 @@ namespace GG
 	{
 	}
 
-	FileStream::FileStream(const std::string & fileName, const OpenMode & openMode)
+	FileStream::FileStream(const std::string & fileName, const OpenMode & openMode) :
+		_file(nullptr)
 	{
 		open(fileName, openMode);
 	}
@@ -28,7 +29,7 @@ namespace GG
 
 	bool FileStream::open(const std::string & fileName, const OpenMode & openMode)
 	{
-		if(_file)
+		if(_file != nullptr)
 			close();
 
 		_file = _openFile(fileName, openMode);
@@ -37,18 +38,18 @@ namespace GG
 	
 	int FileStream::close()
 	{
-		if(!_file)
+		if(_file == nullptr)
 			return -1;
 
 		return FileSystem::CloseFile(_file);
 	}
 
-	uint64 FileStream::getSize() const
+	int64 FileStream::getSize() const
 	{
 		if(!isOpen())
 		{
 			TRACE_WARNING("Trying to get size from an invalid file stream!");
-			return -1;
+			return 0;
 		}
 		return FileSystem::FileLength(_file);
 	}

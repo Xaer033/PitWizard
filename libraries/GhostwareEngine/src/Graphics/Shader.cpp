@@ -26,8 +26,6 @@ namespace GG
 		programHandle(0),
 		IResource()
 	{
-		for( uint i = 0; i < 7; ++i )
-			attributeHandles.push_back("");
 	}
 
 	Shader::Shader(const json & j) :
@@ -35,9 +33,6 @@ namespace GG
 		pixelHandle(0),
 		programHandle(0)
 	{
-		for(uint i = 0; i < 7; ++i)
-			attributeHandles.push_back("");
-
 		_descriptor = ShaderDescriptor::FromJson(j);
 	}
 
@@ -68,10 +63,16 @@ namespace GG
 		parameterHandles.clear();
 
 		if(vertexHandle)
+		{
+			glDetachShader(programHandle, vertexHandle);
 			glDeleteShader(vertexHandle);
+		}
 
 		if(pixelHandle)
+		{
+			glDetachShader(programHandle, pixelHandle);
 			glDeleteShader(pixelHandle);
+		}
 
 		if(programHandle)
 			glDeleteProgram(programHandle);
@@ -88,8 +89,7 @@ namespace GG
 
 	void Shader::bindAttribute( int tag, const std::string & name )
 	{
-		if( (uint)tag < attributeHandles.size() )
-			attributeHandles[ tag ] = name;
+		attributeHandles[ tag ] = name;
 	}
 
 	void Shader::bind( ) const
@@ -177,8 +177,8 @@ namespace GG
 
 	void Shader::_bindAllAttributes()
 	{
-		for( uint i = 0; i < attributeHandles.size(); ++i )
-			glBindAttribLocation( programHandle, i, attributeHandles[i].c_str() );
+		for(auto pair : attributeHandles)
+			glBindAttribLocation(programHandle, pair.first, pair.second.c_str());;
 	}
 
 

@@ -15,52 +15,6 @@
 
 namespace GG
 {
-	/*std::string loadFile(const std::string & filename)
-	{
-		std::ifstream in(filename, std::ios::in | std::ios::binary);
-
-		std::string contents;
-
-		if(in)
-		{
-			in.seekg(0, std::ios::end);
-			contents.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&contents[0], contents.size());
-			in.close();
-		}
-
-		return contents;
-	}*/
-
-	//
-	// Initialize the shader and program object
-	//
-	//bool initShader(GG::Shader *& shader, const std::string & shaderName)
-	//{
-
-	//	std::string directory = "./resources/shaders/";
-
-	//	std::string vShaderStr	= loadFile((directory + shaderName + std::string(".vs")));
-	//	std::string fShaderStr	= loadFile((directory + shaderName + std::string(".ps")));
-
-	//	if(shader != nullptr)
-	//		delete shader;
-
-	//	shader = new Shader();
-	//	shader->bindAttribute(VertexTags::Position,		"inVert");
-	//	shader->bindAttribute(VertexTags::Uv0,			"inUV0");
-	//	shader->bindAttribute(VertexTags::Normal,		"inNormal");
-	//	shader->bindAttribute(VertexTags::Tangent,		"inTangent");
-	//	shader->bindAttribute(VertexTags::Bitangent,	"inBitangent");
-
-	//	//shader->bindAttribute(VertexTags::Color,	"inColor");
-
-	//	shader->compile(vShaderStr, fShaderStr);
-
-	//	return true;
-	//}
-
 
 	RenderFactory::RenderFactory() : _tempShader(nullptr)
 	{
@@ -69,23 +23,16 @@ namespace GG
 
 	RenderFactory::~RenderFactory()
 	{
-
 	}
 
 	void RenderFactory::loadTempAssets()
 	{
-		ResourceManager * rm = ResourceManager::GetInstance();
-		_tempTexture	= rm->getResource<Texture2D>(STRING_ID("brick_albedo"));
-		_roughnessTex	= rm->getResource<Texture2D>(STRING_ID("brick_spec"));
-		_normalTex		= rm->getResource<Texture2D>(STRING_ID("brick_norm"));
+		//ResourceManager * rm = ResourceManager::GetInstance();
+		//_tempTexture	= rm->getResource<Texture2D>(STRING_ID("abrick_albedo"));
+		//_roughnessTex	= rm->getResource<Texture2D>(STRING_ID("brick_spec"));
+		//_normalTex		= rm->getResource<Texture2D>(STRING_ID("brick_norm"));
 
-		_tempShader		= rm->getResource<Shader>(STRING_ID("cookTorrence"));
-		
-		/*if(!initShader(_tempShader, "unlit"))
-		{
-			TRACE_ERROR("Could not load temp shader!");
-			return;
-		}*/
+		//_tempShader		= rm->getResource<Shader>(STRING_ID("cookTorrence"));
 	}
 
 	void RenderFactory::addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix )
@@ -103,7 +50,7 @@ namespace GG
 	void RenderFactory::renderAll( const Camera * camera )
 	{
 		ResourceManager * rm = ResourceManager::GetInstance();
-		rm->getResource<Shader>(STRING_ID("cookTorrence"));
+		loadTempAssets();
 
 		if( camera == nullptr )
 		{
@@ -125,14 +72,12 @@ namespace GG
 	void RenderFactory::_render3DList(const Camera * camera)
 	{
 		RenderState * rs = RenderState::GetInstance();
-		Material *	currentMat		= nullptr;
+		Material *	currentMat	= nullptr;
 
 		Matrix4 viewProjection = rs->getProjectionMatrix() * rs->getViewMatrix();
-
-		for( auto it = _renderCommand3DList.begin(); 
-			 it != _renderCommand3DList.end(); 
-			 ++it 
-		)
+		
+		auto it = _renderCommand3DList.begin();
+		for(; it != _renderCommand3DList.end(); ++it)
 		{
 			const RenderCommand3D * command = &( *it );
 			if( command == nullptr )
@@ -252,16 +197,13 @@ namespace GG
 			material->renderStateBlock.depthRange.y
 		);
 
+		ResourceManager * rm = ResourceManager::GetInstance();
+		_tempShader = rm->getResource<Shader>(material->renderStateBlock.shaderId);
 		_tempShader->bind();
 
 		static float t = 0.0f;
 		t += 0.016f;
 		_tempShader->setParameter("time", t);
-
-		_tempShader->setParameter("tintColor", Vector4(1.0f));
-		_tempShader->setParameter("albedoMap", 0, _tempTexture->getId());
-		_tempShader->setParameter("roughnessMap", 1, _roughnessTex->getId());
-		_tempShader->setParameter("normalMap", 2, _normalTex->getId());
 
 		_tempShader->setParameter("lightList[0].position", Vector3(1.0f, 3.0f, 5.0f));
 		_tempShader->setParameter("lightList[0].color", Vector4(.8, 0.749, 0.681, 2.1f));
@@ -278,6 +220,6 @@ namespace GG
 		_tempShader->setParameter("lightList[2].radius", 7.0f);
 		_tempShader->setParameter("lightList[2].type", 1);
 
-		//material->bindMaterialToShader(_tempShader);
+		material->bindToShader(_tempShader);
 	}
 }

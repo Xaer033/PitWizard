@@ -13,8 +13,8 @@ namespace GG
 	public:
 		static int		VERSION;
 
-		virtual bool	serialize(const Material & material, std::string & jsonString) const;
-		virtual bool	deserialize(Material & material, const std::string & jsonString) const;
+		static bool	Serialize(const Material & material, std::string & jsonString);
+		static bool	Deserialize(Material & material, const std::string & jsonString);
 
 	};
 }

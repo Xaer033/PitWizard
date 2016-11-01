@@ -1,11 +1,32 @@
 
 #include "Material.h"
-
+#include "MaterialDescriptor.h"
 #include "Shader.h"
+#include "Texture2D.h"
+
+#include <GG/Resources/ResourceHandle.h>
+#include <GG/Resources/ResourceManager.h>
 
 namespace GG
 {
-	void Material::bindToShader(Shader * shader)
+	Material::Material() : IResource()
+	{
+	}
+
+	Material::Material(const json & j) : IResource(j)
+	{
+		_descriptor = MaterialDescriptor::FromJson(j);
+	}
+
+	void Material::init()
+	{
+	}
+
+	void Material::shutdown()
+	{
+	}
+
+	void Material::bindToShader(ResourceH<Shader> shader)
 	{
 		for(const auto & pair : _intUniforms)
 			shader->setParameter(pair.first, pair.second);
@@ -28,7 +49,10 @@ namespace GG
 
 		uint unitCount = 0;
 		for(const auto & pair : _textureUniforms)
-			shader->setParameter(pair.first, unitCount++, pair.second);
+		{
+			ResourceH<Texture2D> tex = ResourceManager::GetInstance()->getResource<Texture2D>(pair.second);
+			shader->setParameter(pair.first, unitCount++, tex->getId());
+		}
 		
 	}
 }

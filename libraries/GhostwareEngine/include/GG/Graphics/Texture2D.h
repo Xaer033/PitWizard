@@ -15,6 +15,22 @@ class CIwImage;//Get Rid of this soon!!!
 
 namespace GG
 {
+	enum TextureWrapMode
+	{
+		WM_REPEAT	= GL_REPEAT,
+		WM_CLAMP	= GL_CLAMP_TO_EDGE,
+		WM_MIRRORED_REPEAT = GL_MIRRORED_REPEAT
+	};
+
+	enum TextureFilterMode
+	{
+		FM_NEAREST	= GL_NEAREST,
+		FM_LINEAR	= GL_LINEAR,
+		FM_MIPMAP_NEAREST	= GL_NEAREST_MIPMAP_NEAREST,
+		FM_MIPMAP_LINEAR	= GL_LINEAR_MIPMAP_LINEAR
+	};
+
+
 	class Texture2D : public IResource
 	{
 	public:

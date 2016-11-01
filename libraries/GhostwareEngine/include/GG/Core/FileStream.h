@@ -28,7 +28,7 @@ namespace GG
 		virtual int64	write(const void* buffer, uint32 size, uint32 count);
 		virtual int64	seek(uint64 position);
 		virtual int64	tell() const;
-		virtual uint64	getSize() const;
+		virtual int64	getSize() const;
 
 	private:
 		FileHandle *	_openFile(const std::string & fileName, const OpenMode & openMode) const;

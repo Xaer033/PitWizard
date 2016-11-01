@@ -17,6 +17,8 @@
 			"type"			: "Texture2D",
 			"source"		: "textures/stone_albedo.png",
 			"mipMapping" 	: true,
+			"minFilterMode"	: "mipmap_linear",
+			"magFilterMode"	: "linear",
 			"wrapMode"		: "repeat"
 		},
 		{
@@ -24,6 +26,8 @@
 			"type"			: "Texture2D",
 			"source"		: "textures/stone_rough.png",
 			"mipMapping" 	: true,
+			"minFilterMode"	: "mipmap_linear",
+			"magFilterMode"	: "linear",
 			"wrapMode"		: "repeat"
 		},
 		{
@@ -31,6 +35,8 @@
 			"type"			: "Texture2D",
 			"source"		: "textures/stone_normal.png",
 			"mipMapping" 	: true,
+			"minFilterMode"	: "mipmap_linear",
+			"magFilterMode"	: "linear",
 			"wrapMode"		: "repeat"
 		},
 		
@@ -50,6 +56,13 @@
 				"Tangent"	: "inTangent",
 				"Bitangent"	: "inBitangent"
 			}
+		},
+		
+	// Materials
+		{
+			"id"			: "marble",
+			"type"			: "Material",
+			"source"		: "materials/marble.mat"
 		}
    ]
 }

@@ -1,0 +1,27 @@
+{
+
+	"version": 1,
+
+	"renderStateBlock": {
+		"blendMode": "none",
+		"cullMode": "back",
+		"windingMode": "ccw",
+		"depthRange": [0, 1],
+		"depthTest": true,
+		"shaderId": "cookTorrence"
+	},
+
+	"materialValues": [{
+		"name": "albedoMap",
+		"type": "Texture2D",
+		"value": "brick_albedo"
+	}, {
+		"name": "roughnessMap",
+		"type": "Texture2D",
+		"value": "brick_spec"
+	}, {
+		"name": "normalMap",
+		"type": "Texture2D",
+		"value": "brick_norm"
+	}]
+}

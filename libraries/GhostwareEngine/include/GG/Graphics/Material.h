@@ -4,9 +4,13 @@
 
 #include <GG/Core/Types.h>
 #include <GG/Core/Vector.h>
+#include <GG/Core/StringId.h>
+#include <GG/Resources/IResource.h>
+#include <GG/Resources/ResourceHandle.h>
 #include <GG/Graphics/RenderState.h>
 #include <GG/Graphics/Shader.h>
-#include <GG/Graphics/Camera.h>
+#include <GG/Graphics/MaterialDescriptor.h>
+
 
 namespace GG
 {
@@ -29,23 +33,56 @@ namespace GG
 		bool		isDepthTesting;
 		Vector2		depthRange;
 
-		int32		shaderId;
+		StringId	shaderId;
 	};
 
-	class Material
+
+
+	class Material : public IResource
 	{
 		friend class MaterialSerializer;
-
 	public:
-		Material()
+		static StringId GetResourceType()
 		{
+			static StringId id = STRING_ID("Material");
+			return id;
 		}
+	public:
+		Material();
+		Material(const json & j);
+
+		virtual void	init();
+		virtual	void	shutdown();
+
+		inline virtual	StringId getType() const
+		{
+			return GetResourceType();
+		}
+
+		inline virtual IResourceDescriptor * getDescriptor()
+		{
+			return &_descriptor;
+		}
+
+		inline StringId getShaderId() const
+		{
+			return _shaderId;
+		}
+
+		inline void setShaderId(const StringId & id)
+		{
+			_shaderId = id;
+		}
+
+		void	bindToShader(ResourceH<Shader> shader);
+
 
 		RenderStateBlock	renderStateBlock;
 		
-		void bindToShader(Shader *	shader);
-
 	private:
+		MaterialDescriptor	_descriptor;
+
+		StringId	_shaderId;
 
 		std::unordered_map<std::string, int>		_intUniforms;
 		std::unordered_map<std::string, float>		_floatUniforms;
@@ -53,7 +90,6 @@ namespace GG
 		std::unordered_map<std::string, Vector3>	_vector3Uniforms;
 		std::unordered_map<std::string, Vector4>	_vector4Uniforms;
 		std::unordered_map<std::string, Matrix4>	_matrix4Uniforms;
-		std::unordered_map<std::string, uint>		_textureUniforms;
-
+		std::unordered_map<std::string, StringId>	_textureUniforms;
 	};
 }

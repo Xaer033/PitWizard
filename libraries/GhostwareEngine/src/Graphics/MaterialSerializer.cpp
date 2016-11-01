@@ -89,7 +89,7 @@ namespace GG
 	}
 
 
-	bool MaterialSerializer::serialize(const Material & material, std::string & jsonString) const
+	bool MaterialSerializer::Serialize(const Material & material, std::string & jsonString)
 	{
 		json j;
 
@@ -131,7 +131,7 @@ namespace GG
 		{
 			json uniform;
 			uniform["name"]		= pair.first;
-			uniform["type"]		= "vector2";
+			uniform["type"]		= "Vector2";
 			uniform["value"]	= ToJson(pair.second);
 
 			materialValues[uniformCount] = uniform;
@@ -142,7 +142,7 @@ namespace GG
 		{
 			json uniform;
 			uniform["name"]		= pair.first;
-			uniform["type"]		= "vector3";
+			uniform["type"]		= "Vector3";
 			uniform["value"]	= ToJson(pair.second);
 
 			materialValues[uniformCount] = uniform;
@@ -153,7 +153,7 @@ namespace GG
 		{
 			json uniform;
 			uniform["name"]		= pair.first;
-			uniform["type"]		= "vector4";
+			uniform["type"]		= "Vector4";
 			uniform["value"]	= ToJson(pair.second);
 
 			materialValues[uniformCount] = uniform;
@@ -164,7 +164,7 @@ namespace GG
 		{
 			json uniform; 
 			uniform["name"]		= pair.first;
-			uniform["type"]		= "texture";
+			uniform["type"]		= "Texture2D";
 			uniform["value"]	= pair.second;
 
 			materialValues[uniformCount] = uniform;
@@ -180,11 +180,16 @@ namespace GG
 		return true;
 	}
 
-	bool MaterialSerializer::deserialize(Material & material, const std::string & jsonString) const
+	bool MaterialSerializer::Deserialize(Material & material, const std::string & jsonString)
 	{
 		json j = JsonFromString(jsonString);
 
 		int version = j["version"].asInt();
+		if(version < MaterialSerializer::VERSION)
+		{
+			TRACE_ERROR("Material version: %d is older than current version: %d", version, MaterialSerializer::VERSION);
+			return false;
+		}
 
 		json renderState = j["renderStateBlock"];
 
@@ -194,7 +199,7 @@ namespace GG
 		block.cullMode				= getCullModeFromString(renderState["cullMode"].asString());
 		block.blendMode				= getBlendModeFromString(renderState["blendMode"].asString());
 		block.windingMode			= getWindingModeFromString(renderState["windingMode"].asString());
-		block.shaderId				= renderState["shaderId"].asInt();
+		block.shaderId				= STRING_ID(renderState["shaderId"].asString());
 
 		json materialValues = j["materialValues"];
 
@@ -203,6 +208,8 @@ namespace GG
 			json uniform = materialValues[i];
 			std::string name	= uniform["name"].asString();
 			std::string type	= uniform["type"].asString();
+			std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+
 			json value			= uniform["value"];
 
 			if(type == "int")
@@ -225,14 +232,16 @@ namespace GG
 			{
 				material._vector4Uniforms[name] = Vector4FromJson(value);
 			}
-			else if(type == "texture")
+			else if(type == "texture2d")
 			{
-				material._textureUniforms[name] = value.asUInt();
+				material._textureUniforms[name] = STRING_ID(value.asString());
+			}
+			else
+			{
+				TRACE_WARNING("Could not determine Material value type: %s", type);
 			}
 		}
-		
-
+	
 		return true;
 	}
-
 }

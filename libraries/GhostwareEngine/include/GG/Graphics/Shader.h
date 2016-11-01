@@ -59,7 +59,7 @@ namespace GG
 
 	private:
 		typedef std::unordered_map< std::string, int >	ParameterMap;
-		typedef std::vector< std::string >				AttributeList;
+		typedef std::unordered_map< uint, std::string >	AttributeList;
 		typedef std::vector< std::string >				DefineList;
 
 		ParameterMap		parameterHandles;

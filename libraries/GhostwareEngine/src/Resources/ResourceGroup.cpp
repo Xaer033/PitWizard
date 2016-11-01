@@ -112,9 +112,18 @@ namespace GG
 
 	void ResourceGroup::reloadAllAssets()
 	{
-		removeAllAssets();
+		auto it = _descriptorMap.begin();
+		for(; it != _descriptorMap.end(); ++it)
+		{
+			const StringId resourceId			= it->first;
+			const IResourceDescriptor * desc	= it->second;
+			const StringId resourceType			= desc->type;
+			
+			(*_factoryMap)[resourceType]->loadResource(resourceId);
+		}
+		/*removeAllAssets();
 		createAllAssets(*_factoryMap);
-		loadAllAssets();
+		loadAllAssets();*/
 	}
 
 	const IResourceDescriptor * ResourceGroup::getDescriptor(const StringId & id) const

@@ -21,4 +21,5 @@
 #include "Graphics/MaterialSerializer.h"
 #include "Graphics/Texture2DLoader.h"
 #include "Graphics/ShaderLoader.h"
+#include "Graphics/MaterialLoader.h"
 

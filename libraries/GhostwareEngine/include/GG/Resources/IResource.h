@@ -4,6 +4,7 @@
 
 #include <GG/Core/StringId.h>
 #include <GG/Core/IStream.h>
+#include <GG/Core/Json.h>
 #include "IResourceDescriptor.h"
 
 
@@ -20,6 +21,8 @@ namespace GG
 		};
 
 		IResource() : _state(State::UNKNOWN) {}
+		IResource(const json & j) : _state(State::UNKNOWN) {}
+
 		virtual			~IResource() {}
 
 		virtual void					init()			= 0;

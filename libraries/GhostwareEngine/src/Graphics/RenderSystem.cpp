@@ -70,13 +70,6 @@ namespace GG
 
 	void RenderSystem::renderOneFrame()
 	{
-		// TEMP RESOURCE RELOADING!!! -Julian
-		if(s3eKeyboardGetState(s3eKeyR) & S3E_KEY_STATE_RELEASED)
-		{
-			ResourceManager::GetInstance()->findGroup(STRING_ID("default"))->reloadAllAssets();
-			_renderFactory.loadTempAssets();
-		}
-
 		auto it = _cameraMap.begin();
 		for(; it != _cameraMap.end(); ++it )
 		{

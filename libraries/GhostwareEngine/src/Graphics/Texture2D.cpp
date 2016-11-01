@@ -1,5 +1,6 @@
 
 #include "Texture2D.h"
+#include <cassert>
 #include "s3e.h"
 #include "IwGL.h"
 #include "IwImage.h"
@@ -8,7 +9,6 @@
 
 namespace GG
 {
-
 	Texture2D::Texture2D() :
 		_id(0),
 		_width(0),
@@ -20,7 +20,8 @@ namespace GG
 	Texture2D::Texture2D(const json & jsonDescriptor) :
 		_id(0),
 		_width(0),
-		_height(0)
+		_height(0),
+		IResource(jsonDescriptor)
 	{
 		_descriptor = Texture2DDescriptor::FromJson(jsonDescriptor);
 	}
@@ -79,12 +80,21 @@ namespace GG
 		glBindTexture(GL_TEXTURE_2D, _id);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width, _height, 0, internalFormat, GL_UNSIGNED_BYTE, image.GetTexels());
-		glGenerateMipmap(GL_TEXTURE_2D);
+		assert(glGetError() == GL_NO_ERROR);
+		if(_descriptor.isMipmapped)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+			assert(glGetError() == GL_NO_ERROR);
+		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);// GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);// GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _descriptor.wrapMode);
+		assert(glGetError() == GL_NO_ERROR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _descriptor.wrapMode);
+		assert(glGetError() == GL_NO_ERROR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _descriptor.minFilterMode);
+		assert(glGetError() == GL_NO_ERROR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _descriptor.magFilterMode);
+		assert(glGetError() == GL_NO_ERROR);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 		return true;

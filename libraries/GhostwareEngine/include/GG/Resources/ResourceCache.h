@@ -15,5 +15,4 @@ namespace GG
 	using DescriptorCache = std::unordered_map<StringId, T>;
 
 	typedef std::unordered_map<StringId, std::unique_ptr<AbstractResourceFactory>>	FactoryMap;
-
 }
