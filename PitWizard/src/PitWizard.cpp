@@ -36,6 +36,13 @@ void PitWizard::init(int argc, char** argv)
 {
 	_setupLoggers();
 
+	const char * argv0 = (argc > 0) ? argv[0] : nullptr;
+	FileSystem::Init(argv0);
+	FileSystem::Mount("rom://", "/", true);
+	FileSystem::Mount("ram://", "/", true);
+	FileSystem::Mount("/", "/", true);
+	FileSystem::SetWriteDirectory("ram://");
+
 	s3eSurfaceSetup(S3E_SURFACE_PIXEL_TYPE_RGB888);
 
 	//Initialise graphics system(s)
@@ -63,13 +70,6 @@ void PitWizard::init(int argc, char** argv)
 	inputSystem->init(config);
 
 	RenderState::GetInstance()->setRenderSize(_deviceWidth, _deviceHeight);
-
-	const char * argv0 = (argc > 0) ? argv[0] : nullptr;
-	FileSystem::Init(argv0);
-	FileSystem::Mount("rom://", "/", true);
-	FileSystem::Mount("ram://", "/", true);
-	FileSystem::Mount("/", "/", true);
-	FileSystem::SetWriteDirectory("ram://");
 
 	ResourceManager::GetInstance()->registerType<Texture2D>(new Texture2DLoader());
 	ResourceManager::GetInstance()->registerType<Shader>(new ShaderLoader());
