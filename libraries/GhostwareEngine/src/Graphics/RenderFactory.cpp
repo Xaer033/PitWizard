@@ -203,7 +203,7 @@ namespace GG
 
 		static float t = 0.0f;
 		t += 0.016f;
-		_tempShader->setParameter("time", t);
+		//_tempShader->setParameter("time", t);
 
 		_tempShader->setParameter("lightList[0].position", Vector3(1.0f, 3.0f, 5.0f));
 		_tempShader->setParameter("lightList[0].color", Vector4(.8, 0.749, 0.681, 2.1f));
