@@ -23,7 +23,7 @@ namespace GG
 			"			\"windingMode\" : \"ccw\",\n"
 			"			\"depthRange\" : [0, 1],\n"
 			"			\"depthTest\" : true,\n"
-			"			\"shaderId\" : \"cookTorrence\"\n"
+			"			\"shaderId\" : \"null\"\n"
 			"	},\n"
 			"	\"version\" : 1\n"
 			"}\n";

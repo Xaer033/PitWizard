@@ -4,9 +4,7 @@
 #include "RenderFactory.h"
 #include "ISceneGraph.h"
 #include <GG/Core/StringId.h>
-
-#include "StringId.h"
-#include "Mesh.h"
+#include "MeshInstance.h"
 
 #include <unordered_map>
 
@@ -27,8 +25,8 @@ namespace GG
 
 		SceneNode * createSceneNode();
 
-		Mesh *		addMeshComponent( const StringId & id );
-		Mesh *		getMeshComponent( const StringId & id );
+		MeshInstance *		addMeshComponent( const StringId & id );
+		MeshInstance *		getMeshComponent( const StringId & id );
 
 		Camera *	addCamera( const StringId & id );
 		Camera *	getCamera( const StringId & id );
@@ -36,7 +34,7 @@ namespace GG
 		void		renderOneFrame();
 
 	private:
-		typedef std::unordered_map< StringId, Mesh>		MeshMap;
+		typedef std::unordered_map< StringId, MeshInstance>		MeshMap;
 		typedef std::unordered_map< StringId, Camera>	CameraMap;
 
 		std::unique_ptr<ISceneGraph>	_graph;

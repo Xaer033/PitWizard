@@ -9,7 +9,7 @@
 
 #include "RenderFactory.h"
 #include "ISceneGraph.h"
-#include "Mesh.h"
+#include "MeshInstance.h"
 
 namespace GG
 {
@@ -34,18 +34,18 @@ namespace GG
 		return _graph->createSceneNode( );
 	}
 
-	Mesh * RenderSystem::addMeshComponent( const StringId & id )
+	MeshInstance * RenderSystem::addMeshComponent( const StringId & id )
 	{
-		_meshMap[ id ] = Mesh(nullptr, nullptr);
+		_meshMap[ id ] = MeshInstance();
 		return &_meshMap[ id ];
 	}
 
-	Mesh * RenderSystem::getMeshComponent( const StringId & id )
+	MeshInstance * RenderSystem::getMeshComponent( const StringId & id )
 	{
 		auto iter = _meshMap.find( id );
 		if( iter == _meshMap.end() )
 		{
-			TRACE_WARNING( "Could not find mesh with id: %d", id );
+			TRACE_WARNING( "Could not find mesh component for entity: %s", GetStringFromId(id) );
 			return nullptr;
 		}
 		return &iter->second;

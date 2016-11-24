@@ -69,14 +69,13 @@ void PitWizard::init(int argc, char** argv)
 	inputSystem = std::unique_ptr<InputSystem>(new InputSystem(_deviceWidth, _deviceHeight));
 	inputSystem->init(config);
 
-	RenderState::GetInstance()->setRenderSize(_deviceWidth, _deviceHeight);
+	RenderState::Get()->setRenderSize(_deviceWidth, _deviceHeight);
 
-	ResourceManager::GetInstance()->registerType<Texture2D>(new Texture2DLoader());
-	ResourceManager::GetInstance()->registerType<Shader>(new ShaderLoader());
-	ResourceManager::GetInstance()->registerType<Material>(new MaterialLoader());
+	ResourceManager::Get()->registerType<Texture2D>(new Texture2DLoader());
+	ResourceManager::Get()->registerType<Shader>(new ShaderLoader());
+	ResourceManager::Get()->registerType<Material>(new MaterialLoader());
 
-	FileStream stream("resources/TestGroup.group", OpenMode::OPEN_READ);
-	ResourceGroup* group = ResourceManager::GetInstance()->createGroup(&stream);
+	ResourceGroup* group = ResourceManager::Get()->createGroupFromPack("resources/Cool.group");
 	group->loadAllAssets();
 }
 
@@ -94,39 +93,36 @@ void PitWizard::shutdown()
 
 void PitWizard::doGameLoop()
 {
-	ResourceManager * rm = ResourceManager::GetInstance();
+	ResourceManager * rm = ResourceManager::Get();
 	ResourceH<Material> gridMat = rm->getResource<Material>("marble");
 
-	Model gridModel;
-	gridModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
-	ObjLoader::loadFromFile("./resources/environments/forest_road/models/grid.obj", gridModel);
+	Mesh gridModel;
+	FileStream gStream("resources/gridFloor.gmesh", OpenMode::OPEN_READ);
+	GmeshLoader::LoadFromStream(&gStream, &gridModel);
 
-	Model groundModel;
-	groundModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
-	ObjLoader::loadFromFile("./resources/environments/forest_road/models/groundPlane.obj", groundModel);
 	
-	Model playerModel;
-	playerModel.setVertexProperties(POSITIONS | TEXCOORDS | NORMALS | TANGENTS | BITANGENTS);
-	ObjLoader::loadFromFile("./resources/environments/forest_road/models/player.obj", playerModel);
-	ResourceHandle<Material> tempHolder = rm->getResource<Material>("marble");
+	Mesh playerModel;
+	FileStream pStream("resources/player.gmesh", OpenMode::OPEN_READ);
+	GmeshLoader::LoadFromStream(&pStream, &playerModel);
 
+	ResourceHandle<Material> tempHolder = rm->getResource<Material>("marble");
 
 	World* worldPtr = new World(new BasicSceneGraph(1000));
 	std::unique_ptr<World> world(worldPtr);
 
 	float aspect =	(float)_deviceWidth / (float)_deviceHeight;
 
-	GG::Entity *	box_1		= world->createEntity("Box_1");
-	GG::Mesh *		boxMesh_1	= world->addComponent<Mesh>(box_1);
-	boxMesh_1->geometry = &playerModel;
-	boxMesh_1->material	= gridMat.get();
+	GG::Entity *		box_1		= world->createEntity("Box_1");
+	GG::MeshInstance *	boxMesh_1	= world->addComponent<MeshInstance>(box_1);
+	boxMesh_1->setMesh(&playerModel);
+	boxMesh_1->mainMaterial(STRING_ID("marble"));
 	SceneNode *		boxNode_1	= box_1->getSceneNode();
 	boxNode_1->setPosition(Vector3(0, 1, 0));
 
-	GG::Entity *	box_2		= world->createEntity("Box_2");
-	GG::Mesh *		boxMesh_2	= world->addComponent<Mesh>(box_2);
-	boxMesh_2->geometry = &playerModel;
-	boxMesh_2->material	= gridMat.get();
+	GG::Entity *		box_2		= world->createEntity("Box_2");
+	GG::MeshInstance *	boxMesh_2	= world->addComponent<MeshInstance>(box_2);
+	boxMesh_2->setMesh(&playerModel);
+	boxMesh_2->mainMaterial(STRING_ID("marble"));
 	SceneNode *		boxNode_2	= box_2->getSceneNode();
 	boxNode_2->setPosition(Vector3(0, 0, 3));
 	boxNode_2->setParent(boxNode_1);
@@ -138,19 +134,13 @@ void PitWizard::doGameLoop()
 	cam->setClearColor(GG::Vector4(0.43f, 0.48f, 0.67f, 1.0f));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
 	camNode_1->setPosition(Vector3(0.0f, 3.0f, -7.0f));
-	camNode_1->lookAt(boxNode_1);
+	camNode_1->lookAt(Vector3());
 
-	Entity *	gridEntity = world->createEntity("GridMesh");
-	Mesh *		gridMeshInstance	= world->addComponent<Mesh>(gridEntity);
-	gridMeshInstance->geometry		= &gridModel;
-	gridMeshInstance->material		= gridMat.get();
+	Entity *		groundEntity		= world->createEntity("GroundMesh");
+	MeshInstance *	groundMeshInstance	= world->addComponent<MeshInstance>(groundEntity);
+	groundMeshInstance->setMesh(&gridModel);
+	groundMeshInstance->mainMaterial(STRING_ID("marble"), true);
 
-
-	Entity *	groundEntity = world->createEntity("GroundMesh");
-	Mesh *		groundMeshInstance	= world->addComponent<Mesh>(groundEntity);
-	groundMeshInstance->geometry	= &groundModel;
-	groundMeshInstance->material	= gridMat.get();
-	
 	const float camSpeed	= 5.0f;
 
 	Time clock;
@@ -227,8 +217,8 @@ void PitWizard::_setupLoggers()
 {
 	const std::string filePath = _getFileLogName();
 
-	Log::GetInstance()->registerLogger( new FileLogger( filePath ) );
-	Log::GetInstance()->registerLogger( new ConsoleLogger() );
+	Log::Get()->registerLogger( new FileLogger( filePath ) );
+	Log::Get()->registerLogger( new ConsoleLogger() );
 }
 
 

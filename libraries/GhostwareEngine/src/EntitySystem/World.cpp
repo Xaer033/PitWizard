@@ -1,7 +1,7 @@
 
 #include "World.h"
 
-#include <GG/Graphics/Mesh.h>
+#include <GG/Graphics/MeshInstance.h>
 #include <GG/Graphics/Camera.h>
 #include <GG/Core/Log.h>
 
@@ -72,14 +72,14 @@ namespace GG
 		Entity * entity, 
 		uint32 componentType )
 	{
-		if( componentType == Mesh::GetComponentId() )
+		if( componentType == MeshInstance::GetComponentType() )
 		{
-			Mesh * mesh = _renderSystem->addMeshComponent( entity->getId() );
+			MeshInstance * mesh = _renderSystem->addMeshComponent( entity->getId() );
 			entity->getSceneNode()->attachObject( mesh );
 			return mesh;
 		}
 
-		if( componentType == Camera::GetComponentId() )
+		if( componentType == Camera::GetComponentType() )
 			return _renderSystem->addCamera( entity->getId() );
 
 		return nullptr;
@@ -89,10 +89,10 @@ namespace GG
 		const Entity * entity,
 		uint32 componentType )
 	{
-		if( componentType == Mesh::GetComponentId() )
+		if( componentType == MeshInstance::GetComponentType() )
 			return _renderSystem->getMeshComponent( entity->getId() );
 
-		if( componentType == Camera::GetComponentId() )
+		if( componentType == Camera::GetComponentType() )
 			return _renderSystem->getCamera( entity->getId() );
 
 		return nullptr;

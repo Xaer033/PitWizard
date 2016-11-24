@@ -1,0 +1,58 @@
+{
+  "version": 100,
+  "group": "default",
+  "paths": [
+    "resources",
+    "resources/TestGroup.zip"
+  ],
+  "resources": [
+    {
+  "id": "brick_albedo",
+  "type": "Texture2D",
+  "source": "default/textures/stone_albedo.png",
+  "wrapMode": "repeat",
+  "minFilterMode": "mipmap_linear",
+  "magFilterMode": "linear",
+  "mipMapping": true
+},
+    {
+  "id": "brick_spec",
+  "type": "Texture2D",
+  "source": "default/textures/stone_rough.png",
+  "wrapMode": "repeat",
+  "minFilterMode": "mipmap_linear",
+  "magFilterMode": "linear",
+  "mipMapping": true
+},
+    {
+  "id": "brick_norm",
+  "type": "Texture2D",
+  "source": "default/textures/stone_normal.png",
+  "wrapMode": "repeat",
+  "minFilterMode": "mipmap_linear",
+  "magFilterMode": "linear",
+  "mipMapping": true
+},
+    {
+  "id": "marble",
+  "type": "Material",
+  "source": "default/materials/marble.mat"
+},
+{
+			"id"			: "cookTorrence",
+			"type"			: "Shader",
+			"source"		: "default/shaders/unlit",
+			"vertexSource"	: "default/shaders/unlit.vs",
+			"pixelSource"	: "default/shaders/unlit.ps",
+			
+			"vertexAttributeLayout" :
+			{
+				"Position"	: "inVert",    
+				"Uv0"		: "inUV0", 
+				"Normal"	: "inNormal",
+				"Tangent"	: "inTangent",
+				"Bitangent"	: "inBitangent"
+			}
+		}
+  ]
+}

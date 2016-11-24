@@ -48,11 +48,6 @@ namespace GG
 		return &_descriptor;
 	}
 
-	StringId	Texture2D::getType() const
-	{
-		return Texture2D::GetResourceType();
-	}
-
 	uint Texture2D::getWidth() const
 	{
 		return _width;

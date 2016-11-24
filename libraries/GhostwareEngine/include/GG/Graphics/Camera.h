@@ -18,11 +18,7 @@ namespace GG
 	{
 	public:
 		static	bool DepthCompare( const Camera * a, const Camera * b );
-		static const uint32 GetComponentId()
-		{
-			static StringId id = STRING_ID("CameraComponent");
-			return id;
-		}
+		DEFINE_COMPONENT_TYPE(Camera)
 
 	public:
 

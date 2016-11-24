@@ -50,7 +50,7 @@ namespace GG
 		uint unitCount = 0;
 		for(const auto & pair : _textureUniforms)
 		{
-			ResourceH<Texture2D> tex = ResourceManager::GetInstance()->getResource<Texture2D>(pair.second);
+			ResourceH<Texture2D> tex = ResourceManager::Get()->getResource<Texture2D>(pair.second);
 			shader->setParameter(pair.first, unitCount++, tex->getId());
 		}
 		

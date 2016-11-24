@@ -99,6 +99,11 @@ namespace GG
 	}
 
 
+	void StaticGeometryBuffer::pushIndex(uint index)
+	{
+		_indexList.push_back(index);
+	}
+
     void StaticGeometryBuffer::_generateTangents()
 	{
 		Vertex v[3];
@@ -153,11 +158,11 @@ namespace GG
     
     void StaticGeometryBuffer::build( DrawHint drawHint )
 	{
-		if(getVertexProperties() & TANGENTS)
+		/*if(getVertexProperties() & TANGENTS)
 			_generateTangents();
 
 		_generateIndices();
-		
+		*/
 		
         if( _vertexBufferHandle == 0 )
             glGenBuffers( 1, &_vertexBufferHandle );
@@ -176,6 +181,11 @@ namespace GG
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,          _indexBufferHandle );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER,          sizeof( GLuint ) * _indexList.size(), &_indexList[ 0 ] , drawHint );
        // glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0,    sizeof( GLuint ) * _indexList.size(), &_indexList[ 0 ] );
+	
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 	}
 
     void StaticGeometryBuffer::build( 
@@ -192,7 +202,7 @@ namespace GG
 			_vertexList.push_back( vertexList[ i ] );
 
 
-        if( indexList == NULL || indexCount == 0 )
+        if( indexList == nullptr || indexCount == 0 )
         {
             _generateIndices();
         }
@@ -235,7 +245,7 @@ namespace GG
 			
         int vertexProperties = getVertexProperties();
 
-        if( vertexProperties & GG::TEXCOORDS )
+        if( vertexProperties & GG::UV0 )
         {
             glEnableVertexAttribArray(VertexTags::Uv0);
             glVertexAttribPointer(VertexTags::Uv0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 3 * sizeof( float ) ) );
@@ -292,8 +302,13 @@ namespace GG
 		{
 			TRACE_DEBUG("V: %s %s %s", ToString(v.position), ToString(v.texCoord), ToString(v.normal));
 		}*/
-        glDrawElements( ( GLenum )drawMode, _indexList.size(), GL_UNSIGNED_INT, NULL );
-    }
+		glDrawElements((GLenum)drawMode, _indexList.size(), GL_UNSIGNED_INT, 0);// (void*)(sizeof(uint) * (_indexList.size() / 2)) );
+	}
+
+	void StaticGeometryBuffer::render(const DrawMode & drawMode, uint startIndex, uint indexCount) const
+	{
+		glDrawElements((GLenum)drawMode, indexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint) * startIndex) );
+	}
 
 
 	const StaticGeometryBuffer::Vertex *   StaticGeometryBuffer::getVertexArray() const
@@ -330,7 +345,7 @@ namespace GG
         int vertexProperties = getVertexProperties();
 
 		bool texResult = true;
-		if( vertexProperties & GG::TEXCOORDS )
+		if( vertexProperties & GG::UV0 )
 		{
 			Vector2 deltaTex = v1.texCoord - v2.texCoord;
 			texResult = (fabsf(deltaTex.x) < kLimit &&

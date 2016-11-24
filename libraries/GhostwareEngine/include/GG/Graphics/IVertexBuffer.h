@@ -23,11 +23,13 @@ namespace GG
     enum VertexProperty
     {
         POSITIONS   = 1 << 0,
-        TEXCOORDS   = 1 << 1,
-        NORMALS     = 1 << 2,
-        COLORS      = 1 << 3,
+        UV0			= 1 << 1,
+		UV1			= 1 << 2,
+        NORMALS     = 1 << 3,
         TANGENTS    = 1 << 4,
-        BITANGENTS  = 1 << 5
+        BITANGENTS  = 1 << 5,
+		COLORS      = 1 << 6,
+		BONES		= 1 << 7
     };
 
 
@@ -60,11 +62,14 @@ namespace GG
             virtual void    pushColor(     const Vector4 & t )     = 0;
             virtual void    pushTangent(   const Vector3 & t )     = 0;
             virtual void    pushBitangent( const Vector3 & b )     = 0;
-
+			virtual void	pushIndex(uint index)				   = 0;
+			
             virtual void    build( const DrawHint drawHint = D_STATIC ) = 0;
             virtual void    bind() const                                = 0;
 
             virtual void    render( const DrawMode & drawMode ) const   = 0;
+
+			virtual void    render(const DrawMode & drawMode, uint startIndex, uint indexCount) const		= 0;
 
         protected:
 

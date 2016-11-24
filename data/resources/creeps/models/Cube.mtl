@@ -1,6 +1,0 @@
-CIwMaterial
-{
-    name "Cube/Material"
-    colDiffuse {0.800000,0.800000,0.800000,0.800000}
-    colEmissive {0.800000,0.800000,0.800000,0.000000}
-}

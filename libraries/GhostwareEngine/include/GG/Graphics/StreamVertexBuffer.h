@@ -35,6 +35,7 @@ namespace GG
         virtual void        pushColor( const Vector4 & t );
         virtual void        pushTangent( const Vector3 & t );
         virtual void        pushBitangent( const Vector3 & b );
+		virtual void		pushIndex(uint index);
 
         virtual void        build( const DrawHint drawHint = D_STATIC );
         virtual void        bind() const;

@@ -8,7 +8,7 @@
 #include "Graphics/RenderFactory.h"
 #include "Graphics/SceneNode.h"
 #include "Graphics/Model.h"
-#include "Graphics/Mesh.h"
+#include "Graphics/MeshInstance.h"
 #include "Graphics/ISceneGraph.h"
 #include "Graphics/BasicSceneGraph.h"
 #include "Graphics/RenderSystem.h"
@@ -22,4 +22,5 @@
 #include "Graphics/Texture2DLoader.h"
 #include "Graphics/ShaderLoader.h"
 #include "Graphics/MaterialLoader.h"
+#include "Graphics/GmeshLoader.h"
 

@@ -42,22 +42,14 @@ namespace GG
 	{
 		friend class MaterialSerializer;
 	public:
-		static StringId GetResourceType()
-		{
-			static StringId id = STRING_ID("Material");
-			return id;
-		}
+		DEFINE_RESOURCE_TYPE(Material)
+
 	public:
 		Material();
 		Material(const json & j);
 
 		virtual void	init();
 		virtual	void	shutdown();
-
-		inline virtual	StringId getType() const
-		{
-			return GetResourceType();
-		}
 
 		inline virtual IResourceDescriptor * getDescriptor()
 		{

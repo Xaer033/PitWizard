@@ -51,7 +51,7 @@ namespace GG
 		};
 
 	public:
-		static RenderState * GetInstance()
+		static RenderState * Get()
 		{
 			if(_instance == nullptr)
 				_instance = new RenderState();

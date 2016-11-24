@@ -34,11 +34,7 @@ namespace GG
 	class Texture2D : public IResource
 	{
 	public:
-		static StringId GetResourceType()
-		{
-			static StringId id = STRING_ID("Texture2D");
-			return id;
-		}
+		DEFINE_RESOURCE_TYPE(Texture2D)
 
 	public:
 
@@ -47,11 +43,9 @@ namespace GG
 
 		virtual ~Texture2D();
 
-		virtual void	init() final;
-		virtual void	shutdown() final;
+		virtual void	init()		final;
+		virtual void	shutdown()	final;
 		virtual IResourceDescriptor*	getDescriptor()	final;
-		virtual StringId	getType() const				final;
-
 
 		uint	getWidth()  const;
 		uint	getHeight() const;

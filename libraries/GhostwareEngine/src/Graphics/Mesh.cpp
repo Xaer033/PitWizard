@@ -1,36 +1,28 @@
 
-#include "Mesh.h"
-
-#include "Material.h"
 #include "Model.h"
-#include <GG/Core/Log.h>
 
+#include <GG/Core/Log.h>
 
 namespace GG
 {
-	Mesh::Mesh() :
-		geometry(nullptr),
-		material(nullptr)
+	void Mesh::addSubMesh(const SubMesh & submesh)
 	{
+		_submeshList.push_back(submesh);
 	}
 
-	Mesh::Mesh( Model * geo, Material * mat ) :
-		geometry( geo ), material( mat )
+	const SubMesh * Mesh::getSubMesh(uint index) const
 	{
-	}
-	
-	Mesh::~Mesh()
-	{
-		geometry = nullptr;
-		material = nullptr;
+		if( index < 0 || index >= _submeshList.size())
+		{
+			TRACE_WARNING("Index is outside submeshList bounds!");
+			return nullptr;
+		}
+
+		return &_submeshList[index];
 	}
 
-	void Mesh::render( RenderFactory & renderFactory )
+	uint Mesh::getSubMeshCount() const
 	{
-		renderFactory.addCommand(
-			material,
-			geometry,
-			_entity->getSceneNode()->modelToWorldMatrix()
-		);
+		return _submeshList.size();
 	}
 }

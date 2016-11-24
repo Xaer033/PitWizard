@@ -14,7 +14,8 @@
 
 namespace GG
 {
-	typedef std::vector<RenderCommand3D> RenderCommand3DList;
+	typedef std::vector<RenderCommand3D>		RenderCommand3DList;
+	typedef std::vector<RenderCommandSubMesh>	RenderCommandSubMeshList;
 
 
 	class RenderFactory
@@ -23,7 +24,8 @@ namespace GG
 		RenderFactory();
 		~RenderFactory();
 
-		void		addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix );
+		void		addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix );
+		void		addCommand(IVertexBuffer * vertBuffer, const StringId & materialId, const SubMesh & submesh, const Matrix4 & worldMatrix);
 		
 		void		clearAllCommands();
 		void		renderAll( const Camera * camera );
@@ -39,11 +41,12 @@ namespace GG
 		
 		void		_setMaterial( Material * material);
 		void		_render3DList(const Camera * camera);
-
+		void		_renderCommandList(const Camera * camera);
 	
 	private:
 		ResourceHandle<Shader>			_tempShader;
 		RenderCommand3DList				_renderCommand3DList;
+		RenderCommandSubMeshList		_renderCommandSubMeshList;
 
 		ResourceHandle<Texture2D>		_tempTexture;
 		ResourceHandle<Texture2D>		_roughnessTex;

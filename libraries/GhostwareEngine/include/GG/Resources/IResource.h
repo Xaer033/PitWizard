@@ -10,6 +10,15 @@
 
 namespace GG
 {
+
+#define DEFINE_RESOURCE_TYPE(x) \
+	static StringId GetResourceType()\
+	{\
+		static StringId id = STRING_ID(#x);\
+		return id;\
+	}
+
+
 	class IResource
 	{
 	public:
@@ -28,7 +37,6 @@ namespace GG
 		virtual void					init()			= 0;
 		virtual	void					shutdown()		= 0;
 
-		virtual	StringId				getType() const	= 0;
 		virtual IResourceDescriptor *	getDescriptor()	= 0;
 		
 		

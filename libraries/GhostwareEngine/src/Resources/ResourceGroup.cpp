@@ -17,7 +17,7 @@ namespace GG
 		group._version		= j.get("version", Json::Value(GetVersion())).asInt();
 		group._groupId		= STRING_ID(j.get("group", Json::Value("poop")).asString());
 
-		Json::Value paths	= j.get("paths", Json::arrayValue);
+		/*Json::Value paths	= j.get("paths", Json::arrayValue);
 		for(uint i = 0; i < paths.size(); ++i)
 		{
 			std::string path = paths[i].asString();
@@ -26,7 +26,7 @@ namespace GG
 			{
 				TRACE_WARNING("Error adding path: %s", FileSystem::GetLastError());
 			}
-		}
+		}*/
 		return group;
 	}
 
@@ -86,7 +86,7 @@ namespace GG
 			bool result = (*_factoryMap)[resourceType]->loadResource(resourceId);
 			if(!result)
 			{
-				TRACE_WARNING("Error trying to load resource: %", resourceName);
+				TRACE_WARNING("Error trying to load resource: %s", resourceName);
 			}
 		}
 

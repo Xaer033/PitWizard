@@ -5,6 +5,14 @@
 
 namespace GG
 {
+#define DEFINE_COMPONENT_TYPE(x) \
+	static const StringId GetComponentType()\
+	{\
+		static StringId id = STRING_ID(#x);\
+		return id;\
+	}
+
+
 	class Entity;
 
 	class IComponent

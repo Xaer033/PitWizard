@@ -1,7 +1,7 @@
 
 #include "RenderFactory.h"
 #include "Camera.h"
-#include "Mesh.h"
+#include "MeshInstance.h"
 
 #include <fstream>
 #include <string>
@@ -42,14 +42,22 @@ namespace GG
 		);
 	}
 
+	void RenderFactory::addCommand(IVertexBuffer * vertBuffer, const StringId & materialId, const SubMesh & submesh, const Matrix4 & worldMatrix)
+	{
+		_renderCommandSubMeshList.push_back(
+			RenderCommandSubMesh { vertBuffer, materialId, submesh, worldMatrix }
+		);
+	}
+
 	void RenderFactory::clearAllCommands()
 	{
 		_renderCommand3DList.clear();
+		_renderCommandSubMeshList.clear();
 	}
 
 	void RenderFactory::renderAll( const Camera * camera )
 	{
-		ResourceManager * rm = ResourceManager::GetInstance();
+		ResourceManager * rm = ResourceManager::Get();
 		loadTempAssets();
 
 		if( camera == nullptr )
@@ -61,17 +69,18 @@ namespace GG
 		_setViewport( camera->getViewport() );
 		_clearRenderBuffer( camera->getClearColor(), camera->getClearMode() );
 
-		RenderState::GetInstance()->setViewMatrix(camera->getViewMatrix());
-		RenderState::GetInstance()->setProjectionMatrix(camera->getProjectionMatrix());
+		RenderState::Get()->setViewMatrix(camera->getViewMatrix());
+		RenderState::Get()->setProjectionMatrix(camera->getProjectionMatrix());
 
 		_render3DList(camera);
+		_renderCommandList(camera);
 	}
 
 // -------------------------------------------------------------------------------
 
 	void RenderFactory::_render3DList(const Camera * camera)
 	{
-		RenderState * rs = RenderState::GetInstance();
+		RenderState * rs = RenderState::Get();
 		Material *	currentMat	= nullptr;
 
 		Matrix4 viewProjection = rs->getProjectionMatrix() * rs->getViewMatrix();
@@ -109,9 +118,56 @@ namespace GG
 		}
 	}
 
+	void RenderFactory::_renderCommandList(const Camera * camera)
+	{
+		RenderState * rs = RenderState::Get();
+		StringId	currentMat	= -1;
+		IVertexBuffer * currentVertBuffer = nullptr;
+
+		Matrix4 viewProjection = rs->getProjectionMatrix() * rs->getViewMatrix();
+
+		auto it = _renderCommandSubMeshList.begin();
+		for(; it != _renderCommandSubMeshList.end(); ++it)
+		{
+			const RenderCommandSubMesh * command = &(*it);
+			if(command == nullptr)
+			{
+				TRACE_ERROR("Render Command is null!");
+				continue;
+			}
+
+			rs->setModelMatrix(command->modelMatrix);
+			
+			StringId matId = command->materialId;
+			ResourceH<Material> materialRef = ResourceManager::Get()->getResource<Material>(matId);
+			if(matId != -1 && matId != currentMat)
+			{
+				_setMaterial(materialRef.get());
+				currentMat = matId;
+			}
+
+			_tempShader->setParameter("inMVP", viewProjection * command->modelMatrix);
+			_tempShader->setParameter("inViewMat", rs->getViewMatrix());
+			_tempShader->setParameter("inModelMat", command->modelMatrix);
+			_tempShader->setParameter("inEyePos", camera->getEntity()->getSceneNode()->getWorldPosition());
+
+
+			if(command->vertexBuffer != nullptr )
+			{
+				if(command->vertexBuffer != currentVertBuffer)
+				{
+					command->vertexBuffer->bind();
+					currentVertBuffer = command->vertexBuffer;
+				}
+				const SubMesh & subMesh = command->subMesh;
+				command->vertexBuffer->render((DrawMode)subMesh.primitiveType, subMesh.startIndex, subMesh.indexCount);
+			}
+		}
+	}
+
 	void RenderFactory::_setViewport( const Vector4 & viewport ) const
 	{
-		RenderState::GetInstance()->setViewport(viewport);
+		RenderState::Get()->setViewport(viewport);
 	}
 
 	void RenderFactory:: _clearRenderBuffer( 
@@ -120,8 +176,8 @@ namespace GG
 	{
 		if( clearMode != RenderState::ClearMode::CM_NONE )
 		{
-			RenderState::GetInstance()->setClearColor(clearColor);
-			RenderState::GetInstance()->clearRenderBuffer(clearMode);
+			RenderState::Get()->setClearColor(clearColor);
+			RenderState::Get()->clearRenderBuffer(clearMode);
 		}
 	}
 
@@ -187,7 +243,7 @@ namespace GG
 			return;
 		}
 
-		RenderState * rs = RenderState::GetInstance();
+		RenderState * rs = RenderState::Get();
 		rs->setBlendmode(material->renderStateBlock.blendMode);
 		rs->setCullMode(material->renderStateBlock.cullMode);
 		rs->setDepthTesting(material->renderStateBlock.isDepthTesting);
@@ -197,7 +253,7 @@ namespace GG
 			material->renderStateBlock.depthRange.y
 		);
 
-		ResourceManager * rm = ResourceManager::GetInstance();
+		ResourceManager * rm = ResourceManager::Get();
 		_tempShader = rm->getResource<Shader>(material->renderStateBlock.shaderId);
 		_tempShader->bind();
 

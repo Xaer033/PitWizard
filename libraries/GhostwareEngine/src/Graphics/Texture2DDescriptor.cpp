@@ -43,7 +43,7 @@ namespace GG
 		desc.source			= j.get("source", Json::Value("null")).asString();
 		desc.isMipmapped	= j.get("mipMapping", Json::Value(true)).asBool();
 		desc.wrapMode		= GetWrapModeFromString(j.get("wrapMode", Json::Value("repeat")).asString());
-		desc.minFilterMode	= GetFilterModeFromString(j.get("minFilterMode", Json::Value("mipmapLinear")).asString());
+		desc.minFilterMode	= GetFilterModeFromString(j.get("minFilterMode", Json::Value("mipmap_linear")).asString());
 		desc.magFilterMode	= GetFilterModeFromString(j.get("magFilterMode", Json::Value("linear")).asString());
 
 		return desc;

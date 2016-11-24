@@ -4,6 +4,7 @@
 #include <string>
 #include <cassert>
 #include <unordered_map>
+#include <set>
 
 #include <GG/Core/StringId.h>
 #include <GG/Core/IStream.h>
@@ -36,9 +37,10 @@ namespace GG
 		virtual bool	removeResource(const StringId & id);
 
 	private:
-		static ResourceHandle<R>		_defaultResource;
+		static ResourceHandle<R>			_defaultResource;
 		ResourceCache<R>					_resourceMap;
 		std::unique_ptr<IResourceLoader>	_resourceLoader;
+		std::set<StringId>					_errorCacheIds;
 	};
 
 
@@ -64,7 +66,11 @@ namespace GG
 		auto it = _resourceMap.find(id);
 		if(it == _resourceMap.end())
 		{
-			TRACE_WARNING("Resource Loader could not find asset: %s", GetStringFromId(id));
+			if(_errorCacheIds.find(id) == _errorCacheIds.end())
+			{
+				TRACE_WARNING("Resource Loader could not find asset: %s", GetStringFromId(id));
+				_errorCacheIds.insert(id);
+			}
 			return _defaultResource;
 		}
 

@@ -5,6 +5,7 @@
 #include <GG/Core/StringId.h>
 #include <GG/Core/Log.h>
 #include <GG/Core/IStream.h>
+#include <GG/Core/FileStream.h>
 
 #include "IResource.h"
 #include "ResourceFactory.h"
@@ -20,7 +21,7 @@ namespace GG
 	{
 	public:
 
-		static ResourceManager * GetInstance()
+		static ResourceManager * Get()
 		{
 			if(_instance == nullptr)
 				_instance = new ResourceManager();
@@ -82,7 +83,7 @@ namespace GG
 		ResourceGroup * createGroup( IStream * stream )
 		{
 			assert(stream != nullptr);
-
+			
 			uint32 size = (uint32)stream->getSize();
 			char * buffer = (char*)malloc(size);
 			stream->read(buffer, sizeof(char), size);
@@ -98,6 +99,18 @@ namespace GG
 			_groupMap[groupId].createAllAssets(_factoryMap);
 
 			return &_groupMap[groupId];
+		}
+
+		ResourceGroup * createGroupFromPack(const std::string & filePath)
+		{
+			FileSystem::Mount(filePath);
+			FileStream stream("descriptor.json", OpenMode::OPEN_READ);
+			if(!stream.isOpen())
+			{
+				TRACE_ERROR("Could not open Pack descriptor file in: %s", filePath);
+				return nullptr;
+			}
+			return createGroup(&stream);
 		}
 
 		ResourceGroup * findGroup(const StringId & id)

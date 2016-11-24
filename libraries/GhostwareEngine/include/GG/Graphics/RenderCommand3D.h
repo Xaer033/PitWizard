@@ -11,7 +11,15 @@ namespace GG
 	struct RenderCommand3D
 	{
 		Material *		material;
-		Model *				geometry;
-		Matrix4	 			modelMatrix;
+		Model *			geometry;
+		Matrix4	 		modelMatrix;
+	};
+
+	struct RenderCommandSubMesh
+	{
+		IVertexBuffer * vertexBuffer;
+		StringId		materialId;
+		SubMesh			subMesh;
+		Matrix4	 		modelMatrix;
 	};
 }

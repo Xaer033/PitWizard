@@ -35,7 +35,7 @@ namespace GG
 
         int vertProperty = getVertexProperties();
 
-        if( vertProperty & GG::TEXCOORDS )
+        if( vertProperty & GG::UV0 )
             _texCoordList.push_back( _currentTexCoord );
         
         if( vertProperty & GG::NORMALS )
@@ -77,6 +77,11 @@ namespace GG
         _currentBitangent = biTangent;
     }
 
+	void StreamVertexBuffer::pushIndex(uint index)
+	{
+		
+	}
+
     void StreamVertexBuffer::build( const DrawHint drawHint )
     {
 
@@ -99,7 +104,7 @@ namespace GG
 
         int vertexProperties = getVertexProperties();
 
-        if( vertexProperties & GG::TEXCOORDS )
+        if( vertexProperties & GG::UV0 )
         {
             glEnableVertexAttribArray( Uv0 );
             glVertexAttribPointer( Uv0, 2, GL_FLOAT, GL_FALSE, sizeof( Vector2 ), &_texCoordList[ 0 ] );

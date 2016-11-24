@@ -10,6 +10,8 @@
 
 #include <GG/Core/Vector.h>
 #include <GG/Core/Log.h>
+#include <GG/Core/FileStream.h>
+#include <GG/Core/StreamHelper.h>
 #include <GG/Graphics/StaticGeometryBuffer.h>
 
 namespace GG
@@ -28,18 +30,16 @@ namespace GG
 		std::vector< Vector2 >	texCoordList;
 		std::vector< Vector3 >	normalList;
 	
-	
-		FILE * gFile = fopen( fileLocation.c_str(), "r" );
-	
-		if ( gFile == nullptr ) 
+		FileStream stream = FileStream(fileLocation, OpenMode::OPEN_READ);
+		std::istringstream  fileContents(Stream::ReadStringFromStream(&stream));
+
+		if(!stream.isOpen())
 		{ 
-			LOG_ERROR("File '%s' could not be opened!", fileLocation);
+			TRACE_ERROR("File '%s' could not be opened!", fileLocation);
 			return false; 
 		}
 
-		char line[ kMaxLineSize ]; 
-	 
-	
+		
 		int v  = 0; //vert pos
 		int vt = 0; //vert texCoord
 		int vn = 0; //vert Normal
@@ -48,11 +48,12 @@ namespace GG
 		Vector3 min, max;
 	//Pass 1
 		int lineCount = 0;
-	
-		while( fgets( line, 128, gFile ) != NULL )
+		std::string line;
+
+		while(std::getline(fileContents, line ))
 	    {
 			lineCount++;
-	
+			const char * lineChar = line.c_str();
 			
 	        switch( line[0] )
 	        {
@@ -69,7 +70,7 @@ namespace GG
 	            case ' ':
 					{
 					Vector3 v;
-	                sscanf(line, "v %f %f %f", &v.x, &v.y, &v.z);
+	                sscanf(lineChar, "v %f %f %f", &v.x, &v.y, &v.z);
 	                
 					min.x = (v.x < min.x) ? v.x : min.x;
 					min.y = (v.y < min.y) ? v.y : min.y;
@@ -86,7 +87,7 @@ namespace GG
 			//Normals
 	            case 'n':{
 	                Vector3 vn;
-	                sscanf(line, "vn %f %f %f", &vn.x, &vn.y, &vn.z);
+	                sscanf(lineChar, "vn %f %f %f", &vn.x, &vn.y, &vn.z);
 	             
 					normalList.push_back( vn );
 					}
@@ -95,7 +96,7 @@ namespace GG
 	            case 't':
 					{
 	                Vector2 vt;
-	                sscanf(line, "vt %f %f", &vt.x, &vt.y);
+	                sscanf(lineChar, "vt %f %f", &vt.x, &vt.y);
 	                
 					texCoordList.push_back( vt );
 					}
@@ -115,7 +116,7 @@ namespace GG
 					unsigned int normalIndex[3];
 	
 				//Position
-					sscanf( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",	&posIndex[0], &texIndex[0], &normalIndex[0],
+					sscanf(lineChar, "f %d/%d/%d %d/%d/%d %d/%d/%d",	&posIndex[0], &texIndex[0], &normalIndex[0],
 																	&posIndex[1], &texIndex[1], &normalIndex[1],
 																	&posIndex[2], &texIndex[2], &normalIndex[2] );
 				
@@ -134,8 +135,6 @@ namespace GG
 			}
 		}
 
-		fclose ( gFile );
-	
 		//mesh.aaBoundingBox.min = min;
 		//mesh.aaBoundingBox.max = max;
 	

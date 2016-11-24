@@ -48,9 +48,12 @@ namespace GG
 		virtual void        pushTangent(    const Vector3 & t );
 		virtual void        pushBitangent(  const Vector3 & b );
 
+		virtual void		pushIndex(uint index);
+
 		virtual void        build( const DrawHint drawHint = D_STATIC );
 
         virtual void        render( const DrawMode & drawMode ) const;
+		virtual void		render(const DrawMode & drawMode, uint startIndex, uint indexCount) const;
 
         virtual void        bind() const;
 

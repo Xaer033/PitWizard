@@ -42,7 +42,7 @@ namespace GG
 
 			IComponent * component = _addComponentFromType(
 				entity, 
-				T::GetComponentId()
+				T::GetComponentType()
 			);
 
 			if( component == nullptr )
@@ -66,7 +66,7 @@ namespace GG
 
 			IComponent * component = _getComponentFromType( 
 				entity, 
-				T::GetComponentId() 
+				T::GetComponentType() 
 			);
 
 			return static_cast<T*>( component );
