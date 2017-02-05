@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <IwGL.h>
 #include <GG/Core/Json.h>
 #include <GG/Core/Log.h>
 
@@ -54,9 +55,12 @@ namespace GG
 		s3eKeyboardUpdate();
 		s3ePointerUpdate();
 		
+		
+		CIwGLPoint pointer = CIwGLPoint(s3ePointerGetX(), s3ePointerGetY());
+		pointer = IwGLTransform(pointer);
 
-		_currentState.mouseX		= s3ePointerGetX();
-		_currentState.mouseY		= s3ePointerGetY();
+		_currentState.mouseX		= pointer.x;
+		_currentState.mouseY		= pointer.y;
 
 		if( s3ePointerGetState( S3E_POINTER_BUTTON_SELECT ) & ( int32 )InputMode::PRESSED )
 		{
@@ -66,8 +70,11 @@ namespace GG
 
 		for( uint i = 0; i < EventAction::kMaxTouchId; ++i )
 		{
-			_currentState.touchX[ i ]		= s3ePointerGetTouchX( i );
-			_currentState.touchY[ i ]		= s3ePointerGetTouchY( i );
+			CIwGLPoint touchPos = CIwGLPoint(s3ePointerGetTouchX(i), s3ePointerGetTouchY(i));
+			touchPos = IwGLTransform(touchPos);
+
+			_currentState.touchX[ i ]		= touchPos.x;
+			_currentState.touchY[ i ]		= touchPos.y;
 			_currentState.touchMode[ i ]	= s3ePointerGetTouchState( i );
 
 			if( _currentState.touchMode[ i ] & ( int32 )InputMode::PRESSED )

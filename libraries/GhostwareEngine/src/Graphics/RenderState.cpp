@@ -43,7 +43,11 @@ namespace GG
 		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	}
 
-	void RenderState::setDepthTesting( bool depthTest )
+	void RenderState::setDepthWrite(bool depthWrite)
+	{
+		glDepthMask((depthWrite) ? GL_TRUE : GL_FALSE);
+	}
+	void RenderState::setDepthTest( bool depthTest )
 	{
 		if( _cachedDepthTest == depthTest )
 			return;
@@ -128,6 +132,19 @@ namespace GG
 		Vector2 yVec = Vector2(viewport.y, viewport.w) * (float)_renderHeight;
 
 		glViewport((GLint)xVec.x, (GLint)yVec.x, (GLsizei)xVec.y, (GLsizei)yVec.y );
+	}
+
+	void RenderState::setScissorTest(bool scissorTest)
+	{
+		if(scissorTest)
+			glEnable(GL_SCISSOR_TEST);
+		else
+			glDisable(GL_SCISSOR_TEST);
+	}
+
+	void RenderState::setScissorRect(const Vector4 & clip)
+	{
+		glScissor((GLint)clip.x, (GLint)clip.y, (GLsizei)clip.z, (GLsizei)clip.w);
 	}
 
 

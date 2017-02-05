@@ -20,20 +20,6 @@ namespace GG
     };
 
 
-    enum VertexProperty
-    {
-        POSITIONS   = 1 << 0,
-        UV0			= 1 << 1,
-		UV1			= 1 << 2,
-        NORMALS     = 1 << 3,
-        TANGENTS    = 1 << 4,
-        BITANGENTS  = 1 << 5,
-		COLORS      = 1 << 6,
-		BONES		= 1 << 7
-    };
-
-
-
     enum DrawHint
     {
         D_STATIC    = GL_STATIC_DRAW,
@@ -53,16 +39,17 @@ namespace GG
             void            setVertexProperties( int vertexProperties );
             int             getVertexProperties() const;
 
-            virtual void    clearVertices()                        = 0;
+            virtual void    clearVertices()							= 0;
 
-            virtual void    addPosition( const Vector3 & p )       = 0;
+            virtual void    addPosition( const Vector3 & p )		= 0;
 
-            virtual void    pushTexCoord(  const Vector2 & t )     = 0;
-            virtual void    pushNormal(    const Vector3 & n )     = 0;
-            virtual void    pushColor(     const Vector4 & t )     = 0;
-            virtual void    pushTangent(   const Vector3 & t )     = 0;
-            virtual void    pushBitangent( const Vector3 & b )     = 0;
-			virtual void	pushIndex(uint index)				   = 0;
+            virtual void    pushUv0(  const Vector2 & t )			= 0;
+            virtual void    pushUv1(  const Vector2 & t )			= 0;
+            virtual void    pushNormal(    const Vector3 & n )		= 0;
+            virtual void    pushColor(     const Vector4 & t )		= 0;
+            virtual void    pushTangent(   const Vector3 & t )		= 0;
+            virtual void    pushBitangent( const Vector3 & b )		= 0;
+			virtual void	pushIndex(uint index)					= 0;
 			
             virtual void    build( const DrawHint drawHint = D_STATIC ) = 0;
             virtual void    bind() const                                = 0;

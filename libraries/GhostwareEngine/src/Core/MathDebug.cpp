@@ -24,6 +24,27 @@ namespace GG
 		return str;
 	}
 
+	const std::string ToString(const Vector2i & vec2)
+	{
+		std::string str;
+		StringHelper::Format(str, "{ %d, %d }", vec2.x, vec2.y);
+		return str;
+	}
+
+	const std::string ToString(const Vector3i & vec3)
+	{
+		std::string str;
+		StringHelper::Format(str, "{ %d, %d, %d }", vec3.x, vec3.y, vec3.z);
+		return str;
+	}
+
+	const std::string ToString(const Vector4i & vec4)
+	{
+		std::string str;
+		StringHelper::Format(str, "{ %d, %d, %d, %d }", vec4.x, vec4.y, vec4.z, vec4.w);
+		return str;
+	}
+
 	const std::string ToString( const Matrix4 & mat4 )
 	{
 		std::string matrixFmt;

@@ -29,7 +29,7 @@ namespace GG
 			json attributeLayout		= j.get("vertexAttributeLayout", Json::objectValue);
 			for(auto it = attributeLayout.begin(); it != attributeLayout.end(); ++it)
 			{
-				uint attribKey = _GetVertexAttributeFromString(it.key().asString());
+				uint attribKey = Graphics::VertexAttribute::GetIndexFromString(it.key().asString());
 				std::string attribName = it->asString();
 				desc.vertexAttributeLayout[attribKey] = attribName;
 			}
@@ -46,23 +46,5 @@ namespace GG
 		std::string				pixelShaderSource;
 
 		VertexAttributeLayout	vertexAttributeLayout;
-
-	private:
-
-		static VertexTags _GetVertexAttributeFromString(const std::string & attribStr)
-		{
-			std::string key = attribStr;
-			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-
-			if(key == "position")		{ return VertexTags::Position; }
-			else if(key == "uv0")		{ return VertexTags::Uv0; }
-			else if(key == "normal")	{ return VertexTags::Normal; }
-			else if(key == "tangent")	{ return VertexTags::Tangent; }
-			else if(key == "bitangent") { return VertexTags::Bitangent; }
-			else if(key == "color")		{ return VertexTags::Color; }
-		
-			TRACE_WARNING("Vertex Attribute Key not supported: %s", key);
-			return (VertexTags)0;
-		}
 	};
 }

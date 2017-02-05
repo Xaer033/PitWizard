@@ -12,6 +12,8 @@
 
 namespace GG
 {
+	using namespace Graphics;
+
 	bool ShaderLoader::loadDefault(IResource * outResource)
 	{
 		Shader * shader = (Shader*)outResource;
@@ -30,7 +32,7 @@ namespace GG
 			"   gl_FragColor = vec4(abs(cos(modelVert.x)), abs(modelVert.y), abs(sin(modelVert.z)), 1);  \n"
 			"}\n";
 
-		shader->bindAttribute(VertexTags::Position, "inVert");
+		shader->bindAttribute(VertexAttribute::GetIndex(VertexProperty::POSITIONS), "inVert");
 		return shader->compile(vertexShader, pixelShader);
 	}
 	bool ShaderLoader::loadFromFile(IResource * outResource, const std::string & filePath)

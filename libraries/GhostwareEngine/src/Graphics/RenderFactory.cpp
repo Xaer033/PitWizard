@@ -35,13 +35,13 @@ namespace GG
 		//_tempShader		= rm->getResource<Shader>(STRING_ID("cookTorrence"));
 	}
 
-	void RenderFactory::addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix )
+	/*void RenderFactory::addCommand(Material * mat, Model * geo, const Matrix4 & worldMatrix )
 	{
 		_renderCommand3DList.push_back( 
 			RenderCommand3D { mat, geo, worldMatrix } 
 		);
 	}
-
+*/
 	void RenderFactory::addCommand(IVertexBuffer * vertBuffer, const StringId & materialId, const SubMesh & submesh, const Matrix4 & worldMatrix)
 	{
 		_renderCommandSubMeshList.push_back(
@@ -110,11 +110,11 @@ namespace GG
 			_tempShader->setParameter("inEyePos", camera->getEntity()->getSceneNode()->getWorldPosition());
 			
 
-			if( command->geometry != nullptr )
+			/*if( command->geometry != nullptr )
 			{ 
 				command->geometry->bind();
 				command->geometry->render(DrawMode::TRIANGLE_LIST);
-			}
+			}*/
 		}
 	}
 
@@ -246,12 +246,14 @@ namespace GG
 		RenderState * rs = RenderState::Get();
 		rs->setBlendmode(material->renderStateBlock.blendMode);
 		rs->setCullMode(material->renderStateBlock.cullMode);
-		rs->setDepthTesting(material->renderStateBlock.isDepthTesting);
+		rs->setDepthTest(material->renderStateBlock.isDepthTesting);
 		rs->setWindingMode(material->renderStateBlock.windingMode);
 		rs->setDepthRange(
 			material->renderStateBlock.depthRange.x,
 			material->renderStateBlock.depthRange.y
 		);
+
+		
 
 		ResourceManager * rm = ResourceManager::Get();
 		_tempShader = rm->getResource<Shader>(material->renderStateBlock.shaderId);

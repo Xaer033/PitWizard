@@ -1,0 +1,58 @@
+#!/usr/bin/env mkb
+files
+{
+	[TurboBadger]
+	(tb)
+	"*.cpp"
+	"*.h"
+	
+	(tb/animation)
+	"*.cpp"
+	"*.h"
+	
+	(tb/image)
+	"*.cpp"
+	"*.h"
+	
+	(tb/parser)
+	"*.cpp"
+	"*.h"
+	
+	(tb/renderers)
+	"*.cpp"
+	"*.h"
+	
+	(tb/thirdparty)
+	"*.h"
+	
+	(tb/utf8)
+	"*.cpp"
+	"*.h"
+	
+}
+
+subprojects
+{
+    iwutil
+    iwgl
+}
+
+includepaths
+{
+	"tb"
+	"tb/animation"
+	"tb/image"
+	"tb/parser"
+	"tb/renderers"
+	"tb/thirdparty"
+	"tb/utf8"
+}
+
+option
+{
+    cxx11
+}
+
+deployment
+{
+}

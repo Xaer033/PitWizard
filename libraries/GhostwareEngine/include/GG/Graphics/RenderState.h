@@ -75,8 +75,12 @@ namespace GG
 		void	setRenderSize(int width, int height);
 		void	setViewport(const Vector4 & viewport) const;
 
-		void	setDepthTesting(bool depthTest);
+		void	setDepthTest(bool depthTest);
+		void	setDepthWrite(bool depthWrite);
 		void	setDepthRange(float zNear, float zFar);
+
+		void	setScissorTest(bool scissorTest);
+		void	setScissorRect(const Vector4 & clip);
 
 		void	setCullMode(const CullMode cullMode);
 

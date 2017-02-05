@@ -39,20 +39,30 @@
   "source": "default/materials/marble.mat"
 },
 {
-			"id"			: "cookTorrence",
-			"type"			: "Shader",
-			"source"		: "default/shaders/unlit",
-			"vertexSource"	: "default/shaders/unlit.vs",
-			"pixelSource"	: "default/shaders/unlit.ps",
-			
-			"vertexAttributeLayout" :
-			{
-				"Position"	: "inVert",    
-				"Uv0"		: "inUV0", 
-				"Normal"	: "inNormal",
-				"Tangent"	: "inTangent",
-				"Bitangent"	: "inBitangent"
-			}
+		"id"			: "cookTorrence",
+		"type"			: "Shader",
+		"source"		: "default/shaders/unlit",
+		"vertexSource"	: "default/shaders/unlit.vs",
+		"pixelSource"	: "default/shaders/unlit.ps",
+		
+		"vertexAttributeLayout" :
+		{
+			"Position"	: "inVert",    
+			"Uv0"		: "inUV0", 
+			"Normal"	: "inNormal",
+			"Tangent"	: "inTangent",
+			"Bitangent"	: "inBitangent"
 		}
+	},
+	{
+		"id"		: "gridGround",
+		"type"		: "Mesh",
+		"source"	: "default/meshes/gridGround.gmesh"
+	},
+	{
+		"id"		: "player",
+		"type"		: "Mesh",
+		"source"	: "default/meshes/kludgeModel.gmesh"
+	}
   ]
 }

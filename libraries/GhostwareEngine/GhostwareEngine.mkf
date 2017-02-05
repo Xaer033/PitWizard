@@ -59,6 +59,13 @@ files
 	(src/Resources)
 		"*.cpp"
 	
+# GUI -------------------
+	[GG/Gui]
+	(include/GG/Gui)
+		"*.h"
+		
+	(src/Gui)
+		"*.cpp"
 }
 
 
@@ -72,4 +79,5 @@ includepaths
 	"include/GG/Core"
 	"include/GG/EntitySystem"
 	"include/GG/Resources"
+	"include/GG/Gui"
 }

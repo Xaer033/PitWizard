@@ -68,7 +68,7 @@ namespace GG
 		return &iter->second;
 	}
 
-	void RenderSystem::renderOneFrame()
+	void RenderSystem::renderOneFrame(App * gui)
 	{
 		auto it = _cameraMap.begin();
 		for(; it != _cameraMap.end(); ++it )
@@ -87,6 +87,9 @@ namespace GG
 			_renderFactory.renderAll( &it->second );
 			_renderFactory.clearAllCommands();
 		}
+
+		if(gui)
+			gui->RenderFrame();
 
 		IwGLSwapBuffers();
 	}

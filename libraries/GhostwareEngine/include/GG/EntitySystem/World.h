@@ -11,6 +11,8 @@
 #include <GG/Graphics/RenderSystem.h>
 #include <GG/Core/Log.h>
 
+#include <Gui/Application.h>
+
 namespace GG
 {
 	class World
@@ -28,7 +30,7 @@ namespace GG
 		
 
 		void			update( float deltaTime );
-		void			renderOneFrame();
+		void			renderOneFrame(App * backend);
 
 
 		template <typename T, typename... Args>

@@ -24,11 +24,14 @@ namespace GG
 		struct Vertex
 		{
 			Vector3		position;
-			Vector2		texCoord;
+			Vector2		uv0;
+			Vector2		uv1;
 			Vector3		normal;
 			Vector3		tangent;
 			Vector3		biTangent;
 			Vector4		color;
+			Vector4i	boneIndicies;
+			Vector4		boneWeights;
 		};
 
 	public:
@@ -42,11 +45,14 @@ namespace GG
 		virtual void        clearVertices();
 
 		virtual void        addPosition(    const Vector3 & p );
-		virtual void        pushTexCoord(   const Vector2 & t );
+		virtual void        pushUv0(		const Vector2 & t );
+		virtual void        pushUv1(		const Vector2 & t );
 		virtual void        pushNormal(     const Vector3 & n );
 		virtual void        pushColor(	    const Vector4 & t );
 		virtual void        pushTangent(    const Vector3 & t );
 		virtual void        pushBitangent(  const Vector3 & b );
+		virtual void        pushBoneIndices(const Vector4i & i );
+		virtual void        pushBoneWeights(const Vector4 & w);
 
 		virtual void		pushIndex(uint index);
 
@@ -82,11 +88,14 @@ namespace GG
         GLuint              _arrayBufferHandle;
 
 
-        Vector2             _currentTexCoord;
+        Vector2             _currentUv0;
+		Vector2             _currentUv1;
         Vector3             _currentNormal;
         Vector4             _currentColor;
         Vector3             _currentTangent;
         Vector3             _currentBitangent;
+		Vector4i			_currentBoneIndices;
+		Vector4				_currentBoneWeights;
 
 
         void                _generateTangents();

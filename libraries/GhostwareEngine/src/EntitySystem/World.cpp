@@ -61,9 +61,9 @@ namespace GG
 
 	}
 
-	void World::renderOneFrame()
+	void World::renderOneFrame(App * gui)
 	{
-		_renderSystem->renderOneFrame();
+		_renderSystem->renderOneFrame(gui);
 	}
 
 

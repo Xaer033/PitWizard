@@ -10,14 +10,14 @@
 
 namespace GG
 {
-	//typedef CIwModel Model;
-	typedef StaticGeometryBuffer Model;
-
 	struct MeshDescriptor : public IResourceDescriptor
 	{
-		MeshDescriptor FromJson(const json & j)
+		static MeshDescriptor FromJson(const json & j)
 		{
 			MeshDescriptor desc;
+			desc.resourceId		= STRING_ID(j.get("id", Json::Value("null")).asString());
+			desc.type			= STRING_ID(j.get("type", Json::Value("null")).asString());
+			desc.source			= j.get("source", Json::Value("null")).asString();
 			return desc;
 		}
 
@@ -51,7 +51,10 @@ namespace GG
 
 	public:
 		Mesh() {}
-		Mesh(const json & j) {}
+		Mesh(const json & j) 
+		{
+			_descriptor = MeshDescriptor::FromJson(j);
+		}
 
 		virtual void	init(){}
 		virtual void	shutdown(){}
@@ -60,13 +63,10 @@ namespace GG
 		{
 			return &_descriptor;
 		}
-
 		
-
-		void addSubMesh(const SubMesh & submesh);
-
-		uint getSubMeshCount() const;
-		const SubMesh * getSubMesh(uint index) const;
+		void			addSubMesh(const SubMesh & submesh);
+		uint			getSubMeshCount()		const;
+		const SubMesh * getSubMesh(uint index)	const;
 
 		StaticGeometryBuffer geoBuffer;
 	private:

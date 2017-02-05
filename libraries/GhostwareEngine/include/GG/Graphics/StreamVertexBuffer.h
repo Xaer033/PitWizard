@@ -30,7 +30,8 @@ namespace GG
 
         virtual void        addPosition( const Vector3 & p );
 
-        virtual void        pushTexCoord( const Vector2 & t );
+        virtual void        pushUv0( const Vector2 & t );
+        virtual void		pushUv1(  const Vector2 & t );
         virtual void        pushNormal( const Vector3 & n );
         virtual void        pushColor( const Vector4 & t );
         virtual void        pushTangent( const Vector3 & t );
@@ -48,14 +49,18 @@ namespace GG
 
 	private:
 
-        Vector2             _currentTexCoord;
+        Vector2             _currentUv0;
+		Vector2             _currentUv1;
         Vector3             _currentNormal;
         Vector3             _currentTangent;
         Vector3             _currentBitangent;
         Vector4             _currentColor;
+		Vector4i			_currentBoneIndices;
+		Vector4				_currentBoneWeights;
 
         PositionList        _positionList;
-        TexCoordList        _texCoordList;
+        TexCoordList        _uv0List;
+		TexCoordList        _uv1List;
         NormalList          _normalList;
         TangentList         _tangentList;
         BiTangentList       _biTangentList;

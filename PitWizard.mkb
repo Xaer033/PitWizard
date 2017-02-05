@@ -25,6 +25,7 @@ subprojects
 	libraries/GhostwareEngine/GhostwareEngine
 	libraries/Glm/glm
 	libraries/Physfs/physfs
+	libraries/TurboBadger
 }
 
 
@@ -40,6 +41,7 @@ includepaths
 	"libraries/Photon-cpp/inc"
 	"libraries/GhostwareEngine/GhostwareEngine/include"
 	"libraries/Physfs/"
+	"libraries/TurboBadger/"
 }
 
 options
@@ -51,9 +53,10 @@ assets
 {
 	(data)
 	configs
-	
-	(data-ram/data-gles2-etc, data)
+	Demo
+	resources
 	.
+	
 	
 }
 

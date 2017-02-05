@@ -24,6 +24,8 @@
 
 namespace GG
 {
+	using namespace Graphics;
+
 	StaticGeometryBuffer::StaticGeometryBuffer()  :
 		_vertexBufferHandle(0), 
         _indexBufferHandle(0),  
@@ -62,20 +64,28 @@ namespace GG
 		Vertex v = 
 		{ 
 			p, 
-			_currentTexCoord, 
+			_currentUv0,
+			_currentUv1,
 			_currentNormal,  
 			_currentTangent, 
 			_currentBitangent,
-			_currentColor
+			_currentColor,
+			_currentBoneIndices,
+			_currentBoneWeights
 		};
 	
 		_vertexList.push_back( v );
 
 	}
 
-    void StaticGeometryBuffer::pushTexCoord( const Vector2 & t )
+    void StaticGeometryBuffer::pushUv0( const Vector2 & t )
 	{
-		_currentTexCoord = t;
+		_currentUv0 = t;
+	}
+
+	void StaticGeometryBuffer::pushUv1(const Vector2 & t)
+	{
+		_currentUv1 = t;
 	}
 
     void StaticGeometryBuffer::pushNormal( const Vector3 & n )
@@ -98,6 +108,15 @@ namespace GG
 		_currentBitangent = b;
 	}
 
+	void StaticGeometryBuffer::pushBoneIndices(const Vector4i & i)
+	{
+		_currentBoneIndices = i;
+	}
+
+	void StaticGeometryBuffer::pushBoneWeights(const Vector4 & w)
+	{
+		_currentBoneWeights = w;
+	}
 
 	void StaticGeometryBuffer::pushIndex(uint index)
 	{
@@ -125,8 +144,8 @@ namespace GG
 			Vector3 edge2	= v[2].position - v[0].position;
 
 
-			Vector2 edge1uv = v[1].texCoord - v[0].texCoord;
-			Vector2 edge2uv = v[2].texCoord - v[0].texCoord;
+			Vector2 edge1uv = v[1].uv0 - v[0].uv0;
+			Vector2 edge2uv = v[2].uv0 - v[0].uv0;
 
 			//Determ
 			float det = edge1uv.x * edge2uv.y - edge1uv.y * edge2uv.x;
@@ -140,9 +159,7 @@ namespace GG
 
 
 			const float kEpsilon = 0.001f;
-			if( fabsf( tangent.x ) < kEpsilon && 
-				fabsf( tangent.y ) < kEpsilon &&
-				fabsf( tangent.z ) < kEpsilon)
+			if(glm::length2(tangent) < kEpsilon)
 			{
 				TRACE_WARNING("Tangent vector has length of 0");
 			}
@@ -158,11 +175,9 @@ namespace GG
     
     void StaticGeometryBuffer::build( DrawHint drawHint )
 	{
-		/*if(getVertexProperties() & TANGENTS)
-			_generateTangents();
-
-		_generateIndices();
-		*/
+		if(_indexList.empty())
+			_generateIndices();
+		
 		
         if( _vertexBufferHandle == 0 )
             glGenBuffers( 1, &_vertexBufferHandle );
@@ -173,13 +188,13 @@ namespace GG
         int vCount = getVertexCount();
         int iCount = getIndexCount();
 
-        glBindBuffer( GL_ARRAY_BUFFER,          _vertexBufferHandle );
-        glBufferData( GL_ARRAY_BUFFER,          sizeof( Vertex ) * _vertexList.size(), &_vertexList[ 0 ], drawHint );
+        glBindBuffer( GL_ARRAY_BUFFER,	_vertexBufferHandle );
+        glBufferData( GL_ARRAY_BUFFER,  sizeof( Vertex ) * _vertexList.size(), &_vertexList[ 0 ], drawHint );
         //glBufferSubData( GL_ARRAY_BUFFER, 0,    sizeof( Vertex ) * _vertexList.size(), &_vertexList[ 0 ] );
 
 
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,          _indexBufferHandle );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER,          sizeof( GLuint ) * _indexList.size(), &_indexList[ 0 ] , drawHint );
+        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,	_indexBufferHandle );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER,	sizeof( GLuint ) * _indexList.size(), &_indexList[ 0 ] , drawHint );
        // glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, 0,    sizeof( GLuint ) * _indexList.size(), &_indexList[ 0 ] );
 	
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -215,7 +230,7 @@ namespace GG
 		}
 
 		
-		if( getVertexProperties() & TANGENTS )
+		if( getVertexProperties() & VertexProperty::TANGENTS )
 			_generateTangents();
 
         if( _vertexBufferHandle == 0 )
@@ -240,60 +255,101 @@ namespace GG
         glBindBuffer( GL_ARRAY_BUFFER,          _vertexBufferHandle );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,  _indexBufferHandle  );
 
-        glEnableVertexAttribArray( VertexTags::Position );
-        glVertexAttribPointer(VertexTags::Position, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 0 ) );
+		int Position = VertexAttribute::GetIndex(VertexProperty::POSITIONS);
+        glEnableVertexAttribArray( Position );
+        glVertexAttribPointer(Position, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 0 ) );
 			
         int vertexProperties = getVertexProperties();
 
-        if( vertexProperties & GG::UV0 )
+		int Uv0 = VertexAttribute::GetIndex(VertexProperty::UV0);
+        if( vertexProperties & VertexProperty::UV0 )
         {
-            glEnableVertexAttribArray(VertexTags::Uv0);
-            glVertexAttribPointer(VertexTags::Uv0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 3 * sizeof( float ) ) );
+            glEnableVertexAttribArray(Uv0);
+            glVertexAttribPointer(Uv0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 3 * sizeof( float ) ) );
         }
         else
         {
-            glDisableVertexAttribArray(VertexTags::Uv0 );
+            glDisableVertexAttribArray(Uv0);
         }
 
-        if( vertexProperties & GG::NORMALS )
+		int Uv1 = VertexAttribute::GetIndex(VertexProperty::UV1);
+		if(vertexProperties & VertexProperty::UV1)
+		{
+			glEnableVertexAttribArray(Uv1);
+			glVertexAttribPointer(Uv1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(5 * sizeof(float)));
+		}
+		else
+		{
+			glDisableVertexAttribArray(Uv1);
+		}
+
+
+		int Normal = VertexAttribute::GetIndex(VertexProperty::NORMALS);
+        if( vertexProperties & VertexProperty::NORMALS )
         {
-            glEnableVertexAttribArray(VertexTags::Normal );
-            glVertexAttribPointer(VertexTags::Normal, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 5 * sizeof( float ) ) );
+            glEnableVertexAttribArray(Normal);
+            glVertexAttribPointer(Normal, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 7 * sizeof( float ) ) );
         }
         else
         {
-            glDisableVertexAttribArray(VertexTags::Normal );
+            glDisableVertexAttribArray(Normal );
         }
 
-        if( vertexProperties & GG::TANGENTS )
+		int Tangent = VertexAttribute::GetIndex(VertexProperty::TANGENTS);
+        if( vertexProperties & VertexProperty::TANGENTS )
         {
-            glEnableVertexAttribArray(VertexTags::Tangent );
-            glVertexAttribPointer(VertexTags::Tangent, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 8 * sizeof( float ) ) );
+            glEnableVertexAttribArray(Tangent );
+            glVertexAttribPointer(Tangent, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 9 * sizeof( float ) ) );
         }
         else
         {
-            glDisableVertexAttribArray(VertexTags::Tangent );
+            glDisableVertexAttribArray(Tangent );
         }
 
-        if( vertexProperties & GG::BITANGENTS )
+		int Bitangent = VertexAttribute::GetIndex(VertexProperty::BITANGENTS);
+        if( vertexProperties & VertexProperty::BITANGENTS )
         {
-            glEnableVertexAttribArray(VertexTags::Bitangent );
-            glVertexAttribPointer(VertexTags::Bitangent, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 11 * sizeof( float ) ) );
+            glEnableVertexAttribArray(Bitangent );
+            glVertexAttribPointer(Bitangent, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 13 * sizeof( float ) ) );
         }
         else
         {
-            glDisableVertexAttribArray(VertexTags::Bitangent );
+            glDisableVertexAttribArray(Bitangent );
         }
 
-        if( vertexProperties & GG::COLORS )
+
+		int Color = VertexAttribute::GetIndex(VertexProperty::COLORS);
+        if( vertexProperties & VertexProperty::COLORS )
         {
-            glEnableVertexAttribArray(VertexTags::Color );
-            glVertexAttribPointer(VertexTags::Color, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 14 * sizeof( float ) ) );
+            glEnableVertexAttribArray(Color );
+            glVertexAttribPointer(Color, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), BUFFER_OFFSET( 16 * sizeof( float ) ) );
         }
         else
         {
-            glDisableVertexAttribArray(VertexTags::Color );
+            glDisableVertexAttribArray(Color );
         }
+
+		int BoneIndex = VertexAttribute::GetIndex(VertexProperty::BONE_INDICIES);
+		if(vertexProperties & VertexProperty::BONE_INDICIES)
+		{
+			glEnableVertexAttribArray(BoneIndex);
+			glVertexAttribIPointer(BoneIndex, 4, GL_INT, sizeof(Vertex), BUFFER_OFFSET(20 * sizeof(float)));
+		}
+		else
+		{
+			glDisableVertexAttribArray(BoneIndex);
+		}
+
+		int BoneWeight = VertexAttribute::GetIndex(VertexProperty::BONE_WEIGHTS);
+		if(vertexProperties & VertexProperty::BONE_WEIGHTS)
+		{
+			glEnableVertexAttribArray(BoneWeight);
+			glVertexAttribPointer(BoneWeight, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), BUFFER_OFFSET(24 * sizeof(float) + (sizeof(Vector4i))));
+		}
+		else
+		{
+			glDisableVertexAttribArray(BoneWeight);
+		}
     }
 
     void StaticGeometryBuffer::render( const DrawMode & drawMode ) const
@@ -347,7 +403,7 @@ namespace GG
 		bool texResult = true;
 		if( vertexProperties & GG::UV0 )
 		{
-			Vector2 deltaTex = v1.texCoord - v2.texCoord;
+			Vector2 deltaTex = v1.uv0 - v2.uv0;
 			texResult = (fabsf(deltaTex.x) < kLimit &&
 						 fabsf(deltaTex.y) < kLimit);
 		}
@@ -395,7 +451,7 @@ namespace GG
             bool repeated = false;
 
             ///FLip uv's for openGL
-            _vertexList[ i ].texCoord.y = 1 - _vertexList[ i ].texCoord.y;
+            _vertexList[ i ].uv0.y = 1 - _vertexList[ i ].uv0.y;
 
             for( uint j = 0; j < newVertList.size(); ++j )
             {

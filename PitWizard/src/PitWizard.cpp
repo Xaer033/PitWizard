@@ -19,6 +19,9 @@
 
 #include <GG/Resources/ResourceManager.h>
 
+#include <GG/Gui.h>
+#include <Gui/AppBackendMarmalade.h>
+
 using namespace GG;
 
 
@@ -34,7 +37,7 @@ PitWizard::~PitWizard()
 
 void PitWizard::init(int argc, char** argv)
 {
-	_setupLoggers();
+	//_setupLoggers();
 
 	const char * argv0 = (argc > 0) ? argv[0] : nullptr;
 	FileSystem::Init(argv0);
@@ -74,9 +77,11 @@ void PitWizard::init(int argc, char** argv)
 	ResourceManager::Get()->registerType<Texture2D>(new Texture2DLoader());
 	ResourceManager::Get()->registerType<Shader>(new ShaderLoader());
 	ResourceManager::Get()->registerType<Material>(new MaterialLoader());
+	ResourceManager::Get()->registerType<Mesh>(new MeshLoader());
 
 	ResourceGroup* group = ResourceManager::Get()->createGroupFromPack("resources/Cool.group");
 	group->loadAllAssets();
+
 }
 
 void PitWizard::shutdown()
@@ -93,19 +98,21 @@ void PitWizard::shutdown()
 
 void PitWizard::doGameLoop()
 {
-	ResourceManager * rm = ResourceManager::Get();
-	ResourceH<Material> gridMat = rm->getResource<Material>("marble");
-
-	Mesh gridModel;
-	FileStream gStream("resources/gridFloor.gmesh", OpenMode::OPEN_READ);
-	GmeshLoader::LoadFromStream(&gStream, &gridModel);
-
 	
-	Mesh playerModel;
-	FileStream pStream("resources/player.gmesh", OpenMode::OPEN_READ);
-	GmeshLoader::LoadFromStream(&pStream, &playerModel);
+	App *app = app_create();
+	AppBackendMarmalade *backend = new AppBackendMarmalade();
+	if(!backend || !backend->Init(app))
+		return;
 
-	ResourceHandle<Material> tempHolder = rm->getResource<Material>("marble");
+	bool success = app->Init();
+	if(!success)
+		return;
+
+
+
+
+	ResourceH<Mesh> playerMesh		= ResourceManager::Get()->getResource<Mesh>(STRING_ID("player"));
+	ResourceH<Mesh> gridGroundMesh	= ResourceManager::Get()->getResource<Mesh>(STRING_ID("gridGround"));
 
 	World* worldPtr = new World(new BasicSceneGraph(1000));
 	std::unique_ptr<World> world(worldPtr);
@@ -114,15 +121,15 @@ void PitWizard::doGameLoop()
 
 	GG::Entity *		box_1		= world->createEntity("Box_1");
 	GG::MeshInstance *	boxMesh_1	= world->addComponent<MeshInstance>(box_1);
-	boxMesh_1->setMesh(&playerModel);
-	boxMesh_1->mainMaterial(STRING_ID("marble"));
+	boxMesh_1->setMesh(playerMesh.get());
+	boxMesh_1->mainMaterial(STRING_ID("marble"), true);
 	SceneNode *		boxNode_1	= box_1->getSceneNode();
 	boxNode_1->setPosition(Vector3(0, 1, 0));
 
 	GG::Entity *		box_2		= world->createEntity("Box_2");
 	GG::MeshInstance *	boxMesh_2	= world->addComponent<MeshInstance>(box_2);
-	boxMesh_2->setMesh(&playerModel);
-	boxMesh_2->mainMaterial(STRING_ID("marble"));
+	boxMesh_2->setMesh(playerMesh.get());
+	boxMesh_2->mainMaterial(STRING_ID("marble"), true);
 	SceneNode *		boxNode_2	= box_2->getSceneNode();
 	boxNode_2->setPosition(Vector3(0, 0, 3));
 	boxNode_2->setParent(boxNode_1);
@@ -133,12 +140,12 @@ void PitWizard::doGameLoop()
 	cam->setClearMode(RenderState::ClearMode::CM_DEPTH | RenderState::ClearMode::CM_COLOR);
 	cam->setClearColor(GG::Vector4(0.43f, 0.48f, 0.67f, 1.0f));
 	GG::SceneNode * camNode_1 = cam->getEntity()->getSceneNode();
-	camNode_1->setPosition(Vector3(0.0f, 3.0f, -7.0f));
+	camNode_1->setPosition(Vector3(0.0f, 3.0f, 3.0f));
 	camNode_1->lookAt(Vector3());
 
 	Entity *		groundEntity		= world->createEntity("GroundMesh");
 	MeshInstance *	groundMeshInstance	= world->addComponent<MeshInstance>(groundEntity);
-	groundMeshInstance->setMesh(&gridModel);
+	groundMeshInstance->setMesh(gridGroundMesh.get());
 	groundMeshInstance->mainMaterial(STRING_ID("marble"), true);
 
 	const float camSpeed	= 5.0f;
@@ -159,7 +166,7 @@ void PitWizard::doGameLoop()
 			/*ResourceHandle<Shader> shader = rm->getResource<Shader>(STRING_ID("cookTorrence"));
 			shader->setState(IResource::State::UNLOADED);
 */
-			rm->findGroup(STRING_ID("default"))->reloadAllAssets();
+			ResourceManager::Get()->findGroup(STRING_ID("default"))->reloadAllAssets();
 		}
 
 		if(s3eKeyboardGetState(s3eKeyLeft) & S3E_KEY_STATE_DOWN)
@@ -205,12 +212,17 @@ void PitWizard::doGameLoop()
 		camNode_1->translate(move * camSpeed * deltaTime);
 
 		world->update(1.0f / 60.0f);
-		
-		world->renderOneFrame();
+		app->Process();
+
+		world->renderOneFrame(app);
 
 			// Sleep for 0ms to allow the OS to process events etc.
 		s3eDeviceYield( 0 );
 	}
+
+
+	/*delete backend;
+	delete app;*/
 }
 
 void PitWizard::_setupLoggers()

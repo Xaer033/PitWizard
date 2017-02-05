@@ -19,7 +19,7 @@
 MemSize 		= 20000000
 MemSizeDebug	= 80000000
 SysStackSize	= 4000000
-SysGlesVersion	= 2
+SysGlesVersion	= 3
 
 DispFixRot 	= Landscape
 

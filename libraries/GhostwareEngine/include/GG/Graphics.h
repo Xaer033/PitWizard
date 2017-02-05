@@ -23,4 +23,5 @@
 #include "Graphics/ShaderLoader.h"
 #include "Graphics/MaterialLoader.h"
 #include "Graphics/GmeshLoader.h"
+#include "Graphics/MeshLoader.h"
 

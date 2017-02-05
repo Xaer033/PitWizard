@@ -9,6 +9,8 @@
 
 namespace GG
 {
+	using namespace Graphics;
+
 	bool GmeshLoader::LoadFromStream(IStream * stream, Mesh * mesh)
 	{
 		if(stream == nullptr)
@@ -56,7 +58,7 @@ namespace GG
 			{
 				Vector2 uv0;
 				stream->read(&uv0, sizeOfVec2, 1);
-				mesh->geoBuffer.pushTexCoord(uv0);
+				mesh->geoBuffer.pushUv0(uv0);
 			}
 
 			if(vertAttribute & VertexProperty::UV1)
@@ -92,7 +94,7 @@ namespace GG
 				mesh->geoBuffer.pushColor(color);
 			}
 
-			if(vertAttribute & VertexProperty::BONES)
+			if(vertAttribute & VertexProperty::BONE_INDICIES)
 			{
 				uint bi_x, bi_y, bi_z, bi_w;
 

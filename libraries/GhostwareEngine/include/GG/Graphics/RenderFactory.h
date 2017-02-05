@@ -24,7 +24,7 @@ namespace GG
 		RenderFactory();
 		~RenderFactory();
 
-		void		addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix );
+		//void		addCommand( Material * mat, Model * geo, const Matrix4 & worldMatrix );
 		void		addCommand(IVertexBuffer * vertBuffer, const StringId & materialId, const SubMesh & submesh, const Matrix4 & worldMatrix);
 		
 		void		clearAllCommands();

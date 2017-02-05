@@ -8,6 +8,8 @@
 
 #include <unordered_map>
 
+#include <Gui/Application.h>
+
 namespace GG
 {
 	class RenderSystem
@@ -31,7 +33,7 @@ namespace GG
 		Camera *	addCamera( const StringId & id );
 		Camera *	getCamera( const StringId & id );
 
-		void		renderOneFrame();
+		void		renderOneFrame(App * gui);
 
 	private:
 		typedef std::unordered_map< StringId, MeshInstance>		MeshMap;

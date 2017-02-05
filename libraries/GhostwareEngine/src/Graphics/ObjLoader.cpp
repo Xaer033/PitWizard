@@ -123,7 +123,7 @@ namespace GG
 					
 					for( uint i = 0; i < 3; ++i )
 					{
-						mesh.pushTexCoord( texCoordList[ texIndex[i] - 1 ]	);
+						mesh.pushUv0( texCoordList[ texIndex[i] - 1 ]	);
 						mesh.pushNormal( normalList[ normalIndex[i]	- 1 ]	);
 						mesh.addPosition( vertPosList[ posIndex[i] - 1	]	);
 					}
